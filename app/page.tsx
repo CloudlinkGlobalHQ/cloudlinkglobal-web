@@ -1,12 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import dynamic from "next/dynamic";
 import WaitlistForm from "./components/WaitlistForm";
 import MouseGlow from "./components/MouseGlow";
 import StickyNav from "./components/StickyNav";
-import CinematicIntro from "./components/CinematicIntro";
 import InteractiveAlert from "./components/InteractiveAlert";
 import MagneticButton from "./components/MagneticButton";
 import DemoPanel from "./components/DemoPanel";
@@ -187,7 +186,6 @@ function HeroMetric({
 }
 
 export default function Home() {
-  const [introComplete, setIntroComplete] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -198,14 +196,10 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-[#040410] text-white overflow-x-hidden">
-      <CinematicIntro onComplete={() => setIntroComplete(true)} />
       <MouseGlow />
 
       {/* Sticky nav */}
-      <motion.div
-        animate={{ opacity: introComplete ? 1 : 0 }}
-        transition={{ duration: 0.5, delay: 0.3, ease: E }}
-      >
+      <div>
         <StickyNav
           items={[
             { id: "top", label: "Home" },
@@ -215,7 +209,7 @@ export default function Home() {
             { id: "waitlist", label: "Early Access" },
           ]}
         />
-      </motion.div>
+      </div>
 
       {/* ── HERO ── */}
       <section
