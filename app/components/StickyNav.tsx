@@ -57,12 +57,14 @@ export default function StickyNav({ items }: { items: Item[] }) {
           })}
         </div>
 
-        <a
-          href="#waitlist"
-          className="rounded-full border border-white/20 bg-white/0 px-3 py-1.5 text-xs font-semibold hover:border-white/40 hover:bg-white/5"
-        >
-          Join early access
-        </a>
+        <div className="flex items-center gap-2">
+          <a href="/login" className="rounded-full border border-white/20 bg-white/0 px-3 py-1.5 text-xs font-semibold hover:border-white/40 hover:bg-white/5 transition">
+            Sign in
+          </a>
+          <a href="#waitlist" className="rounded-full bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 text-xs font-semibold transition">
+            Join early access
+          </a>
+        </div>
       </div>
     </div>
   );
