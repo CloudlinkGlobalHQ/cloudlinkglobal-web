@@ -22,7 +22,7 @@ export default function RunsTable() {
           <h1 className="text-2xl font-bold text-slate-800">Run History</h1>
           <p className="text-slate-500 text-sm mt-1">Every time the agent loop has executed</p>
         </div>
-        <button onClick={load} className="text-sm text-indigo-600 hover:underline">↻ Refresh</button>
+        <button onClick={load} className="text-sm text-green-600 hover:underline">↻ Refresh</button>
       </div>
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         {loading ? (

@@ -14,7 +14,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 function StatCard({ label, value, sub, color = 'indigo' }: { label: string; value: any; sub?: string; color?: string }) {
   const colors: Record<string, string> = {
-    indigo: 'text-indigo-700', green: 'text-green-700',
+    indigo: 'text-green-700', green: 'text-green-700',
     yellow: 'text-yellow-700', red: 'text-red-700', orange: 'text-orange-600',
   }
   return (
@@ -41,7 +41,7 @@ function CostBar({ services }: { services: Record<string, number> }) {
   if (!services || Object.keys(services).length === 0) return null
   const entries = Object.entries(services).sort((a, b) => b[1] - a[1]).slice(0, 6)
   const total = entries.reduce((s, [, v]) => s + v, 0)
-  const COLORS = ['bg-indigo-500','bg-blue-400','bg-cyan-400','bg-teal-400','bg-emerald-400','bg-amber-400']
+  const COLORS = ['bg-green-500','bg-blue-400','bg-cyan-400','bg-teal-400','bg-emerald-400','bg-amber-400']
   return (
     <div className="mt-4">
       <div className="flex rounded-full overflow-hidden h-3 gap-px mb-3">
@@ -88,7 +88,7 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
           <h1 className="text-2xl font-bold text-slate-800">Overview</h1>
           <p className="text-slate-500 text-sm mt-1">Live view of your cloud infrastructure</p>
         </div>
-        <button onClick={onRefresh} className="text-sm text-indigo-600 hover:underline">↻ Refresh</button>
+        <button onClick={onRefresh} className="text-sm text-green-600 hover:underline">↻ Refresh</button>
       </div>
 
       {(lastScan || lastRun) && (
@@ -181,8 +181,8 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
           <p className="text-slate-400 text-sm mb-2">No data yet</p>
           <p className="text-slate-500 text-sm">
             Add an AWS credential in the{' '}
-            <a href="/dashboard/credentials" className="font-medium text-indigo-600">Credentials</a>{' '}tab,
-            then click <span className="font-medium text-indigo-600">▶ Run scan</span> to discover resources.
+            <a href="/dashboard/credentials" className="font-medium text-green-600">Credentials</a>{' '}tab,
+            then click <span className="font-medium text-green-600">▶ Run scan</span> to discover resources.
           </p>
         </div>
       )}

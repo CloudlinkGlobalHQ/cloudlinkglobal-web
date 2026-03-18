@@ -48,11 +48,11 @@ export default function ScansHistory() {
           <p className="text-slate-500 text-sm mt-1">Every time Cloudlink scanned your cloud accounts</p>
         </div>
         <div className="flex items-center gap-3">
-          {msg && <span className="text-sm text-indigo-600">{msg}</span>}
-          <button onClick={handleScan} disabled={scanning} className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+          {msg && <span className="text-sm text-green-600">{msg}</span>}
+          <button onClick={handleScan} disabled={scanning} className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
             {scanning ? '⟳ Scanning…' : '▶ Scan now'}
           </button>
-          <button onClick={load} className="text-sm text-indigo-600 hover:underline">↻ Refresh</button>
+          <button onClick={load} className="text-sm text-green-600 hover:underline">↻ Refresh</button>
         </div>
       </div>
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
@@ -78,7 +78,7 @@ export default function ScansHistory() {
                     {s.error && <p className="text-xs text-red-500 mt-1 max-w-xs truncate">{s.error}</p>}
                   </td>
                   <td className="px-4 py-3 text-center text-slate-700 font-medium">{s.events_found ?? 0}</td>
-                  <td className="px-4 py-3 text-center text-indigo-600 font-medium">{s.actions_queued ?? 0}</td>
+                  <td className="px-4 py-3 text-center text-green-600 font-medium">{s.actions_queued ?? 0}</td>
                 </tr>
               ))}
             </tbody>

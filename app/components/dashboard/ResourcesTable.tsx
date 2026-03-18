@@ -122,17 +122,17 @@ export default function ResourcesTable() {
             {withIssues.length > 0 && <span className="ml-2 text-orange-600 font-medium">• {withIssues.length} with issues</span>}
           </p>
         </div>
-        <button onClick={load} className="text-sm text-indigo-600 hover:underline">↻ Refresh</button>
+        <button onClick={load} className="text-sm text-green-600 hover:underline">↻ Refresh</button>
       </div>
 
       {resources.length > 0 && (
         <div className="flex gap-2 mb-4 flex-wrap items-center">
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search resources…"
-            className="border border-slate-200 text-sm rounded-lg px-3 py-1.5 text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 min-w-48" />
+            className="border border-slate-200 text-sm rounded-lg px-3 py-1.5 text-slate-600 focus:outline-none focus:ring-2 focus:ring-green-500 min-w-48" />
           <div className="flex gap-1.5 flex-wrap">
             {types.map(t => (
               <button key={t} onClick={() => setFilterType(t)}
-                className={`text-xs px-3 py-1.5 rounded-full border transition font-medium ${filterType === t ? 'bg-indigo-600 text-white border-indigo-600' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                className={`text-xs px-3 py-1.5 rounded-full border transition font-medium ${filterType === t ? 'bg-green-600 text-white border-green-600' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
                 {t === 'all' ? `All (${resources.length})` : `${TYPE_ICONS[t] || '☁️'} ${t.replace(/_/g, ' ')} (${resources.filter(r => r.resource_type === t).length})`}
               </button>
             ))}

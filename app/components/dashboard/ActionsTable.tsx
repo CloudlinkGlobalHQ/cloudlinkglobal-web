@@ -73,7 +73,7 @@ export default function ActionsTable({ onRefresh }: { onRefresh?: () => void }) 
             className="border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-medium px-4 py-2 rounded-lg transition">
             ⚙ Policies
           </button>
-          <button onClick={load} className="text-sm text-indigo-600 hover:underline">↻ Refresh</button>
+          <button onClick={load} className="text-sm text-green-600 hover:underline">↻ Refresh</button>
         </div>
       </div>
 
@@ -94,7 +94,7 @@ export default function ActionsTable({ onRefresh }: { onRefresh?: () => void }) 
                   <button
                     disabled={savingPolicy[type]}
                     onClick={() => togglePolicy(type, requiresApproval)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors disabled:opacity-50 ${requiresApproval ? 'bg-indigo-600' : 'bg-slate-300'}`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors disabled:opacity-50 ${requiresApproval ? 'bg-green-600' : 'bg-slate-300'}`}
                   >
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${requiresApproval ? 'translate-x-6' : 'translate-x-1'}`} />
                   </button>
@@ -108,7 +108,7 @@ export default function ActionsTable({ onRefresh }: { onRefresh?: () => void }) 
       <div className="flex gap-2 mb-4 flex-wrap">
         {FILTERS.map(f => (
           <button key={f} onClick={() => setFilter(f)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${filter === f ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:border-indigo-300'}`}>
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${filter === f ? 'bg-green-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:border-green-300'}`}>
             {f.replace(/_/g, ' ')}
           </button>
         ))}

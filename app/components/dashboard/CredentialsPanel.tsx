@@ -92,7 +92,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
     return false
   }
 
-  const inp = "w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+  const inp = "w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
 
   return (
     <div>
@@ -101,19 +101,19 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
           <h1 className="text-2xl font-bold text-slate-800">Credentials</h1>
           <p className="text-slate-500 text-sm mt-1">Cloud credentials used to scan and remediate infrastructure</p>
         </div>
-        <button onClick={() => setShowForm(s => !s)} className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+        <button onClick={() => setShowForm(s => !s)} className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
           + Add credential
         </button>
       </div>
 
-      {msg && <p className="text-sm text-indigo-600 mb-4">{msg}</p>}
+      {msg && <p className="text-sm text-green-600 mb-4">{msg}</p>}
 
       {showForm && (
         <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6">
           <div className="flex gap-1 border-b border-slate-200 mb-6">
             {CLOUD_TABS.map(t => (
               <button key={t} onClick={() => setCloudTab(t)}
-                className={`px-4 py-2 text-sm font-medium border-b-2 transition ${cloudTab === t ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>{t}</button>
+                className={`px-4 py-2 text-sm font-medium border-b-2 transition ${cloudTab === t ? 'border-green-600 text-green-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>{t}</button>
             ))}
           </div>
 
@@ -123,7 +123,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
               <div className="flex gap-1 mb-5 bg-slate-100 p-1 rounded-lg w-fit">
                 {['IAM Role', 'Access Key'].map(t => (
                   <button key={t} onClick={() => setAwsAuthTab(t)}
-                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition ${awsAuthTab === t ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>{t}</button>
+                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition ${awsAuthTab === t ? 'bg-white text-green-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>{t}</button>
                 ))}
               </div>
 
@@ -192,7 +192,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
           )}
 
           <div className="flex gap-3 mt-2">
-            <button onClick={handleAdd} disabled={saving || !formValid()} className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+            <button onClick={handleAdd} disabled={saving || !formValid()} className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
               {saving ? 'Saving…' : 'Save credential'}
             </button>
             <button onClick={() => setShowForm(false)} className="text-sm text-slate-500 hover:text-slate-700">Cancel</button>
@@ -215,7 +215,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
                 <tr key={c.credential_id} className="hover:bg-slate-50">
                   <td className="px-4 py-3 font-medium text-slate-700">{c.label || '—'}</td>
                   <td className="px-4 py-3"><span className={`text-xs border px-2 py-0.5 rounded font-medium ${CLOUD_COLORS[c.cloud] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>{c.cloud?.toUpperCase()}</span></td>
-                  <td className="px-4 py-3"><span className="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded text-xs font-medium">{c.credential_type}</span></td>
+                  <td className="px-4 py-3"><span className="bg-green-50 text-green-700 px-2 py-0.5 rounded text-xs font-medium">{c.credential_type}</span></td>
                   <td className="px-4 py-3 text-xs text-slate-400">{new Date(c.created_at).toLocaleDateString()}</td>
                   <td className="px-4 py-3 text-xs">
                     {c.last_verified_at ? <span className="text-green-600">✓ {new Date(c.last_verified_at).toLocaleString()}</span> : <span className="text-yellow-600">Never verified</span>}
@@ -225,7 +225,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
                       {(c.credential_type === 'iam_role' || c.credential_type === 'access_key') && (
                         <>
                           <button disabled={!!busy[c.credential_id]} onClick={() => handleVerify(c.credential_id)} className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs rounded-lg disabled:opacity-50 transition">{busy[c.credential_id] === 'verify' ? '…' : 'Verify'}</button>
-                          <button disabled={!!busy[c.credential_id]} onClick={() => handleScan(c.credential_id)} className="px-2 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs rounded-lg disabled:opacity-50 transition">{busy[c.credential_id] === 'scan' ? '⟳' : 'Scan'}</button>
+                          <button disabled={!!busy[c.credential_id]} onClick={() => handleScan(c.credential_id)} className="px-2 py-1 bg-green-50 hover:bg-green-100 text-green-700 text-xs rounded-lg disabled:opacity-50 transition">{busy[c.credential_id] === 'scan' ? '⟳' : 'Scan'}</button>
                         </>
                       )}
                       <button disabled={!!busy[c.credential_id]} onClick={() => handleDelete(c.credential_id)} className="px-2 py-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs rounded-lg disabled:opacity-50 transition">Delete</button>

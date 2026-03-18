@@ -5,6 +5,24 @@ import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { getKey, setKey, getStats, scanNow, runOnce } from '../lib/api'
 
+function Logo({ size = 28 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="cl-dash-bg" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#16a34a" />
+          <stop offset="100%" stopColor="#22c55e" />
+        </linearGradient>
+      </defs>
+      <rect width="40" height="40" rx="10" fill="url(#cl-dash-bg)" />
+      <circle cx="12" cy="21" r="3.5" fill="white" />
+      <circle cx="28" cy="21" r="3.5" fill="white" />
+      <line x1="15.5" y1="21" x2="24.5" y2="21" stroke="white" strokeWidth="2" strokeLinecap="round" />
+      <path d="M10 21 C10 11, 30 11, 30 21" stroke="white" strokeOpacity="0.5" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 const NAV = [
   { label: 'Overview',    href: '/dashboard' },
   { label: 'Actions',     href: '/dashboard/actions' },
@@ -66,10 +84,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between sticky top-0 z-10 shadow-sm">
         <div className="flex items-center gap-3">
           <Link href="/dashboard" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-sm shadow-indigo-600/30">
-              <span className="text-white font-bold text-sm">C</span>
-            </div>
-            <span className="font-bold text-slate-800 text-lg tracking-tight">Cloudlink</span>
+            <Logo size={28} />
+            <span className="font-bold text-gray-900 text-base tracking-tight">Cloudlink</span>
           </Link>
           {stats && <span className="text-xs text-slate-400 hidden sm:block">Tenant: {stats.tenant_id?.slice(0,8)}…</span>}
         </div>
@@ -81,7 +97,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           )}
           <button onClick={handleRunScan} disabled={scanState === 'scanning' || scanState === 'running'}
             className={`text-white text-sm font-medium px-4 py-2 rounded-lg transition disabled:opacity-60 shadow-sm ${
-              scanState === 'done' ? 'bg-green-600' : scanState === 'error' ? 'bg-red-500' : 'bg-indigo-600 hover:bg-indigo-700'
+              scanState === 'done' ? 'bg-green-600' : scanState === 'error' ? 'bg-red-500' : 'bg-green-600 hover:bg-green-700'
             }`}>
             {scanLabel}
           </button>
@@ -99,7 +115,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             return (
               <Link key={href} href={href}
                 className={`px-4 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition ${
-                  active ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-800'
+                  active ? 'border-green-600 text-green-600' : 'border-transparent text-slate-500 hover:text-slate-800'
                 }`}>
                 {label}
               </Link>
