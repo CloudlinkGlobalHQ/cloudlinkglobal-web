@@ -37,89 +37,6 @@ function WordReveal({
   )
 }
 
-// ─── Beat 0: Logo draw ───
-function LogoDrawBeat() {
-  return (
-    <motion.div
-      key="logo-draw"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0, scale: 0.96 }}
-      transition={{ duration: 0.5, ease: E }}
-      className="flex flex-col items-center gap-4"
-    >
-      {/* Animated SVG logo icon — strokes draw in */}
-      <svg
-        width="64"
-        height="64"
-        viewBox="0 0 40 40"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <linearGradient id="ci-bg-beat0" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#6366f1" />
-            <stop offset="100%" stopColor="#8b5cf6" />
-          </linearGradient>
-        </defs>
-        {/* Background rect draws in */}
-        <motion.rect
-          width="40" height="40" rx="10"
-          fill="url(#ci-bg-beat0)"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, ease: E }}
-        />
-        {/* Left dot */}
-        <motion.circle
-          cx="12" cy="21" r="3.5" fill="white"
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.35, delay: 0.3, ease: E }}
-        />
-        {/* Right dot */}
-        <motion.circle
-          cx="28" cy="21" r="3.5" fill="white"
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.35, delay: 0.45, ease: E }}
-        />
-        {/* Connecting line — strokes in */}
-        <motion.line
-          x1="15.5" y1="21" x2="24.5" y2="21"
-          stroke="white" strokeWidth="2" strokeLinecap="round"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.55, ease: E }}
-        />
-        {/* Arc above */}
-        <motion.path
-          d="M10 21 C10 11, 30 11, 30 21"
-          stroke="white" strokeOpacity="0.45" strokeWidth="1.5" fill="none" strokeLinecap="round"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 0.55, delay: 0.65, ease: E }}
-        />
-      </svg>
-
-      {/* Wordmark types in */}
-      <motion.div className="flex items-center gap-0 overflow-hidden">
-        {'Cloudlink'.split('').map((char, i) => (
-          <motion.span
-            key={i}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.7 + i * 0.06, ease: E }}
-            style={{ fontSize: 28, fontWeight: 700, color: 'white', letterSpacing: '-0.025em' }}
-          >
-            {char}
-          </motion.span>
-        ))}
-      </motion.div>
-    </motion.div>
-  )
-}
-
 // ─── Beat 1: Text statement ───
 function TextBeat({ text, delayStart = 0.1 }: { text: string; delayStart?: number }) {
   const lines = text.split('\n')
@@ -443,14 +360,13 @@ export default function CinematicIntro({ onComplete }: { onComplete: () => void 
       <motion.div
         className="absolute top-0 left-0 h-[2px] bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-500"
         initial={{ width: '0%' }}
-        animate={{ width: exit ? '100%' : `${(step / 4) * 100}%` }}
+        animate={{ width: exit ? '100%' : `${((step - 1) / 3) * 100}%` }}
         transition={{ duration: exit ? 0.3 : 0.8, ease: E }}
       />
 
       {/* Center beat content */}
       <div className="relative z-10 flex items-center justify-center w-full h-full">
         <AnimatePresence mode="wait">
-          {step === 0 && <LogoDrawBeat key="step0" />}
           {step === 1 && (
             <TextBeat
               key="step1"

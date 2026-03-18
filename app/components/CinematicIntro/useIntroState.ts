@@ -3,11 +3,10 @@
 import { useEffect, useRef, useState } from 'react'
 
 const TIMINGS = [
-  1200,  // 0→1: logo hold
-  3000,  // 1→2: statement 1
-  5200,  // 2→3: cost spike
-  7200,  // 3→4: statement 2 + logo mark
-  8800,  // 4→exit
+  1800,  // 1→2: statement 1
+  4000,  // 2→3: cost spike
+  6000,  // 3→4: final statement
+  7600,  // 4→exit
 ]
 
 function lockScroll() {
@@ -23,7 +22,7 @@ function unlockScroll() {
 }
 
 export function useIntroState() {
-  const [step, setStep] = useState(0)
+  const [step, setStep] = useState(1)
   const [exit, setExit] = useState(false)
   const [done, setDone] = useState(false)
   const timers = useRef<ReturnType<typeof setTimeout>[]>([])
@@ -47,7 +46,7 @@ export function useIntroState() {
     TIMINGS.forEach((ms, i) => {
       const t = setTimeout(() => {
         if (i < TIMINGS.length - 1) {
-          setStep(i + 1)
+          setStep(i + 2) // steps 1→2→3→4
         } else {
           triggerExit()
         }
