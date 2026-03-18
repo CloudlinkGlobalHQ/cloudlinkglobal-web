@@ -4,6 +4,24 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { setKey, getStats } from '../lib/api'
 
+function Logo({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="cl-login-bg" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#16a34a" />
+          <stop offset="100%" stopColor="#22c55e" />
+        </linearGradient>
+      </defs>
+      <rect width="40" height="40" rx="10" fill="url(#cl-login-bg)" />
+      <circle cx="12" cy="21" r="3.5" fill="white" />
+      <circle cx="28" cy="21" r="3.5" fill="white" />
+      <line x1="15.5" y1="21" x2="24.5" y2="21" stroke="white" strokeWidth="2" strokeLinecap="round" />
+      <path d="M10 21 C10 11, 30 11, 30 21" stroke="white" strokeOpacity="0.5" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 export default function LoginPage() {
   const router = useRouter()
   const [keyInput, setKeyInput] = useState('')
@@ -26,44 +44,41 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black px-4">
-      {/* Background glow */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl" />
-      </div>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
+      {/* Dot grid background */}
+      <div
+        className="pointer-events-none fixed inset-0 opacity-50"
+        style={{ backgroundImage: 'radial-gradient(#e5e7eb 1px, transparent 1px)', backgroundSize: '28px 28px' }}
+      />
 
-      <div className="relative w-full max-w-md">
+      <div className="relative z-10 w-full max-w-md">
         {/* Logo */}
-        <div className="flex items-center gap-3 mb-8">
-          <a href="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-600/30">
-              <span className="text-white font-bold text-lg">C</span>
-            </div>
-            <span className="text-white font-bold text-xl tracking-tight">Cloudlink</span>
-          </a>
-        </div>
+        <a href="/" className="flex items-center gap-3 mb-8 group w-fit">
+          <Logo size={34} />
+          <span className="text-gray-900 font-bold text-xl tracking-tight">Cloudlink</span>
+        </a>
 
         {/* Card */}
-        <div className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 shadow-2xl">
-          <h1 className="text-2xl font-bold text-white mb-1">Sign in to Cloudlink</h1>
-          <p className="text-white/50 text-sm mb-8">Enter your API key to access your dashboard</p>
+        <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-lg">
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">Sign in to Cloudlink</h1>
+          <p className="text-gray-500 text-sm mb-8">Enter your API key to access your dashboard</p>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-white/60 mb-2">API Key</label>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">API Key</label>
               <input
                 type="password"
                 placeholder="cl_••••••••••••••••••••••••"
                 value={keyInput}
                 onChange={e => setKeyInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && login()}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition font-mono"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:border-green-500 transition-all bg-white text-gray-900 placeholder-gray-400 font-mono"
                 autoFocus
               />
             </div>
 
             {error && (
-              <p className="text-red-400 text-xs bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">
+              <p className="text-red-600 text-xs bg-red-50 border border-red-200 rounded-lg px-3 py-2">
                 {error}
               </p>
             )}
@@ -71,21 +86,21 @@ export default function LoginPage() {
             <button
               onClick={login}
               disabled={loading || !keyInput.trim()}
-              className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold rounded-xl py-3 text-sm transition shadow-lg shadow-indigo-600/30"
+              className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold rounded-xl py-3 text-sm transition-colors shadow-sm"
             >
               {loading ? 'Verifying…' : 'Continue →'}
             </button>
           </div>
 
-          <p className="text-white/30 text-xs mt-6 text-center">
+          <p className="text-gray-400 text-xs mt-6 text-center">
             Don&apos;t have an API key?{' '}
-            <a href="/#waitlist" className="text-indigo-400 hover:text-indigo-300 underline">
+            <a href="/#waitlist" className="text-green-600 hover:underline">
               Join the waitlist
             </a>
           </p>
         </div>
 
-        <p className="text-white/20 text-xs text-center mt-6">
+        <p className="text-gray-400 text-xs text-center mt-6">
           © {new Date().getFullYear()} Cloudlink Global · All rights reserved
         </p>
       </div>
