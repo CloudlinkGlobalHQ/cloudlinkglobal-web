@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import WaitlistForm from "./components/WaitlistForm";
 import MouseGlow from "./components/MouseGlow";
 import Reveal from "./components/Reveal";
@@ -10,9 +11,13 @@ import MagneticButton from "./components/MagneticButton";
 import StickyNav from "./components/StickyNav";
 import TrustStrip from "./components/TrustStrip";
 import DemoPanel from "./components/DemoPanel";
+import CinematicIntro from "./components/CinematicIntro";
 import { motion } from "framer-motion";
 
+const easeApple = [0.22, 1, 0.36, 1];
+
 export default function Home() {
+  const [introComplete, setIntroComplete] = useState(false);
   const cardClass =
     "rounded-2xl border border-white/10 bg-white/5 p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.03)] transition hover:border-white/20";
   const cardClassSm =
@@ -58,20 +63,26 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-black text-white">
+      <CinematicIntro onComplete={() => setIntroComplete(true)} />
       <MouseGlow />
 
-      {/* ✅ Sticky nav */}
-      <StickyNav
-        items={[
-          { id: "top", label: "Top" },
-          { id: "who", label: "Who" },
-          { id: "how", label: "How" },
-          { id: "demo", label: "Demo" },
-          { id: "get", label: "Output" },
-          { id: "security", label: "Security" },
-          { id: "waitlist", label: "Waitlist" },
-        ]}
-      />
+      {/* ✅ Sticky nav — hidden until intro completes */}
+      <motion.div
+        animate={{ opacity: introComplete ? 1 : 0 }}
+        transition={{ duration: 0.5, delay: 0.3, ease: easeApple }}
+      >
+        <StickyNav
+          items={[
+            { id: "top", label: "Top" },
+            { id: "who", label: "Who" },
+            { id: "how", label: "How" },
+            { id: "demo", label: "Demo" },
+            { id: "get", label: "Output" },
+            { id: "security", label: "Security" },
+            { id: "waitlist", label: "Waitlist" },
+          ]}
+        />
+      </motion.div>
 
       <div id="top" className="relative mx-auto max-w-5xl px-6 py-16">
         {/* Top bar */}
