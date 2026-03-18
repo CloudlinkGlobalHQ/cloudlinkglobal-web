@@ -65,3 +65,18 @@ export const getAuditLog    = (params: Record<string, any> = {}) => {
   return request(`/audit${q ? `?${q}` : ''}`)
 }
 export const getCostSummary = () => request('/cost-summary')
+
+// Deploys
+export const getDeploys       = (service?: string) => request(`/deploys${service ? `?service=${encodeURIComponent(service)}` : ''}`)
+export const getDeploy        = (id: string)        => request(`/deploys/${id}`)
+export const createDeploy     = (data: object)      => request('/deploys', { method: 'POST', body: JSON.stringify(data) })
+
+// Regressions
+export const getRegressions          = (status?: string) => request(`/regressions${status ? `?status=${status}` : ''}`)
+export const acknowledgeRegression   = (id: string)      => request(`/regressions/${id}/acknowledge`, { method: 'POST' })
+export const resolveRegression       = (id: string)      => request(`/regressions/${id}/resolve`,     { method: 'POST' })
+export const runRegressionDetection  = ()                => request('/regression/run', { method: 'POST' })
+
+// Cost Snapshots
+export const getCostSnapshots        = (service?: string) => request(`/cost-snapshots${service ? `?service=${encodeURIComponent(service)}` : ''}`)
+export const getTrackedServices      = ()                  => request('/cost-snapshots/services')
