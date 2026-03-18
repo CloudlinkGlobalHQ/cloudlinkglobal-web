@@ -111,7 +111,8 @@ export default function InteractiveAlert({ cardClass }: { cardClass: string }) {
           </div>
         </div>
 
-        <span className="rounded-full border border-white/15 bg-black/30 px-3 py-1 text-xs text-white/70">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-300">
+          <span className="h-1.5 w-1.5 rounded-full bg-red-400 shadow-[0_0_6px_rgba(248,113,113,0.8)]" />
           ALERT
         </span>
       </div>
@@ -126,28 +127,28 @@ export default function InteractiveAlert({ cardClass }: { cardClass: string }) {
       </div>
 
       <div className="mt-6 grid gap-3">
-        <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-3">
+        <div className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.04] px-4 py-3">
           <span className="text-sm text-white/70">Service</span>
           <span className="text-sm font-semibold">
             <SwapText>{preset.service}</SwapText>
           </span>
         </div>
 
-        <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-3">
+        <div className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.04] px-4 py-3">
           <span className="text-sm text-white/70">Deploy</span>
           <span className="text-sm font-semibold">
             <SwapText>{preset.deploy}</SwapText>
           </span>
         </div>
 
-        <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-3">
+        <div className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.04] px-4 py-3">
           <span className="text-sm text-white/70">Hourly cost change</span>
           <span className="text-sm font-semibold text-red-200">
             +<SwapText>{preset.hourlyPct}</SwapText>%
           </span>
         </div>
 
-        <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-3">
+        <div className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.04] px-4 py-3">
           <span className="text-sm text-white/70">Est. monthly impact</span>
           <span className="text-sm font-semibold">
             +$<SwapText>{money(preset.monthlyImpact)}</SwapText>

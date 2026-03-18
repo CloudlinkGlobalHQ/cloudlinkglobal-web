@@ -65,15 +65,23 @@ export default function DemoPanel({ cardClass }: { cardClass: string }) {
         </div>
 
         <div className="mt-4 grid grid-cols-7 gap-2 items-end h-28">
-          {series.map((v, i) => (
-            <motion.div
-              key={`${mode}-${i}`}
-              initial={{ height: 6, opacity: 0.6 }}
-              animate={{ height: `${(v / max) * 100}%`, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 320, damping: 26 }}
-              className="rounded-md bg-gradient-to-b from-white/35 to-white/10 border border-white/10"
-            />
-          ))}
+          {series.map((v, i) => {
+            const isSpike = mode === "after" && i >= 3;
+            return (
+              <motion.div
+                key={`${mode}-${i}`}
+                initial={{ height: 6, opacity: 0.4 }}
+                animate={{ height: `${(v / max) * 100}%`, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 300, damping: 24, delay: i * 0.04 }}
+                className={[
+                  "rounded-md border",
+                  isSpike
+                    ? "bg-gradient-to-b from-red-400/60 to-red-600/20 border-red-400/25 shadow-[0_0_12px_rgba(248,113,113,0.2)]"
+                    : "bg-gradient-to-b from-indigo-400/50 to-violet-600/20 border-indigo-400/20",
+                ].join(" ")}
+              />
+            );
+          })}
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2 text-xs text-white/60">
