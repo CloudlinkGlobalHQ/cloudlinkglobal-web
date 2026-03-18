@@ -21,9 +21,7 @@ export default function StickyNav({ items }: { items: Item[] }) {
     const els = ids
       .map((id) => document.getElementById(id))
       .filter(Boolean) as HTMLElement[];
-
     if (!els.length) return;
-
     const obs = new IntersectionObserver(
       (entries) => {
         const visible = entries
@@ -33,31 +31,28 @@ export default function StickyNav({ items }: { items: Item[] }) {
       },
       { root: null, threshold: [0.15, 0.25, 0.35], rootMargin: "-25% 0px -60% 0px" }
     );
-
     els.forEach((el) => obs.observe(el));
     return () => obs.disconnect();
   }, [ids]);
 
   return (
-    <div
+    <header
       className={[
-        "sticky top-0 z-30 -mx-6 px-6 py-3 transition-all duration-300",
+        "sticky top-0 z-30 w-full transition-all duration-300",
         scrolled
-          ? "backdrop-blur-xl bg-[#040410]/80 border-b border-white/8 shadow-[0_1px_0_0_rgba(255,255,255,0.05)]"
-          : "backdrop-blur-md bg-transparent border-b border-transparent",
+          ? "bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-sm"
+          : "bg-white border-b border-gray-100",
       ].join(" ")}
     >
-      <div className="mx-auto max-w-5xl flex items-center justify-between gap-3">
+      <div className="mx-auto max-w-6xl px-6 h-14 flex items-center justify-between gap-4">
         {/* Logo */}
-        <a href="#top" className="flex items-center gap-2 group">
-          <LogoMark size={28} />
-          <span className="text-sm font-semibold tracking-tight text-white/90 group-hover:text-white transition-colors">
-            Cloudlink
-          </span>
+        <a href="#top" className="flex items-center gap-2 shrink-0">
+          <LogoMark size={26} />
+          <span className="text-sm font-bold tracking-tight text-gray-900">Cloudlink</span>
         </a>
 
-        {/* Section nav pills */}
-        <div className="hidden sm:flex items-center gap-1">
+        {/* Nav links */}
+        <nav className="hidden md:flex items-center gap-0.5">
           {items.map((it) => {
             const isActive = it.id === active;
             return (
@@ -65,34 +60,34 @@ export default function StickyNav({ items }: { items: Item[] }) {
                 key={it.id}
                 href={`#${it.id}`}
                 className={[
-                  "rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200",
+                  "px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-150",
                   isActive
-                    ? "bg-white/10 text-white"
-                    : "text-white/50 hover:text-white/80 hover:bg-white/5",
+                    ? "text-green-700 bg-green-50"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50",
                 ].join(" ")}
               >
                 {it.label}
               </a>
             );
           })}
-        </div>
+        </nav>
 
-        {/* Action buttons */}
-        <div className="flex items-center gap-2">
+        {/* CTAs */}
+        <div className="flex items-center gap-2 shrink-0">
           <a
             href="/login"
-            className="rounded-full border border-white/15 bg-transparent px-3 py-1.5 text-xs font-semibold text-white/70 hover:border-white/30 hover:text-white transition-all duration-200"
+            className="hidden sm:inline-flex px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-md hover:bg-gray-50 transition-colors"
           >
             Sign in
           </a>
           <a
             href="#waitlist"
-            className="rounded-full bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-1.5 text-xs font-semibold transition-all duration-200 shadow-lg shadow-indigo-500/20"
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-green-600 hover:bg-green-700 text-white text-sm font-semibold transition-colors shadow-sm shadow-green-600/20"
           >
-            Early access
+            Get started
           </a>
         </div>
       </div>
-    </div>
+    </header>
   );
 }

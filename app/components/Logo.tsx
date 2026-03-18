@@ -26,8 +26,8 @@ export function LogoMark({ size = 36 }: { size?: number }) {
           y2="40"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0%" stopColor="#6366f1" />
-          <stop offset="100%" stopColor="#8b5cf6" />
+          <stop offset="0%" stopColor="#16a34a" />
+          <stop offset="100%" stopColor="#22c55e" />
         </linearGradient>
         <linearGradient
           id="cl-icon"
@@ -87,7 +87,7 @@ export function LogoWordmark({
         style={{
           fontSize: Math.round(size * 0.53),
           fontWeight: 700,
-          color: "white",
+          color: "#111827",
           letterSpacing: "-0.025em",
           lineHeight: 1,
         }}

@@ -13,130 +13,145 @@ const betaFeatures = [
   "Priority onboarding support",
 ];
 
-const futurePlans = [
-  { name: "Starter", price: "$49", per: "/mo", desc: "Small teams, up to 3 services" },
-  { name: "Growth", price: "$149", per: "/mo", desc: "Up to 20 services + webhooks" },
-  { name: "Enterprise", price: "Custom", per: "", desc: "Unlimited services + SLA" },
+const plans = [
+  {
+    name: "Starter",
+    price: "$29",
+    per: "/mo",
+    desc: "Small teams, up to 3 AWS services",
+    features: ["3 AWS services", "Deploy regression alerts", "Slack + email", "7-day history"],
+    cta: "Start free trial",
+    highlight: false,
+  },
+  {
+    name: "Growth",
+    price: "$129",
+    per: "/mo",
+    desc: "Scaling teams with multiple services",
+    features: ["20 AWS services", "Webhook integrations", "90-day history", "Team seats (5)", "Priority support"],
+    cta: "Start free trial",
+    highlight: true,
+  },
+  {
+    name: "Enterprise",
+    price: "Custom",
+    per: "",
+    desc: "Unlimited services + SLA + SSO",
+    features: ["Unlimited services", "SOC 2 compliance docs", "Dedicated onboarding", "SLA guarantee", "SSO / SAML"],
+    cta: "Contact us",
+    highlight: false,
+  },
 ];
 
 export default function Pricing() {
   return (
-    <section className="mb-20">
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.7, ease: E }}
-        className="mb-10 text-center"
-      >
-        <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-indigo-300 mb-4">
-          Pricing
-        </div>
-        <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Free during beta</h2>
-        <p className="mt-3 mx-auto max-w-xl text-white/50">
-          Early access is completely free. Lock in your spot before we launch paid plans.
-        </p>
-      </motion.div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Beta card — highlighted */}
+    <section id="pricing" className="py-20 bg-gray-50">
+      <div className="mx-auto max-w-6xl px-6">
         <motion.div
-          initial={{ opacity: 0, y: 32, filter: "blur(8px)" }}
-          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.7, ease: E }}
-          className="relative rounded-2xl border border-indigo-500/40 bg-gradient-to-br from-indigo-500/10 via-violet-500/5 to-transparent p-6 overflow-hidden"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: E }}
+          className="text-center mb-4"
         >
-          {/* Glow */}
-          <div className="pointer-events-none absolute -top-12 -right-12 h-40 w-40 rounded-full bg-indigo-500/20 blur-3xl" />
+          <div className="inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-green-700 mb-4">
+            Pricing
+          </div>
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">Free during beta</h2>
+          <p className="mt-3 mx-auto max-w-xl text-gray-500">
+            Full access, no credit card required. Early members lock in <span className="text-green-700 font-semibold">40% off</span> when paid plans launch.
+          </p>
+        </motion.div>
 
-          <div className="relative">
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-3">
-                  Active now
-                </div>
-                <div className="text-2xl font-bold text-white">Beta Access</div>
-              </div>
-              <div className="text-right">
-                <div className="text-4xl font-bold text-white">$0</div>
-                <div className="text-xs text-white/35">during beta</div>
-              </div>
+        {/* Beta banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: E }}
+          className="mb-10 rounded-2xl border border-green-200 bg-green-50 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        >
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-green-300 bg-green-100 px-2.5 py-0.5 text-[10px] font-bold text-green-700 uppercase tracking-wider">
+                Active now
+              </span>
+              <span className="text-sm font-bold text-gray-900">Beta Access — $0/mo</span>
             </div>
-
-            <p className="mt-3 text-sm text-white/50">
-              Full access to all features, no credit card required. We&apos;ll notify you when paid plans launch — early members get a discount.
-            </p>
-
-            <ul className="mt-6 space-y-2.5">
-              {betaFeatures.map((f, i) => (
-                <motion.li
-                  key={f}
-                  initial={{ opacity: 0, x: -12 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.07 }}
-                  className="flex items-center gap-3 text-sm text-white/65"
-                >
-                  <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-indigo-500/25 text-indigo-400 text-[9px] font-bold">
-                    ✓
-                  </span>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
+              {betaFeatures.map((f) => (
+                <span key={f} className="flex items-center gap-1.5 text-xs text-gray-600">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                    <path d="M2 5l2 2 4-4" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                   {f}
-                </motion.li>
+                </span>
               ))}
-            </ul>
+            </div>
+          </div>
+          <a href="#waitlist" className="shrink-0 inline-flex items-center gap-2 rounded-full bg-green-600 hover:bg-green-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors shadow-sm">
+            Get free beta access →
+          </a>
+        </motion.div>
 
-            <a
-              href="#waitlist"
-              className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-500 hover:bg-indigo-400 px-5 py-3 font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all duration-200 active:scale-95"
+        {/* Paid plans */}
+        <div className="grid gap-5 md:grid-cols-3">
+          {plans.map((plan, i) => (
+            <motion.div
+              key={plan.name}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: i * 0.08, ease: E }}
+              className={[
+                "relative rounded-2xl border p-6 flex flex-col",
+                plan.highlight
+                  ? "border-green-300 bg-white shadow-lg shadow-green-100/60 ring-1 ring-green-300/50"
+                  : "border-gray-200 bg-white shadow-sm",
+              ].join(" ")}
             >
-              Get free beta access →
-            </a>
-          </div>
-        </motion.div>
-
-        {/* Future plans — muted preview */}
-        <motion.div
-          initial={{ opacity: 0, y: 32, filter: "blur(8px)" }}
-          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.7, delay: 0.1, ease: E }}
-          className="rounded-2xl border border-white/8 bg-white/[0.03] p-6"
-        >
-          <div className="mb-5">
-            <div className="text-xs font-semibold uppercase tracking-widest text-white/25 mb-2">Coming after beta</div>
-            <h3 className="text-lg font-semibold text-white/70">Paid plans</h3>
-            <p className="mt-1.5 text-sm text-white/35">
-              Early access members get 40% off launch pricing, locked in forever.
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            {futurePlans.map((plan, i) => (
-              <motion.div
-                key={plan.name}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: 0.2 + i * 0.08 }}
-                className="flex items-center justify-between rounded-xl border border-white/6 bg-white/[0.03] px-4 py-3"
+              {plan.highlight && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <span className="rounded-full bg-green-600 px-3 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider shadow-sm">Most popular</span>
+                </div>
+              )}
+              <div className="mb-4">
+                <div className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">{plan.name}</div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-bold text-gray-900">{plan.price}</span>
+                  {plan.per && <span className="text-sm text-gray-400">{plan.per}</span>}
+                </div>
+                <p className="mt-1.5 text-sm text-gray-500">{plan.desc}</p>
+              </div>
+              <ul className="space-y-2.5 mb-6 flex-1">
+                {plan.features.map((f) => (
+                  <li key={f} className="flex items-center gap-2.5 text-sm text-gray-600">
+                    <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-600">
+                      <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                        <path d="M1.5 4l2 2 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <a href="#waitlist"
+                className={[
+                  "inline-flex items-center justify-center rounded-full px-4 py-2.5 text-sm font-semibold transition-colors",
+                  plan.highlight
+                    ? "bg-green-600 hover:bg-green-700 text-white shadow-sm"
+                    : "border border-gray-200 hover:border-green-300 text-gray-700 hover:text-green-700 hover:bg-green-50",
+                ].join(" ")}
               >
-                <div>
-                  <div className="text-sm font-semibold text-white/50">{plan.name}</div>
-                  <div className="text-[11px] text-white/25">{plan.desc}</div>
-                </div>
-                <div className="text-right">
-                  <span className="text-lg font-bold text-white/35">{plan.price}</span>
-                  <span className="text-xs text-white/20">{plan.per}</span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                {plan.cta}
+              </a>
+            </motion.div>
+          ))}
+        </div>
 
-          <div className="mt-5 rounded-xl border border-indigo-500/15 bg-indigo-500/5 px-4 py-3 text-sm text-indigo-300/60">
-            Lock in <span className="font-semibold text-indigo-300">40% off</span> by joining the waitlist today.
-          </div>
-        </motion.div>
+        <p className="mt-6 text-center text-xs text-gray-400">
+          Beta members get 40% off their chosen plan when paid tiers launch — locked in forever.
+        </p>
       </div>
     </section>
   );

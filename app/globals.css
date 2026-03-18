@@ -2,124 +2,70 @@
 
 /* ─── Brand design tokens ─────────────────────────────────────────────────── */
 :root {
-  /* Backgrounds */
-  --bg-base: #040410;
-  --bg-surface: rgba(255, 255, 255, 0.035);
-  --bg-surface-hover: rgba(255, 255, 255, 0.055);
-
-  /* Borders */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-hover: rgba(255, 255, 255, 0.18);
-
-  /* Brand gradient */
-  --brand-start: #818cf8;   /* indigo-400 */
-  --brand-mid: #a78bfa;     /* violet-400 */
-  --brand-end: #c084fc;     /* purple-400 */
-
-  /* Text */
-  --text-primary: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.65);
-  --text-muted: rgba(255, 255, 255, 0.4);
-  --text-faint: rgba(255, 255, 255, 0.25);
+  --bg-base: #ffffff;
+  --bg-alt: #f9fafb;
+  --bg-green-tint: #f0fdf4;
+  --bg-surface: #ffffff;
+  --border-subtle: #e5e7eb;
+  --border-hover: #d1d5db;
+  --green-50:  #f0fdf4;
+  --green-100: #dcfce7;
+  --green-200: #bbf7d0;
+  --green-500: #22c55e;
+  --green-600: #16a34a;
+  --green-700: #15803d;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
 }
 
-/* ─── Base styles ─────────────────────────────────────────────────────────── */
+/* ─── Base ────────────────────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
-  background-color: var(--bg-base);
-  color-scheme: dark;
+  background-color: #ffffff;
+  color-scheme: light;
 }
 
 body {
-  background: var(--bg-base);
-  color: var(--text-primary);
+  background: #ffffff;
+  color: #111827;
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont,
     "Segoe UI", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Selection ───────────────────────────────────────────────────────────── */
 ::selection {
-  background: rgba(99, 102, 241, 0.35);
-  color: #fff;
+  background: rgba(22, 163, 74, 0.18);
+  color: #111827;
 }
 
-/* ─── Scrollbar (subtle dark) ─────────────────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-base);
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.22);
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f9fafb; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
-/* ─── Gradient text utility ───────────────────────────────────────────────── */
+/* ─── Gradient text (green) ───────────────────────────────────────────────── */
 .text-gradient {
-  background: linear-gradient(
-    135deg,
-    var(--brand-start) 0%,
-    var(--brand-mid) 50%,
-    var(--brand-end) 100%
-  );
+  background: linear-gradient(135deg, #15803d 0%, #16a34a 40%, #22c55e 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
 }
 
-/* ─── Gradient border card utility ───────────────────────────────────────── */
-.card-gradient-border {
-  position: relative;
-  background: var(--bg-surface);
-  border-radius: 16px;
-}
-.card-gradient-border::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 16px;
-  padding: 1px;
-  background: linear-gradient(
-    135deg,
-    rgba(129, 140, 248, 0.4) 0%,
-    rgba(167, 139, 250, 0.15) 50%,
-    rgba(255, 255, 255, 0.06) 100%
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* ─── Glow orb helpers ────────────────────────────────────────────────────── */
-.orb-indigo {
-  background: radial-gradient(
-    ellipse,
-    rgba(99, 102, 241, 0.22) 0%,
-    transparent 70%
-  );
-}
-.orb-violet {
-  background: radial-gradient(
-    ellipse,
-    rgba(139, 92, 246, 0.18) 0%,
-    transparent 70%
-  );
-}
-
-/* ─── Dot grid background ─────────────────────────────────────────────────── */
+/* ─── Dot grid (light) ────────────────────────────────────────────────────── */
 .dot-grid {
-  background-image: radial-gradient(
-    rgba(255, 255, 255, 0.07) 1px,
-    transparent 1px
-  );
-  background-size: 32px 32px;
+  background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* ─── Card hover ──────────────────────────────────────────────────────────── */
+.card-hover {
+  transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+}
+.card-hover:hover {
+  box-shadow: 0 8px 32px rgba(22, 163, 74, 0.08), 0 2px 8px rgba(0,0,0,0.05);
+  border-color: #bbf7d0;
+  transform: translateY(-2px);
 }
