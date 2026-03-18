@@ -14,6 +14,11 @@ import AnimatedGradientText from "./components/AnimatedGradientText";
 import TiltCard from "./components/TiltCard";
 import AnimatedCounter from "./components/AnimatedCounter";
 import GlowOrb from "./components/GlowOrb";
+import HeroDashboard from "./components/HeroDashboard";
+import Testimonials from "./components/Testimonials";
+import ComparisonTable from "./components/ComparisonTable";
+import Pricing from "./components/Pricing";
+import FAQ from "./components/FAQ";
 
 // Lazy load heavy WebGL component
 const ParticleField = dynamic(() => import("./components/ParticleField"), { ssr: false });
@@ -329,28 +334,33 @@ export default function Home() {
           </motion.div>
         </motion.div>
 
-        {/* Floating metric cards */}
-        <div className="relative z-10 mt-14 flex flex-wrap items-center justify-center gap-4">
+        {/* Hero dashboard mockup */}
+        <div className="relative z-10 w-full max-w-3xl mx-auto px-4">
+          <HeroDashboard />
+        </div>
+
+        {/* Floating metric cards — hidden on mobile, shown on md+ */}
+        <div className="relative z-10 mt-6 hidden md:flex flex-wrap items-center justify-center gap-4">
           <HeroMetric
             label="Cost spike"
             value="+18%"
             sub="api-service · deploy #247"
             accent="text-red-400"
-            delay={0.9}
+            delay={1.4}
           />
           <HeroMetric
             label="Monthly impact"
             value="$4,200"
             sub="Estimated regression"
             accent="text-amber-400"
-            delay={1.05}
+            delay={1.55}
           />
           <HeroMetric
             label="Detected in"
             value="< 2h"
             sub="After production deploy"
             accent="text-emerald-400"
-            delay={1.2}
+            delay={1.7}
           />
         </div>
 
@@ -359,8 +369,8 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, y: [0, 8, 0] }}
           transition={{
-            opacity: { delay: 1.5, duration: 0.5 },
-            y: { duration: 1.8, repeat: Infinity, ease: "easeInOut", delay: 1.5 },
+            opacity: { delay: 2, duration: 0.5 },
+            y: { duration: 1.8, repeat: Infinity, ease: "easeInOut", delay: 2 },
           }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/25 text-xs tracking-widest uppercase flex flex-col items-center gap-2"
         >
@@ -592,6 +602,15 @@ export default function Home() {
           </motion.div>
         </section>
 
+        {/* ── TESTIMONIALS ── */}
+        <Testimonials />
+
+        {/* ── COMPARISON TABLE ── */}
+        <ComparisonTable />
+
+        {/* ── PRICING ── */}
+        <Pricing />
+
         {/* ── SECURITY ── */}
         <section id="security" className="mb-20">
           <motion.div
@@ -627,6 +646,8 @@ export default function Home() {
             </div>
           </motion.div>
         </section>
+        {/* ── FAQ ── */}
+        <FAQ />
       </div>
 
       {/* ── WAITLIST CTA ── */}
