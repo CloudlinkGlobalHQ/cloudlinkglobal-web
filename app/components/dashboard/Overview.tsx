@@ -1,7 +1,130 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getDemoSummary, getCostSummary } from '../../lib/api'
+import { getDemoSummary, getCostSummary, getCredentials, getDeploys, getTrackedServices } from '../../lib/api'
+
+// ─── Onboarding checklist ────────────────────────────────────────────────────
+
+const STEPS = [
+  {
+    id: 'credential',
+    title: 'Add an AWS credential',
+    desc: 'Connect your AWS account so Cloudlink can scan your infrastructure.',
+    href: '/dashboard/credentials',
+    cta: 'Go to Credentials →',
+  },
+  {
+    id: 'scan',
+    title: 'Run your first scan',
+    desc: 'Discover cloud resources and start collecting hourly cost snapshots.',
+    href: null, // triggered via the Run scan button
+    cta: 'Click ▶ Run scan above',
+  },
+  {
+    id: 'deploy',
+    title: 'Connect your CI pipeline',
+    desc: 'Send deploy events so Cloudlink can link cost spikes to specific releases.',
+    href: '/dashboard/deploys',
+    cta: 'Go to Deploys →',
+  },
+  {
+    id: 'baseline',
+    title: 'Build your cost baseline',
+    desc: 'Cloudlink needs 7 days of hourly data to detect regressions reliably. Hang tight — this happens automatically.',
+    href: null,
+    cta: 'Auto-completes in ~7 days',
+  },
+]
+
+function CheckIcon({ done }: { done: boolean }) {
+  if (done) return (
+    <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+      <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+    </div>
+  )
+  return (
+    <div className="w-6 h-6 rounded-full border-2 border-slate-300 flex-shrink-0" />
+  )
+}
+
+function OnboardingChecklist({
+  hasCredential, hasScanned, hasDeploy, hasBaseline, stepsLoaded,
+}: {
+  hasCredential: boolean; hasScanned: boolean; hasDeploy: boolean; hasBaseline: boolean; stepsLoaded: boolean
+}) {
+  const [dismissed, setDismissed] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return localStorage.getItem('cl_onboarding_dismissed') === '1'
+  })
+
+  const allDone = hasCredential && hasScanned && hasDeploy && hasBaseline
+  const doneCount = [hasCredential, hasScanned, hasDeploy, hasBaseline].filter(Boolean).length
+
+  if (dismissed || !stepsLoaded) return null
+  if (allDone) {
+    // Auto-dismiss after all done
+    if (typeof window !== 'undefined') localStorage.setItem('cl_onboarding_dismissed', '1')
+    return null
+  }
+
+  const states = { credential: hasCredential, scan: hasScanned, deploy: hasDeploy, baseline: hasBaseline }
+
+  // Find first incomplete step index for progress highlight
+  const firstIncomplete = STEPS.findIndex(s => !states[s.id as keyof typeof states])
+
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 p-5 mb-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h2 className="text-sm font-semibold text-slate-800">Getting started</h2>
+          <p className="text-xs text-slate-400 mt-0.5">{doneCount} of {STEPS.length} steps complete</p>
+        </div>
+        <button onClick={() => { setDismissed(true); localStorage.setItem('cl_onboarding_dismissed', '1') }}
+          className="text-xs text-slate-400 hover:text-slate-600 transition">Dismiss</button>
+      </div>
+
+      {/* Progress bar */}
+      <div className="w-full h-1.5 bg-slate-100 rounded-full mb-5 overflow-hidden">
+        <div className="h-full bg-green-500 rounded-full transition-all duration-500"
+          style={{ width: `${(doneCount / STEPS.length) * 100}%` }} />
+      </div>
+
+      {/* Steps */}
+      <div className="space-y-3">
+        {STEPS.map((step, i) => {
+          const done = states[step.id as keyof typeof states]
+          const active = !done && i === firstIncomplete
+          return (
+            <div key={step.id}
+              className={`flex items-start gap-3 p-3 rounded-lg transition ${
+                active ? 'bg-green-50 border border-green-100' : done ? 'opacity-50' : 'opacity-70'
+              }`}>
+              <CheckIcon done={done} />
+              <div className="flex-1 min-w-0">
+                <p className={`text-sm font-medium ${done ? 'line-through text-slate-400' : 'text-slate-700'}`}>
+                  {step.title}
+                </p>
+                {!done && <p className="text-xs text-slate-400 mt-0.5">{step.desc}</p>}
+              </div>
+              {!done && step.href && (
+                <a href={step.href}
+                  className="flex-shrink-0 text-xs font-medium text-green-600 hover:text-green-700 whitespace-nowrap">
+                  {step.cta}
+                </a>
+              )}
+              {!done && !step.href && (
+                <span className="flex-shrink-0 text-xs text-slate-400 whitespace-nowrap">{step.cta}</span>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
 
 const STATUS_COLORS: Record<string, string> = {
   SUCCESS:           'bg-green-100 text-green-800',
@@ -64,13 +187,32 @@ function CostBar({ services }: { services: Record<string, number> }) {
 }
 
 export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: () => void }) {
-  const [summary, setSummary] = useState<any>(null)
-  const [cost, setCost] = useState<any>(null)
+  const [summary, setSummary]           = useState<any>(null)
+  const [cost, setCost]                 = useState<any>(null)
+  const [hasCredential, setHasCredential] = useState(false)
+  const [hasDeploy, setHasDeploy]       = useState(false)
+  const [hasBaseline, setHasBaseline]   = useState(false)
+  const [stepsLoaded, setStepsLoaded]   = useState(false)
 
   useEffect(() => {
     getDemoSummary().then(setSummary).catch(() => {})
     getCostSummary().then(setCost).catch(() => {})
   }, [stats])
+
+  // Load onboarding step states once
+  useEffect(() => {
+    Promise.allSettled([
+      getCredentials(),
+      getDeploys(),
+      getTrackedServices(),
+    ]).then(([creds, deploys, services]) => {
+      setHasCredential(creds.status === 'fulfilled' && Array.isArray(creds.value) && creds.value.length > 0)
+      setHasDeploy(deploys.status === 'fulfilled' && Array.isArray(deploys.value) && deploys.value.length > 0)
+      // Baseline is "done" if we have tracked services with snapshots (proxy for 7d data)
+      setHasBaseline(services.status === 'fulfilled' && Array.isArray(services.value?.services) && services.value.services.length > 0)
+      setStepsLoaded(true)
+    })
+  }, [])
 
   const byStatus = stats?.actions_by_status || {}
   const total    = Object.values(byStatus).reduce((a: number, b: any) => a + b, 0) as number
@@ -81,6 +223,8 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
   const lastScan = summary?.last_scan || stats?.last_scan
   const lastRun  = summary?.last_run
 
+  const hasScanned = !!(summary?.last_scan || stats?.last_scan)
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -90,6 +234,14 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
         </div>
         <button onClick={onRefresh} className="text-sm text-green-600 hover:underline">↻ Refresh</button>
       </div>
+
+      <OnboardingChecklist
+        hasCredential={hasCredential}
+        hasScanned={hasScanned}
+        hasDeploy={hasDeploy}
+        hasBaseline={hasBaseline}
+        stepsLoaded={stepsLoaded}
+      />
 
       {(lastScan || lastRun) && (
         <div className="bg-white rounded-xl border border-slate-200 px-5 py-3 mb-6 flex flex-wrap gap-6 text-sm text-slate-500">
@@ -176,16 +328,6 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
         </div>
       )}
 
-      {total === 0 && !summary?.recent_actions?.length && !cost?.total_mtd_usd && (
-        <div className="bg-white rounded-xl border border-slate-200 p-10 text-center">
-          <p className="text-slate-400 text-sm mb-2">No data yet</p>
-          <p className="text-slate-500 text-sm">
-            Add an AWS credential in the{' '}
-            <a href="/dashboard/credentials" className="font-medium text-green-600">Credentials</a>{' '}tab,
-            then click <span className="font-medium text-green-600">▶ Run scan</span> to discover resources.
-          </p>
-        </div>
-      )}
     </div>
   )
 }
