@@ -206,9 +206,18 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
       getDeploys(),
       getTrackedServices(),
     ]).then(([creds, deploys, services]) => {
-      setHasCredential(creds.status === 'fulfilled' && Array.isArray(creds.value) && creds.value.length > 0)
-      setHasDeploy(deploys.status === 'fulfilled' && Array.isArray(deploys.value) && deploys.value.length > 0)
-      // Baseline is "done" if we have tracked services with snapshots (proxy for 7d data)
+      // API may return plain array OR { credentials: [...] } — handle both
+      const credList = creds.status === 'fulfilled'
+        ? (Array.isArray(creds.value) ? creds.value : (creds.value?.credentials ?? creds.value?.items ?? []))
+        : []
+      setHasCredential(credList.length > 0)
+
+      const deployList = deploys.status === 'fulfilled'
+        ? (Array.isArray(deploys.value) ? deploys.value : (deploys.value?.deploys ?? deploys.value?.items ?? []))
+        : []
+      setHasDeploy(deployList.length > 0)
+
+      // Baseline: tracked services exist = cost snapshots are being collected
       setHasBaseline(services.status === 'fulfilled' && Array.isArray(services.value?.services) && services.value.services.length > 0)
       setStepsLoaded(true)
     })
@@ -224,6 +233,8 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
   const lastRun  = summary?.last_run
 
   const hasScanned = !!(summary?.last_scan || stats?.last_scan)
+  // If resources exist, a credential must have been added — use as reliable fallback
+  const credentialConfirmed = hasCredential || (stats?.resources_count > 0)
 
   return (
     <div>
@@ -236,7 +247,7 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
       </div>
 
       <OnboardingChecklist
-        hasCredential={hasCredential}
+        hasCredential={credentialConfirmed}
         hasScanned={hasScanned}
         hasDeploy={hasDeploy}
         hasBaseline={hasBaseline}
