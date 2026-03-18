@@ -3,44 +3,39 @@
 import { useEffect, useRef, useState } from 'react'
 
 const TIMINGS = [
-  1000,  // step 0 → 1  (logo hold → statement 1)
-  2700,  // step 1 → 2
-  4600,  // step 2 → 3
-  6500,  // step 3 → 4  (final logo + tagline)
-  7900,  // step 4 → exit (trigger clip-wipe)
+  1200,  // 0→1: logo hold
+  3000,  // 1→2: statement 1
+  5200,  // 2→3: cost spike
+  7200,  // 3→4: statement 2 + logo mark
+  8800,  // 4→exit
 ]
 
 export function useIntroState() {
-  const [step, setStep]   = useState(0)
-  const [exit, setExit]   = useState(false)
-  const [done, setDone]   = useState(false)
-  const [skip, setSkip]   = useState(false)
+  const [step, setStep] = useState(0)
+  const [exit, setExit] = useState(false)
+  const [done, setDone] = useState(false)
   const timers = useRef<ReturnType<typeof setTimeout>[]>([])
 
   const triggerExit = () => {
-    // Clear pending timers
     timers.current.forEach(clearTimeout)
+    timers.current = []
     setExit(true)
-    timers.current = [
-      setTimeout(() => {
-        sessionStorage.setItem('cl_intro_seen', '1')
-        document.body.style.overflow = ''
-        setDone(true)
-      }, 900),
-    ]
+    const t = setTimeout(() => {
+      sessionStorage.setItem('cl_intro_seen', '1')
+      document.body.style.overflow = ''
+      setDone(true)
+    }, 950)
+    timers.current.push(t)
   }
 
   useEffect(() => {
-    // If already seen this session, skip immediately
     if (sessionStorage.getItem('cl_intro_seen') === '1') {
       setDone(true)
       return
     }
 
-    // Lock scroll during intro
     document.body.style.overflow = 'hidden'
 
-    // Queue the step advances
     TIMINGS.forEach((ms, i) => {
       const t = setTimeout(() => {
         if (i < TIMINGS.length - 1) {
@@ -58,10 +53,7 @@ export function useIntroState() {
     }
   }, [])
 
-  const handleSkip = () => {
-    setSkip(true)
-    triggerExit()
-  }
+  const handleSkip = () => triggerExit()
 
-  return { step, exit, done, skip, handleSkip }
+  return { step, exit, done, handleSkip }
 }
