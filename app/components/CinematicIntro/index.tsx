@@ -1,7 +1,7 @@
 'use client'
 
 import { AnimatePresence, motion } from 'framer-motion'
-import Image from 'next/image'
+import { LogoWordmark } from '../Logo'
 import { useIntroState } from './useIntroState'
 
 const E = [0.22, 1, 0.36, 1] as const
@@ -9,9 +9,9 @@ const EXIT_EASE = [0.76, 0, 0.24, 1] as const
 
 const STATEMENTS = [
   null, // step 0: logo only
-  'Your cloud is exposed.',
-  'Every open port. Every idle resource.\nEvery misconfiguration.',
-  'Cloudlink finds it.\nCloudlink fixes it.\nAutomatically.',
+  'Your deploys are costing you.',
+  'Every regression. Every spike.\nEvery dollar you didn\'t see coming.',
+  'Cloudlink finds it.\nBefore the bill arrives.',
   null, // step 4: logo + tagline
 ]
 
@@ -28,7 +28,7 @@ function TextBeat({ text }: { text: string }) {
         fontWeight: 700,
         lineHeight: 1.2,
         textAlign: 'center',
-        maxWidth: 700,
+        maxWidth: 680,
         whiteSpace: 'pre-line',
       }}
       className="text-white px-6"
@@ -42,27 +42,23 @@ function LogoBeat({ showTagline }: { showTagline: boolean }) {
   return (
     <motion.div
       key="logo-beat"
-      initial={{ opacity: 0, scale: 0.92 }}
+      initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0 }}
+      exit={{ opacity: 0, scale: 0.97 }}
       transition={{ duration: 0.8, ease: E }}
-      className="flex flex-col items-center gap-4"
+      className="flex flex-col items-center gap-5"
     >
-      <div className="flex items-center gap-3">
-        <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-600/40">
-          <span className="text-white font-bold text-2xl">C</span>
-        </div>
-        <span className="text-white font-bold text-4xl tracking-tight">Cloudlink</span>
-      </div>
+      <LogoWordmark size={48} />
+
       <AnimatePresence>
         {showTagline && (
           <motion.p
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.25, ease: E }}
-            className="text-white/50 text-lg font-medium tracking-wide"
+            transition={{ duration: 0.6, delay: 0.3, ease: E }}
+            className="text-white/40 text-base font-medium tracking-wide"
           >
-            AI-powered cloud remediation
+            Deploy-aware AWS cost intelligence
           </motion.p>
         )}
       </AnimatePresence>
@@ -84,35 +80,33 @@ export default function CinematicIntro({ onComplete }: { onComplete: () => void 
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 bg-black flex items-center justify-center overflow-hidden"
+      className="fixed inset-0 z-50 bg-[#040410] flex items-center justify-center overflow-hidden"
       animate={{
         clipPath: exit ? 'inset(100% 0% 0% 0%)' : 'inset(0% 0% 0% 0%)',
       }}
       transition={{ duration: 0.85, ease: EXIT_EASE }}
     >
-      {/* Ambient grid background */}
+      {/* Dot grid */}
+      <div className="dot-grid absolute inset-0 pointer-events-none opacity-50" />
+
+      {/* Ambient glow */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.4, delay: 0.2, ease: E }}
         style={{
-          backgroundImage: `
-            radial-gradient(ellipse 55% 40% at 50% 50%, rgba(99,102,241,0.15), transparent),
-            linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)
-          `,
-          backgroundSize: '100% 100%, 80px 80px, 80px 80px',
+          background: 'radial-gradient(ellipse 55% 45% at 50% 50%, rgba(99,102,241,0.18), transparent)',
         }}
       />
 
-      {/* Slow indigo pulse */}
+      {/* Slow indigo/violet pulse */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
-        animate={{ scale: [1, 1.06, 1], opacity: [0.6, 1, 0.6] }}
+        animate={{ scale: [1, 1.06, 1], opacity: [0.5, 0.9, 0.5] }}
         transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
         style={{
-          background: 'radial-gradient(ellipse 40% 30% at 50% 50%, rgba(99,102,241,0.12), transparent)',
+          background: 'radial-gradient(ellipse 40% 30% at 50% 50%, rgba(139,92,246,0.12), transparent)',
         }}
       />
 
@@ -136,7 +130,7 @@ export default function CinematicIntro({ onComplete }: { onComplete: () => void 
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
             onClick={handleSkip}
-            className="fixed bottom-6 right-6 z-60 text-xs text-white/30 hover:text-white/70 transition-colors duration-200 tracking-wide"
+            className="fixed bottom-6 right-6 z-[60] text-xs text-white/30 hover:text-white/60 transition-colors duration-200 tracking-wide"
           >
             Skip →
           </motion.button>
