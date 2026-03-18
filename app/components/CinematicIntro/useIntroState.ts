@@ -10,6 +10,18 @@ const TIMINGS = [
   8800,  // 4→exit
 ]
 
+function lockScroll() {
+  window.scrollTo(0, 0)
+  document.body.style.overflow = 'hidden'
+  document.documentElement.style.overflow = 'hidden'
+}
+
+function unlockScroll() {
+  document.body.style.overflow = ''
+  document.documentElement.style.overflow = ''
+  window.scrollTo(0, 0)
+}
+
 export function useIntroState() {
   const [step, setStep] = useState(0)
   const [exit, setExit] = useState(false)
@@ -19,31 +31,18 @@ export function useIntroState() {
   const triggerExit = () => {
     timers.current.forEach(clearTimeout)
     timers.current = []
-    // Snap to top before the wipe reveals the hero
     window.scrollTo(0, 0)
     setExit(true)
     const t = setTimeout(() => {
-      sessionStorage.setItem('cl_intro_seen', '1')
-      document.body.style.overflow = ''
-      document.documentElement.style.scrollBehavior = ''
-      window.scrollTo(0, 0)
+      unlockScroll()
       setDone(true)
     }, 950)
     timers.current.push(t)
   }
 
   useEffect(() => {
-    // Always start at the very top
     window.scrollTo(0, 0)
-
-    if (sessionStorage.getItem('cl_intro_seen') === '1') {
-      setDone(true)
-      return
-    }
-
-    // Lock scroll + pin to top for the entire intro
-    document.body.style.overflow = 'hidden'
-    document.documentElement.style.scrollBehavior = 'auto'
+    lockScroll()
 
     TIMINGS.forEach((ms, i) => {
       const t = setTimeout(() => {
@@ -58,8 +57,7 @@ export function useIntroState() {
 
     return () => {
       timers.current.forEach(clearTimeout)
-      document.body.style.overflow = ''
-      document.documentElement.style.scrollBehavior = ''
+      unlockScroll()
     }
   }, [])
 

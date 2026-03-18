@@ -273,7 +273,8 @@ function FinalBeat() {
       <WordReveal
         text="Cloudlink finds it before the bill arrives."
         delayStart={0.05}
-        className="text-white font-bold"
+        className="text-white"
+        style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3.2rem)', fontWeight: 700, lineHeight: 1.15 }}
       />
 
       {/* Small logo mark appears below */}
