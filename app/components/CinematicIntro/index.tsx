@@ -1,40 +1,37 @@
 'use client'
 
+import React, { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useIntroState } from './useIntroState'
-import { useEffect, useState } from 'react'
 
 const E = [0.22, 1, 0.36, 1] as const
 const EXIT_EASE = [0.76, 0, 0.24, 1] as const
 
-// ─── Word-by-word reveal ───
+// ─── Word-by-word reveal (fade + rise, no clipping) ───
 function WordReveal({
   text,
   delayStart = 0,
   className = '',
+  style,
 }: {
   text: string
   delayStart?: number
   className?: string
+  style?: React.CSSProperties
 }) {
   const words = text.split(' ')
   return (
-    <span className={className}>
+    <span className={className} style={{ display: 'inline', ...style }}>
       {words.map((word, i) => (
-        <span key={i} style={{ display: 'inline-block', overflow: 'hidden', verticalAlign: 'bottom', marginRight: '0.25em' }}>
-          <motion.span
-            style={{ display: 'inline-block' }}
-            initial={{ y: '110%', opacity: 0 }}
-            animate={{ y: '0%', opacity: 1 }}
-            transition={{
-              duration: 0.55,
-              delay: delayStart + i * 0.08,
-              ease: E,
-            }}
-          >
-            {word}
-          </motion.span>
-        </span>
+        <motion.span
+          key={i}
+          style={{ display: 'inline-block', marginRight: '0.28em' }}
+          initial={{ opacity: 0, y: 18, filter: 'blur(4px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ duration: 0.5, delay: delayStart + i * 0.07, ease: E }}
+        >
+          {word}
+        </motion.span>
       ))}
     </span>
   )
@@ -132,14 +129,15 @@ function TextBeat({ text, delayStart = 0.1 }: { text: string; delayStart?: numbe
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, filter: 'blur(10px)' }}
       transition={{ duration: 0.5 }}
-      className="text-center px-6 max-w-2xl"
+      style={{ textAlign: 'center', padding: '0 1.5rem', maxWidth: 680 }}
     >
       {lines.map((line, li) => (
-        <div key={li} className={li > 0 ? 'mt-1' : ''}>
+        <div key={li} style={{ marginTop: li > 0 ? '0.15em' : 0 }}>
           <WordReveal
             text={line}
             delayStart={delayStart + li * 0.3}
-            className="text-white font-bold"
+            className="text-white"
+            style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3.2rem)', fontWeight: 700, lineHeight: 1.15 }}
           />
         </div>
       ))}
@@ -424,10 +422,11 @@ function Background() {
 export default function CinematicIntro({ onComplete }: { onComplete: () => void }) {
   const { step, exit, done, handleSkip } = useIntroState()
 
-  if (done) {
-    onComplete()
-    return null
-  }
+  useEffect(() => {
+    if (done) onComplete()
+  }, [done, onComplete])
+
+  if (done) return null
 
   return (
     <motion.div
@@ -448,10 +447,7 @@ export default function CinematicIntro({ onComplete }: { onComplete: () => void 
       />
 
       {/* Center beat content */}
-      <div
-        className="relative z-10 flex items-center justify-center w-full h-full"
-        style={{ fontSize: 'clamp(1.6rem, 4.5vw, 3rem)' }}
-      >
+      <div className="relative z-10 flex items-center justify-center w-full h-full">
         <AnimatePresence mode="wait">
           {step === 0 && <LogoDrawBeat key="step0" />}
           {step === 1 && (
