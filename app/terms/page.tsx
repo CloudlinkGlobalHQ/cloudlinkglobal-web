@@ -62,7 +62,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mt-8 mb-3">10. Contact</h2>
-            <p>For questions about these terms, contact us at <a href="mailto:hello@cloudlinkglobal.com" className="text-green-600 hover:underline">hello@cloudlinkglobal.com</a>.</p>
+            <p>For questions about these terms, contact us at <a href="mailto:satvikranga60@gmail.com" className="text-green-600 hover:underline">satvikranga60@gmail.com</a>.</p>
           </section>
         </div>
       </main>

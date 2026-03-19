@@ -647,7 +647,7 @@ export default function Home() {
             <div>
               <div className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Company</div>
               <ul className="space-y-2">
-                {[["/login","Sign in"],["mailto:hello@cloudlinkglobal.com","Contact"]].map(([h,l]) => (
+                {[["/login","Sign in"],["mailto:satvikranga60@gmail.com","Contact"]].map(([h,l]) => (
                   <li key={l}><a href={h} className="text-xs text-gray-500 hover:text-green-600 transition-colors">{l}</a></li>
                 ))}
               </ul>

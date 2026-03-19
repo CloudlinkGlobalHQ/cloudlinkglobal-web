@@ -42,7 +42,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mt-8 mb-3">6. Your Rights</h2>
-            <p>You may access, update, or delete your data at any time through the dashboard or by contacting us at <a href="mailto:hello@cloudlinkglobal.com" className="text-green-600 hover:underline">hello@cloudlinkglobal.com</a>. You may also request a copy of all data we hold about your account.</p>
+            <p>You may access, update, or delete your data at any time through the dashboard or by contacting us at <a href="mailto:satvikranga60@gmail.com" className="text-green-600 hover:underline">satvikranga60@gmail.com</a>. You may also request a copy of all data we hold about your account.</p>
           </section>
 
           <section>
@@ -52,7 +52,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mt-8 mb-3">8. Contact</h2>
-            <p>For questions about this policy, contact us at <a href="mailto:hello@cloudlinkglobal.com" className="text-green-600 hover:underline">hello@cloudlinkglobal.com</a>.</p>
+            <p>For questions about this policy, contact us at <a href="mailto:satvikranga60@gmail.com" className="text-green-600 hover:underline">satvikranga60@gmail.com</a>.</p>
           </section>
         </div>
       </main>
