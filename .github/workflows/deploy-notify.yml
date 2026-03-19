@@ -1,0 +1,22 @@
+name: Notify deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  notify:
+    name: Notify Cloudlink of deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send deploy event
+        run: |
+          curl -sf -X POST "${{ secrets.CLOUDLINK_API_URL }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDLINK_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "service": "cloudlinkglobal-web",
+              "version": "${{ github.sha }}",
+              "environment": "production",
+              "commit_message": ${{ toJSON(github.event.head_commit.message) }}
+            }' || echo "Deploy notification failed (non-fatal)"
