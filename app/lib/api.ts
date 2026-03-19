@@ -77,6 +77,11 @@ export const acknowledgeRegression   = (id: string)      => request(`/regression
 export const resolveRegression       = (id: string)      => request(`/regressions/${id}/resolve`,     { method: 'POST' })
 export const runRegressionDetection  = ()                => request('/regression/run', { method: 'POST' })
 
+// Slack settings
+export const getSlackSettings  = ()             => request('/settings/slack')
+export const updateSlackSettings = (data: object) => request('/settings/slack', { method: 'PUT', body: JSON.stringify(data) })
+export const testSlackSettings = ()             => request('/settings/slack/test', { method: 'POST' })
+
 // Cost Snapshots
 export const getCostSnapshots        = (service?: string) => request(`/cost-snapshots${service ? `?service=${encodeURIComponent(service)}` : ''}`)
 export const getTrackedServices      = ()                  => request('/cost-snapshots/services')
