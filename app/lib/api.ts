@@ -1,16 +1,22 @@
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents-production.up.railway.app'
 
-function key(): string {
-  if (typeof window === 'undefined') return ''
-  return localStorage.getItem('cl_api_key') || ''
+let _getToken: (() => Promise<string | null>) | null = null
+
+export function setTokenGetter(fn: () => Promise<string | null>) {
+  _getToken = fn
 }
 
-function headers(): Record<string, string> {
-  return { Authorization: `Bearer ${key()}`, 'Content-Type': 'application/json' }
+async function headers(): Promise<Record<string, string>> {
+  const token = _getToken ? await _getToken() : null
+  return {
+    Authorization: token ? `Bearer ${token}` : '',
+    'Content-Type': 'application/json',
+  }
 }
 
 async function request(path: string, opts: RequestInit = {}): Promise<any> {
-  const res = await fetch(`${BASE}${path}`, { headers: headers(), ...opts })
+  const h = await headers()
+  const res = await fetch(`${BASE}${path}`, { headers: h, ...opts })
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }))
     throw new Error(typeof err.detail === 'string' ? err.detail : JSON.stringify(err.detail))
@@ -18,8 +24,6 @@ async function request(path: string, opts: RequestInit = {}): Promise<any> {
   return res.json()
 }
 
-export const setKey = (k: string) => localStorage.setItem('cl_api_key', k)
-export const getKey = key
 export const getBase = () => BASE
 
 // Core

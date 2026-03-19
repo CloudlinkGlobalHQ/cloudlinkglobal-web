@@ -1,9 +1,11 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
+import { UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
-import { getKey, setKey, getStats, scanNow, runOnce } from '../lib/api'
+import { getStats, scanNow } from '../lib/api'
+import ClerkApiProvider from '../components/ClerkApiProvider'
 
 function Logo({ size = 28 }: { size?: number }) {
   return (
@@ -37,29 +39,20 @@ const NAV = [
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const router   = useRouter()
   const pathname = usePathname()
-  const [ready, setReady]     = useState(false)
   const [stats, setStats]     = useState<any>(null)
   const [scanState, setScanState] = useState<'idle'|'scanning'|'running'|'done'|'error'>('idle')
   const [scanMsg, setScanMsg] = useState('')
 
-  useEffect(() => {
-    if (!getKey()) { router.replace('/login'); return }
-    setReady(true)
-  }, [])
-
   const refreshStats = useCallback(async () => {
-    if (!getKey()) return
     try { setStats(await getStats()) } catch {}
   }, [])
 
   useEffect(() => {
-    if (!ready) return
     refreshStats()
     const t = setInterval(refreshStats, 15000)
     return () => clearInterval(t)
-  }, [ready, refreshStats])
+  }, [refreshStats])
 
   const handleRunScan = async () => {
     setScanState('scanning'); setScanMsg('Scanning cloud accounts…')
@@ -76,11 +69,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     setTimeout(() => { setScanState('idle'); setScanMsg('') }, 5000)
   }
 
-  if (!ready) return null
-
   const scanLabel = { idle: '▶ Run scan', scanning: '⟳ Scanning…', running: '⟳ Running…', done: '✓ Done', error: '✕ Error' }[scanState]
 
   return (
+    <ClerkApiProvider>
     <div className="min-h-screen flex flex-col bg-slate-50">
       {/* Top nav */}
       <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between sticky top-0 z-10 shadow-sm">
@@ -103,9 +95,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             }`}>
             {scanLabel}
           </button>
-          <button onClick={() => { setKey(''); router.push('/login') }} className="text-sm text-slate-400 hover:text-slate-700 transition">
-            Sign out
-          </button>
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: 'w-8 h-8',
+              },
+            }}
+          />
         </div>
       </header>
 
@@ -128,10 +124,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* Content */}
       <main className="flex-1 p-6 max-w-7xl mx-auto w-full">
-        {/* Pass stats + refreshStats to Overview via context would be ideal,
-            but for simplicity Overview fetches its own data. */}
         {children}
       </main>
     </div>
+    </ClerkApiProvider>
   )
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
 
@@ -64,9 +65,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         style={{ perspective: 1200 }}
       >
-        <SmoothScroll>
-          {children}
-        </SmoothScroll>
+        <ClerkProvider>
+          <SmoothScroll>
+            {children}
+          </SmoothScroll>
+        </ClerkProvider>
       </body>
     </html>
   );
