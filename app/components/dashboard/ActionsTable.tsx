@@ -19,6 +19,7 @@ export default function ActionsTable({ onRefresh }: { onRefresh?: () => void }) 
   const [actions, setActions]   = useState<any[]>([])
   const [filter, setFilter]     = useState('All')
   const [loading, setLoading]   = useState(false)
+  const [error, setError]       = useState('')
   const [busy, setBusy]         = useState<Record<string, boolean>>({})
   const [expanded, setExpanded] = useState<string | null>(null)
   const [showPolicies, setShowPolicies] = useState(false)
@@ -27,20 +28,22 @@ export default function ActionsTable({ onRefresh }: { onRefresh?: () => void }) 
 
   const load = async () => {
     setLoading(true)
+    setError('')
     try {
       const data = await getActions(filter === 'All' ? '' : filter)
       setActions(data.items || [])
-    } catch {}
+    } catch (e: any) { setError(e?.message || 'Something went wrong') }
     setLoading(false)
   }
 
   const loadPolicies = async () => {
+    setError('')
     try {
       const d = await getApprovalPolicies()
       const map: Record<string, any> = {}
       for (const p of d.items || []) map[p.action_type] = p
       setPolicies(map)
-    } catch {}
+    } catch (e: any) { setError(e?.message || 'Something went wrong') }
   }
 
   useEffect(() => { load() }, [filter])
@@ -76,6 +79,8 @@ export default function ActionsTable({ onRefresh }: { onRefresh?: () => void }) 
           <button onClick={load} className="text-sm text-green-600 hover:underline">↻ Refresh</button>
         </div>
       </div>
+
+      {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
 
       {showPolicies && (
         <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6">

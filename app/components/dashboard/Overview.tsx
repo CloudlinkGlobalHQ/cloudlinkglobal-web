@@ -189,14 +189,16 @@ function CostBar({ services }: { services: Record<string, number> }) {
 export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: () => void }) {
   const [summary, setSummary]           = useState<any>(null)
   const [cost, setCost]                 = useState<any>(null)
+  const [error, setError]               = useState('')
   const [hasCredential, setHasCredential] = useState(false)
   const [hasDeploy, setHasDeploy]       = useState(false)
   const [hasBaseline, setHasBaseline]   = useState(false)
   const [stepsLoaded, setStepsLoaded]   = useState(false)
 
   useEffect(() => {
-    getDemoSummary().then(setSummary).catch(() => {})
-    getCostSummary().then(setCost).catch(() => {})
+    setError('')
+    getDemoSummary().then(setSummary).catch((e: any) => { setError(e?.message || 'Something went wrong') })
+    getCostSummary().then(setCost).catch((e: any) => { setError(e?.message || 'Something went wrong') })
   }, [stats])
 
   // Load onboarding step states once
@@ -245,6 +247,8 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
         </div>
         <button onClick={onRefresh} className="text-sm text-green-600 hover:underline">↻ Refresh</button>
       </div>
+
+      {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
 
       <OnboardingChecklist
         hasCredential={credentialConfirmed}

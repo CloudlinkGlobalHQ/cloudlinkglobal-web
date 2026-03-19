@@ -90,12 +90,14 @@ function ResourceDetail({ r }: { r: any }) {
 export default function ResourcesTable() {
   const [resources, setResources] = useState<any[]>([])
   const [loading, setLoading]     = useState(false)
+  const [error, setError]         = useState('')
   const [filterType, setFilterType] = useState('all')
   const [search, setSearch]       = useState('')
 
   const load = async () => {
     setLoading(true)
-    try { const data = await getResources(); setResources(data.items || []) } catch {}
+    setError('')
+    try { const data = await getResources(); setResources(data.items || []) } catch (e: any) { setError(e?.message || 'Something went wrong') }
     setLoading(false)
   }
 
@@ -124,6 +126,8 @@ export default function ResourcesTable() {
         </div>
         <button onClick={load} className="text-sm text-green-600 hover:underline">↻ Refresh</button>
       </div>
+
+      {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
 
       {resources.length > 0 && (
         <div className="flex gap-2 mb-4 flex-wrap items-center">

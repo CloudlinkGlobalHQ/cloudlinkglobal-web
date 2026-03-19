@@ -19,7 +19,7 @@ function SlackCard() {
       setUrl(d.slack_webhook_url || '')
       setSaved(d.slack_webhook_url || '')
       setEnabled(d.enabled ?? true)
-    }).catch(() => {})
+    }).catch((e: any) => { setMsg(`Error loading Slack settings: ${e?.message || 'Something went wrong'}`); setMsgOk(false) })
   }, [])
 
   const flash = (text: string, ok = true) => { setMsg(text); setMsgOk(ok); setTimeout(() => setMsg(''), 4000) }
@@ -98,6 +98,7 @@ function SlackCard() {
 export default function WebhooksPanel() {
   const [hooks, setHooks]     = useState<any[]>([])
   const [loading, setLoading] = useState(false)
+  const [error, setError]     = useState('')
   const [showForm, setShowForm] = useState(false)
   const [form, setForm]       = useState({ url: '', secret: '', events: [...ALL_EVENTS] })
   const [saving, setSaving]   = useState(false)
@@ -106,7 +107,8 @@ export default function WebhooksPanel() {
 
   const load = async () => {
     setLoading(true)
-    try { const d = await getWebhooks(); setHooks(d.items || []) } catch {}
+    setError('')
+    try { const d = await getWebhooks(); setHooks(d.items || []) } catch (e: any) { setError(e?.message || 'Something went wrong') }
     setLoading(false)
   }
 
@@ -152,6 +154,7 @@ export default function WebhooksPanel() {
 
       <SlackCard />
 
+      {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
       {msg && <p className="text-sm text-green-600 mb-4">{msg}</p>}
 
       {showForm && (

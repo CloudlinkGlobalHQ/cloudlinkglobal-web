@@ -14,18 +14,20 @@ const STATUS_STYLES: Record<string, string> = {
 export default function AuditLog() {
   const [entries, setEntries]     = useState<any[]>([])
   const [loading, setLoading]     = useState(false)
+  const [error, setError]         = useState('')
   const [filterType, setFilterType]     = useState('')
   const [filterResource, setFilterResource] = useState('')
 
   const load = async () => {
     setLoading(true)
+    setError('')
     try {
       const params: Record<string, any> = { limit: 100 }
       if (filterType) params.action_type = filterType
       if (filterResource) params.resource_id = filterResource
       const d = await getAuditLog(params)
       setEntries(d.items || [])
-    } catch {}
+    } catch (e: any) { setError(e?.message || 'Something went wrong') }
     setLoading(false)
   }
 
@@ -42,6 +44,8 @@ export default function AuditLog() {
         </div>
         <button onClick={load} className="text-sm text-green-600 hover:underline">↻ Refresh</button>
       </div>
+
+      {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
 
       <div className="flex gap-3 mb-4 flex-wrap">
         <select value={filterType} onChange={e => setFilterType(e.target.value)}

@@ -23,10 +23,12 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
   const [azureForm, setAzureForm]     = useState({ label: '', tenant_id_az: '', client_id: '', client_secret: '', subscription_id: '' })
   const [saving, setSaving]   = useState(false)
   const [msg, setMsg]         = useState('')
+  const [error, setError]     = useState('')
 
   const load = async () => {
     setLoading(true)
-    try { const d = await getCredentials(); setCreds(d.items || []) } catch {}
+    setError('')
+    try { const d = await getCredentials(); setCreds(d.items || []) } catch (e: any) { setError(e?.message || 'Something went wrong') }
     setLoading(false)
   }
 
@@ -106,6 +108,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
         </button>
       </div>
 
+      {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
       {msg && <p className="text-sm text-green-600 mb-4">{msg}</p>}
 
       {showForm && (

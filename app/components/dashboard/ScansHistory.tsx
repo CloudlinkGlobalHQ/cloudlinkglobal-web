@@ -20,11 +20,13 @@ export default function ScansHistory() {
   const [scans, setScans]     = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [scanning, setScanning] = useState(false)
+  const [error, setError]     = useState('')
   const [msg, setMsg]         = useState('')
 
   const load = async () => {
     setLoading(true)
-    try { const d = await getScans(); setScans(d.items || []) } catch {}
+    setError('')
+    try { const d = await getScans(); setScans(d.items || []) } catch (e: any) { setError(e?.message || 'Something went wrong') }
     setLoading(false)
   }
 
@@ -55,6 +57,7 @@ export default function ScansHistory() {
           <button onClick={load} className="text-sm text-green-600 hover:underline">↻ Refresh</button>
         </div>
       </div>
+      {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         {loading ? (
           <div className="p-10 text-center text-slate-400 text-sm">Loading…</div>
