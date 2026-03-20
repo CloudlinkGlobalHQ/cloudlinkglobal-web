@@ -8,24 +8,29 @@ const PRICES: Record<string, string> = {
 }
 
 export async function POST(req: Request) {
-  const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { plan } = await req.json()
-  const priceId = PRICES[plan]
-  if (!priceId) return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
+    const { plan } = await req.json()
+    const priceId = PRICES[plan]
+    if (!priceId) return NextResponse.json({ error: `Invalid plan or missing price ID for: ${plan}` }, { status: 400 })
 
-  const origin = req.headers.get('origin') || 'https://cloudlinkglobal.com'
+    const origin = req.headers.get('origin') || 'https://cloudlinkglobal.com'
 
-  const session = await getStripe().checkout.sessions.create({
-    mode: 'subscription',
-    payment_method_types: ['card'],
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${origin}/dashboard?checkout=success`,
-    cancel_url: `${origin}/#pricing`,
-    client_reference_id: userId,
-    metadata: { clerk_user_id: userId, plan },
-  })
+    const session = await getStripe().checkout.sessions.create({
+      mode: 'subscription',
+      payment_method_types: ['card'],
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${origin}/dashboard?checkout=success`,
+      cancel_url: `${origin}/#pricing`,
+      client_reference_id: userId,
+      metadata: { clerk_user_id: userId, plan },
+    })
 
-  return NextResponse.json({ url: session.url })
+    return NextResponse.json({ url: session.url })
+  } catch (err: any) {
+    console.error('Stripe checkout error:', err)
+    return NextResponse.json({ error: err.message || 'Checkout failed' }, { status: 500 })
+  }
 }
