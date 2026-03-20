@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 
 const E: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -44,6 +46,31 @@ const plans = [
 ];
 
 export default function Pricing() {
+  const { isSignedIn } = useAuth();
+  const [loading, setLoading] = useState<string | null>(null);
+
+  const handleCheckout = async (plan: string) => {
+    if (!isSignedIn) {
+      window.location.href = "/login";
+      return;
+    }
+    setLoading(plan);
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan }),
+      });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+      else alert(data.error || "Could not create checkout session");
+    } catch {
+      alert("Something went wrong");
+    } finally {
+      setLoading(null);
+    }
+  };
+
   return (
     <section id="pricing" className="py-20 bg-gray-50">
       <div className="mx-auto max-w-6xl px-6">
@@ -135,16 +162,18 @@ export default function Pricing() {
                   </li>
                 ))}
               </ul>
-              <a href="#waitlist"
+              <button
+                onClick={() => plan.name === "Enterprise" ? window.location.href = "mailto:satvikranga60@gmail.com?subject=Cloudlink Enterprise" : handleCheckout(plan.name.toLowerCase())}
+                disabled={loading === plan.name.toLowerCase()}
                 className={[
-                  "inline-flex items-center justify-center rounded-full px-4 py-2.5 text-sm font-semibold transition-colors",
+                  "inline-flex items-center justify-center rounded-full px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-60",
                   plan.highlight
                     ? "bg-green-600 hover:bg-green-700 text-white shadow-sm"
                     : "border border-gray-200 hover:border-green-300 text-gray-700 hover:text-green-700 hover:bg-green-50",
                 ].join(" ")}
               >
-                {plan.cta}
-              </a>
+                {loading === plan.name.toLowerCase() ? "Redirecting…" : plan.cta}
+              </button>
             </motion.div>
           ))}
         </div>
