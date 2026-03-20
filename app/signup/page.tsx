@@ -1,4 +1,6 @@
 import { SignUp } from '@clerk/nextjs'
+import { auth } from '@clerk/nextjs/server'
+import { redirect } from 'next/navigation'
 
 function Logo({ size = 32 }: { size?: number }) {
   return (
@@ -18,7 +20,10 @@ function Logo({ size = 32 }: { size?: number }) {
   )
 }
 
-export default function SignUpPage() {
+export default async function SignUpPage() {
+  const { userId } = await auth()
+  if (userId) redirect('/dashboard')
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
       <div
@@ -33,6 +38,7 @@ export default function SignUpPage() {
         </a>
 
         <SignUp
+          forceRedirectUrl="/dashboard"
           appearance={{
             elements: {
               rootBox: 'w-full',
