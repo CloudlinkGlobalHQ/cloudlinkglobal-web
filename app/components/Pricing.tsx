@@ -27,7 +27,7 @@ const plans = [
   },
   {
     name: "Growth",
-    price: "$129",
+    price: "$99",
     per: "/mo",
     desc: "Scaling teams with multiple services",
     features: ["20 AWS services", "Webhook integrations", "90-day history", "Team seats (5)", "Priority support"],
