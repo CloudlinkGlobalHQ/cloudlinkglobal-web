@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
+import { Suspense } from "react";
+import PostHogProvider from "./components/PostHogProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -66,6 +68,9 @@ export default function RootLayout({
         style={{ perspective: 1200 }}
       >
         <ClerkProvider>
+          <Suspense fallback={null}>
+            <PostHogProvider />
+          </Suspense>
           <SmoothScroll>
             {children}
           </SmoothScroll>
