@@ -6,6 +6,7 @@ import { UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import { getStats, scanNow } from '../lib/api'
 import ClerkApiProvider from '../components/ClerkApiProvider'
+import { SubscriptionProvider, useSubscription } from '../components/SubscriptionProvider'
 
 function Logo({ size = 28 }: { size?: number }) {
   return (
@@ -36,6 +37,7 @@ const NAV = [
   { label: 'Scans',       href: '/dashboard/scans' },
   { label: 'Audit',       href: '/dashboard/audit' },
   { label: 'Webhooks',    href: '/dashboard/webhooks' },
+  { label: 'Billing',     href: '/dashboard/billing' },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -73,6 +75,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <ClerkApiProvider>
+    <SubscriptionProvider>
     <div className="min-h-screen flex flex-col bg-slate-50">
       {/* Top nav */}
       <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between sticky top-0 z-10 shadow-sm">
@@ -127,6 +130,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {children}
       </main>
     </div>
+    </SubscriptionProvider>
     </ClerkApiProvider>
   )
 }
