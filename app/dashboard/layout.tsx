@@ -34,6 +34,8 @@ const NAV = [
   { label: 'Tag Costs',      href: '/dashboard/tags' },
   { label: 'AutoStop',       href: '/dashboard/autostop' },
   { label: 'Reserved',       href: '/dashboard/reserved-instances' },
+  { label: 'Rightsizing',    href: '/dashboard/rightsizing' },
+  { label: 'Savings Report', href: '/dashboard/savings-report' },
   { label: 'Regressions',    href: '/dashboard/regressions' },
   { label: 'Estimate',       href: '/dashboard/cost-estimate' },
   { label: 'Deploys',        href: '/dashboard/deploys' },

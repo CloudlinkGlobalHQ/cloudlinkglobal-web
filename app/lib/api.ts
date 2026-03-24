@@ -137,6 +137,15 @@ export const getCostForecast = (daysBack = 30, daysAhead = 30) =>
 export const getTagCosts = (tagKey = 'Environment') =>
   request(`/tag-costs?tag_key=${encodeURIComponent(tagKey)}`)
 
+// Rightsizing
+export const getRightsizing = (cpuThreshold = 20) => request(`/rightsizing?cpu_threshold=${cpuThreshold}`)
+
+// Savings report
+export const getSavingsReport = () => request('/savings-report')
+
+// Anomaly alerts
+export const runAnomalyAlerts = () => request('/anomaly-alerts/run', { method: 'POST' })
+
 // Team members
 export const getTeamMembers   = ()                         => request('/team/members')
 export const inviteTeamMember = (data: object)             => request('/team/members', { method: 'POST', body: JSON.stringify(data) })
