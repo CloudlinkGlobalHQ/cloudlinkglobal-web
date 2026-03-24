@@ -42,6 +42,7 @@ const NAV = [
   { label: 'Audit',       href: '/dashboard/audit' },
   { label: 'Webhooks',    href: '/dashboard/webhooks' },
   { label: 'Budgets',     href: '/dashboard/budgets' },
+  { label: 'Reserved',    href: '/dashboard/reserved-instances' },
   { label: 'Billing',     href: '/dashboard/billing' },
 ]
 

@@ -125,3 +125,6 @@ export const getAiAdvisor = () => request('/ai-advisor', { method: 'POST' })
 // Email digest
 export const sendWeeklyDigest = (data: { email: string; name?: string }) =>
   request('/emails/weekly-digest', { method: 'POST', body: JSON.stringify(data) })
+
+// Reserved Instance recommendations
+export const getRiRecommendations = () => request('/ri-recommendations')
