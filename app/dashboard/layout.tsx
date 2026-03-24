@@ -28,6 +28,7 @@ function Logo({ size = 28 }: { size?: number }) {
 
 const NAV = [
   { label: 'Overview',    href: '/dashboard' },
+  { label: 'AI Advisor',  href: '/dashboard/advisor' },
   { label: 'Unit Economics', href: '/dashboard/unit-economics' },
   { label: 'AutoStop',    href: '/dashboard/autostop' },
   { label: 'Regressions', href: '/dashboard/regressions' },

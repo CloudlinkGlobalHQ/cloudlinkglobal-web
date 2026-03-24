@@ -118,3 +118,6 @@ export const runAutostopNow          = ()                          => request('/
 
 // Unit Economics
 export const getUnitEconomics = (days = 30) => request(`/unit-economics?days=${days}`)
+
+// AI Cost Advisor
+export const getAiAdvisor = () => request('/ai-advisor', { method: 'POST' })
