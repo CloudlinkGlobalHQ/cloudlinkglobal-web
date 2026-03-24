@@ -23,6 +23,15 @@ export default function APIReferencePage() {
     { method: 'DELETE', path: '/webhooks/:id', desc: 'Remove a webhook' },
     { method: 'GET', path: '/audit', desc: 'Query audit log (filter by ?event_type=, ?since=)' },
     { method: 'GET', path: '/subscription/:clerk_user_id', desc: 'Get subscription status for a user' },
+    { method: 'GET', path: '/budgets', desc: 'List all budget guardrails with current spend' },
+    { method: 'POST', path: '/budgets', desc: 'Create a new budget guardrail' },
+    { method: 'PUT', path: '/budgets/:id', desc: 'Update a budget' },
+    { method: 'DELETE', path: '/budgets/:id', desc: 'Delete a budget' },
+    { method: 'GET', path: '/budgets/alerts', desc: 'List budget alert history' },
+    { method: 'POST', path: '/budgets/check', desc: 'Manually trigger budget threshold checks' },
+    { method: 'POST', path: '/cost-estimate', desc: 'Predict cost impact of a deploy before it goes live' },
+    { method: 'GET', path: '/anomalies', desc: 'Scan all services for cost anomalies (ML-powered)' },
+    { method: 'GET', path: '/anomalies/:service', desc: 'Analyze a specific service for cost anomalies' },
   ]
 
   const methodColors: Record<string, string> = {

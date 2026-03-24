@@ -1,7 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getDemoSummary, getCostSummary, getCredentials, getDeploys, getTrackedServices } from '../../lib/api'
+import { getDemoSummary, getCostSummary, getCredentials, getDeploys, getTrackedServices, getCostSnapshots, getAnomalies } from '../../lib/api'
+import dynamic from 'next/dynamic'
+
+const CostTrendChart = dynamic(() => import('./CostTrendChart'), { ssr: false })
 
 // ─── Onboarding checklist ────────────────────────────────────────────────────
 
@@ -194,11 +197,15 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
   const [hasDeploy, setHasDeploy]       = useState(false)
   const [hasBaseline, setHasBaseline]   = useState(false)
   const [stepsLoaded, setStepsLoaded]   = useState(false)
+  const [snapshots, setSnapshots]       = useState<any[]>([])
+  const [anomalies, setAnomalies]       = useState<any[]>([])
 
   useEffect(() => {
     setError('')
     getDemoSummary().then(setSummary).catch((e: any) => { setError(e?.message || 'Something went wrong') })
     getCostSummary().then(setCost).catch((e: any) => { setError(e?.message || 'Something went wrong') })
+    getCostSnapshots().then(setSnapshots).catch(() => {})
+    getAnomalies().then(r => setAnomalies(r.anomalies || [])).catch(() => {})
   }, [stats])
 
   // Load onboarding step states once
@@ -295,6 +302,36 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
           </p>
           <p className="text-xs text-slate-400 mb-2">across {cost.credential_count} AWS credential(s)</p>
           <CostBar services={cost.top_services} />
+        </div>
+      )}
+
+      {/* Cost trend chart */}
+      {snapshots.length > 0 && <CostTrendChart snapshots={snapshots} />}
+
+      {/* Anomalies */}
+      {anomalies.length > 0 && (
+        <div className="bg-white rounded-xl border border-slate-200 p-5 mb-6">
+          <h2 className="text-sm font-semibold text-slate-700 mb-3">Cost Anomalies Detected</h2>
+          <div className="space-y-2">
+            {anomalies.map((a: any, i: number) => (
+              <div key={i} className={`flex items-center justify-between p-3 rounded-lg ${
+                a.severity === 'critical' ? 'bg-red-50' : a.severity === 'high' ? 'bg-amber-50' : 'bg-yellow-50'
+              }`}>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">{a.service}</p>
+                  <p className="text-xs text-slate-500">
+                    {a.direction === 'spike' ? 'Cost spike' : 'Cost drop'}: {a.change_pct > 0 ? '+' : ''}{a.change_pct}% · z-score: {a.composite_z_score}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                    a.severity === 'critical' ? 'bg-red-100 text-red-700' : a.severity === 'high' ? 'bg-amber-100 text-amber-700' : 'bg-yellow-100 text-yellow-700'
+                  }`}>{a.severity}</span>
+                  <p className="text-xs text-slate-500 mt-1">${a.monthly_impact_usd.toLocaleString()}/mo impact</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

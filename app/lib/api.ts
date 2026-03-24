@@ -89,3 +89,18 @@ export const testSlackSettings = ()             => request('/settings/slack/test
 // Cost Snapshots
 export const getCostSnapshots        = (service?: string) => request(`/cost-snapshots${service ? `?service=${encodeURIComponent(service)}` : ''}`)
 export const getTrackedServices      = ()                  => request('/cost-snapshots/services')
+
+// Budget Guardrails
+export const getBudgets       = ()             => request('/budgets')
+export const createBudget     = (data: object) => request('/budgets', { method: 'POST', body: JSON.stringify(data) })
+export const updateBudget     = (id: string, data: object) => request(`/budgets/${id}`, { method: 'PUT', body: JSON.stringify(data) })
+export const deleteBudget     = (id: string)   => request(`/budgets/${id}`, { method: 'DELETE' })
+export const getBudgetAlerts  = (budgetId?: string) => request(`/budgets/alerts${budgetId ? `?budget_id=${budgetId}` : ''}`)
+export const checkBudgets     = ()             => request('/budgets/check', { method: 'POST' })
+
+// Cost Estimation
+export const estimateDeployCost = (data: object) => request('/cost-estimate', { method: 'POST', body: JSON.stringify(data) })
+
+// Anomaly Detection
+export const getAnomalies         = ()              => request('/anomalies')
+export const analyzeServiceAnomaly = (service: string) => request(`/anomalies/${encodeURIComponent(service)}`)
