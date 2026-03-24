@@ -128,3 +128,17 @@ export const sendWeeklyDigest = (data: { email: string; name?: string }) =>
 
 // Reserved Instance recommendations
 export const getRiRecommendations = () => request('/ri-recommendations')
+
+// Cost Forecast
+export const getCostForecast = (daysBack = 30, daysAhead = 30) =>
+  request(`/cost-forecast?days_back=${daysBack}&days_ahead=${daysAhead}`)
+
+// Tag-based cost allocation
+export const getTagCosts = (tagKey = 'Environment') =>
+  request(`/tag-costs?tag_key=${encodeURIComponent(tagKey)}`)
+
+// Team members
+export const getTeamMembers   = ()                         => request('/team/members')
+export const inviteTeamMember = (data: object)             => request('/team/members', { method: 'POST', body: JSON.stringify(data) })
+export const updateTeamMember = (id: string, data: object) => request(`/team/members/${id}`, { method: 'PUT', body: JSON.stringify(data) })
+export const removeTeamMember = (id: string)               => request(`/team/members/${id}`, { method: 'DELETE' })
