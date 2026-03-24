@@ -104,3 +104,14 @@ export const estimateDeployCost = (data: object) => request('/cost-estimate', { 
 // Anomaly Detection
 export const getAnomalies         = ()              => request('/anomalies')
 export const analyzeServiceAnomaly = (service: string) => request(`/anomalies/${encodeURIComponent(service)}`)
+
+// AutoStopping
+export const getAutostopRules        = ()                          => request('/autostop/rules')
+export const createAutostopRule      = (data: object)              => request('/autostop/rules', { method: 'POST', body: JSON.stringify(data) })
+export const updateAutostopRule      = (id: string, data: object)  => request(`/autostop/rules/${id}`, { method: 'PUT', body: JSON.stringify(data) })
+export const deleteAutostopRule      = (id: string)                => request(`/autostop/rules/${id}`, { method: 'DELETE' })
+export const getAutostopEvents       = (limit = 100)               => request(`/autostop/events?limit=${limit}`)
+export const getAutostopSavings      = ()                          => request('/autostop/savings')
+export const stopResource            = (id: string, data: object)  => request(`/autostop/resources/${encodeURIComponent(id)}/stop`, { method: 'POST', body: JSON.stringify(data) })
+export const startResource           = (id: string, data: object)  => request(`/autostop/resources/${encodeURIComponent(id)}/start`, { method: 'POST', body: JSON.stringify(data) })
+export const runAutostopNow          = ()                          => request('/autostop/run', { method: 'POST' })
