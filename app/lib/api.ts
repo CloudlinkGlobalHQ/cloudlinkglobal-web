@@ -121,3 +121,7 @@ export const getUnitEconomics = (days = 30) => request(`/unit-economics?days=${d
 
 // AI Cost Advisor
 export const getAiAdvisor = () => request('/ai-advisor', { method: 'POST' })
+
+// Email digest
+export const sendWeeklyDigest = (data: { email: string; name?: string }) =>
+  request('/emails/weekly-digest', { method: 'POST', body: JSON.stringify(data) })
