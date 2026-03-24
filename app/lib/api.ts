@@ -115,3 +115,6 @@ export const getAutostopSavings      = ()                          => request('/
 export const stopResource            = (id: string, data: object)  => request(`/autostop/resources/${encodeURIComponent(id)}/stop`, { method: 'POST', body: JSON.stringify(data) })
 export const startResource           = (id: string, data: object)  => request(`/autostop/resources/${encodeURIComponent(id)}/start`, { method: 'POST', body: JSON.stringify(data) })
 export const runAutostopNow          = ()                          => request('/autostop/run', { method: 'POST' })
+
+// Unit Economics
+export const getUnitEconomics = (days = 30) => request(`/unit-economics?days=${days}`)
