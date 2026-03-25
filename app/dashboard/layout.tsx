@@ -32,6 +32,8 @@ const NAV = [
   { label: 'Forecast',       href: '/dashboard/forecast' },
   { label: 'Unit Economics', href: '/dashboard/unit-economics' },
   { label: 'Tag Costs',      href: '/dashboard/tags' },
+  { label: 'Virtual Tags',   href: '/dashboard/virtual-tags' },
+  { label: 'Kubernetes',     href: '/dashboard/kubernetes' },
   { label: 'AutoStop',       href: '/dashboard/autostop' },
   { label: 'Reserved',       href: '/dashboard/reserved-instances' },
   { label: 'Rightsizing',    href: '/dashboard/rightsizing' },
@@ -48,6 +50,7 @@ const NAV = [
   { label: 'Webhooks',       href: '/dashboard/webhooks' },
   { label: 'Budgets',        href: '/dashboard/budgets' },
   { label: 'Team',           href: '/dashboard/team' },
+  { label: 'API Keys',       href: '/dashboard/api-keys' },
   { label: 'Billing',        href: '/dashboard/billing' },
 ]
 

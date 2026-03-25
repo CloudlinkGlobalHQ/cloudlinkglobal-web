@@ -151,3 +151,31 @@ export const getTeamMembers   = ()                         => request('/team/mem
 export const inviteTeamMember = (data: object)             => request('/team/members', { method: 'POST', body: JSON.stringify(data) })
 export const updateTeamMember = (id: string, data: object) => request(`/team/members/${id}`, { method: 'PUT', body: JSON.stringify(data) })
 export const removeTeamMember = (id: string)               => request(`/team/members/${id}`, { method: 'DELETE' })
+
+// Virtual Tags
+export const getVirtualTags        = ()                          => request('/virtual-tags')
+export const createVirtualTag      = (data: object)              => request('/virtual-tags', { method: 'POST', body: JSON.stringify(data) })
+export const updateVirtualTag      = (id: string, data: object)  => request(`/virtual-tags/${id}`, { method: 'PUT', body: JSON.stringify(data) })
+export const deleteVirtualTag      = (id: string)                => request(`/virtual-tags/${id}`, { method: 'DELETE' })
+export const getVirtualTagCosts    = (days = 30)                 => request(`/virtual-tags/costs/breakdown?days=${days}`)
+
+// Kubernetes cost visibility
+export const getK8sCosts           = (hoursBack = 168, cluster?: string) =>
+  request(`/k8s/costs?hours_back=${hoursBack}${cluster ? `&cluster=${encodeURIComponent(cluster)}` : ''}`)
+export const getK8sNamespaces      = (hoursBack = 168, cluster?: string) =>
+  request(`/k8s/costs/namespaces?hours_back=${hoursBack}${cluster ? `&cluster=${encodeURIComponent(cluster)}` : ''}`)
+export const getK8sPods            = (hoursBack = 24, namespace?: string) =>
+  request(`/k8s/costs/pods?hours_back=${hoursBack}${namespace ? `&namespace=${encodeURIComponent(namespace)}` : ''}`)
+export const ingestK8sCosts        = (data: object)              => request('/k8s/ingest', { method: 'POST', body: JSON.stringify(data) })
+
+// Anomaly runbooks
+export const getAnomalyRunbook     = (service: string)           => request(`/anomalies/${encodeURIComponent(service)}/runbook`, { method: 'POST' })
+
+// Public API v1
+export const getV1Costs            = (days = 30)                 => request(`/v1/costs?days=${days}`)
+export const getV1Anomalies        = ()                          => request('/v1/anomalies')
+export const getV1Savings          = ()                          => request('/v1/savings')
+
+// API key management
+export const getApiKeys            = ()                          => request('/api-keys')
+export const createApiKey          = (data: object)              => request('/api-keys', { method: 'POST', body: JSON.stringify(data) })
