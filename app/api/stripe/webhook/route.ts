@@ -2,8 +2,12 @@ import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { getStripe } from '../../../lib/stripe'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents-production.up.railway.app'
-const WEBHOOK_SECRET = process.env.CLOUDLINK_WEBHOOK_SECRET || ''
+const API_URL = process.env.CLOUDLINK_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents-production.up.railway.app'
+const BACKEND_SYNC_SECRET =
+  process.env.CLOUDLINK_WEBHOOK_SECRET ||
+  process.env.CLOUDLINK_SYNC_SECRET ||
+  process.env.CLOUDLINK_SUPERADMIN_KEY ||
+  ''
 
 async function syncSubscription(data: {
   clerk_user_id: string
@@ -14,11 +18,14 @@ async function syncSubscription(data: {
   current_period_end?: string
 }) {
   try {
+    if (!BACKEND_SYNC_SECRET) {
+      throw new Error('Missing Cloudlink backend sync secret')
+    }
     await fetch(`${API_URL}/subscription`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${WEBHOOK_SECRET}`,
+        Authorization: `Bearer ${BACKEND_SYNC_SECRET}`,
       },
       body: JSON.stringify(data),
     })

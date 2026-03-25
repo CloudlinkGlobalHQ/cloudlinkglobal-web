@@ -20,6 +20,7 @@ interface SubscriptionContextValue {
   loading: boolean
   isPaid: boolean
   plan: Plan
+  limits: { services: number; historyDays: number; teamSeats: number }
   refresh: () => Promise<void>
 }
 
@@ -28,6 +29,7 @@ const SubscriptionContext = createContext<SubscriptionContextValue>({
   loading: true,
   isPaid: false,
   plan: 'free',
+  limits: { services: 3, historyDays: 7, teamSeats: 1 },
   refresh: async () => {},
 })
 
@@ -75,8 +77,10 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const plan = subscription?.plan || 'free'
   const isPaid = plan !== 'free' && subscription?.status === 'active'
 
+  const limits = getPlanLimits(plan)
+
   return (
-    <SubscriptionContext.Provider value={{ subscription, loading, isPaid, plan, refresh }}>
+    <SubscriptionContext.Provider value={{ subscription, loading, isPaid, plan, limits, refresh }}>
       {children}
     </SubscriptionContext.Provider>
   )

@@ -30,7 +30,12 @@ export const getBase = () => BASE
 export const getStats            = ()              => request('/stats')
 export const getDemoSummary      = ()              => request('/demo_summary')
 export const getActions          = (status?: string) => request(`/actions${status ? `?status=${status}` : ''}`)
-export const getResources        = ()              => request('/resources')
+export const getResources        = (provider?: string, resourceType?: string) => {
+  const q = new URLSearchParams()
+  if (provider) q.set('provider', provider)
+  if (resourceType) q.set('resource_type', resourceType)
+  return request(`/resources${q.toString() ? `?${q.toString()}` : ''}`)
+}
 export const getRuns             = ()              => request('/runs')
 export const getCredentials      = ()              => request('/credentials')
 export const getApprovalPolicies = ()              => request('/approval-policies')
@@ -69,6 +74,12 @@ export const getAuditLog    = (params: Record<string, any> = {}) => {
   return request(`/audit${q ? `?${q}` : ''}`)
 }
 export const getCostSummary = () => request('/cost-summary')
+export const getMultiCloudSummary = () => request('/multi-cloud/summary')
+export const ingestCloudCosts = (data: object) => request('/cloud-costs/ingest', { method: 'POST', body: JSON.stringify(data) })
+export const getGovernanceSummary = () => request('/v1/governance')
+export const getDriftSummary = () => request('/drift/summary')
+export const getDeployRisk = (service: string) => request(`/deploy-risk/${encodeURIComponent(service)}`)
+export const runAutofixRegression = (id: string, data: object) => request(`/autofix/regressions/${id}`, { method: 'POST', body: JSON.stringify(data) })
 
 // Deploys
 export const getDeploys       = (service?: string) => request(`/deploys${service ? `?service=${encodeURIComponent(service)}` : ''}`)
@@ -167,6 +178,17 @@ export const getK8sNamespaces      = (hoursBack = 168, cluster?: string) =>
 export const getK8sPods            = (hoursBack = 24, namespace?: string) =>
   request(`/k8s/costs/pods?hours_back=${hoursBack}${namespace ? `&namespace=${encodeURIComponent(namespace)}` : ''}`)
 export const ingestK8sCosts        = (data: object)              => request('/k8s/ingest', { method: 'POST', body: JSON.stringify(data) })
+
+// Drift detection
+export const getDriftBaselines     = ()                          => request('/drift/baselines')
+export const createDriftBaseline   = (data: object)              => request('/drift/baselines', { method: 'POST', body: JSON.stringify(data) })
+export const deleteDriftBaseline   = (id: string)                => request(`/drift/baselines/${id}`, { method: 'DELETE' })
+export const runDriftScan          = ()                          => request('/drift/scan', { method: 'POST' })
+export const getDriftEvents        = (params: Record<string, any> = {}) => {
+  const q = new URLSearchParams(params).toString()
+  return request(`/drift/events${q ? `?${q}` : ''}`)
+}
+export const acknowledgeDriftEvent = (id: string)                => request(`/drift/events/${id}/acknowledge`, { method: 'POST' })
 
 // Anomaly runbooks
 export const getAnomalyRunbook     = (service: string)           => request(`/anomalies/${encodeURIComponent(service)}/runbook`, { method: 'POST' })

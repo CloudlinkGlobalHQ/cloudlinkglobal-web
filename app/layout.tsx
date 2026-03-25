@@ -1,20 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
 import { Suspense } from "react";
 import PostHogProvider from "./components/PostHogProvider";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Cloudlink Global — Deploy-aware AWS cost monitoring",
@@ -64,8 +53,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        style={{ perspective: 1200 }}
+        className="antialiased"
+        style={{
+          perspective: 1200,
+          ["--font-geist-sans" as string]: '"Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
+          ["--font-geist-mono" as string]: '"SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
+        }}
       >
         <ClerkProvider>
           <Suspense fallback={null}>

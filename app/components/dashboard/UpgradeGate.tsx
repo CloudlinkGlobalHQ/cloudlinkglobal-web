@@ -8,12 +8,14 @@ export default function UpgradeGate({ feature, requiredPlan = 'starter', childre
   requiredPlan?: 'starter' | 'growth' | 'enterprise'
   children: React.ReactNode
 }) {
-  const { plan, loading } = useSubscription()
+  const { plan, subscription, loading } = useSubscription()
 
   if (loading) return null
 
   const planRank: Record<string, number> = { free: 0, starter: 1, growth: 2, enterprise: 3 }
-  const userRank = planRank[plan] ?? 0
+  const status = subscription?.status || 'none'
+  const effectivePlan = status === 'active' || plan === 'enterprise' ? plan : 'free'
+  const userRank = planRank[effectivePlan] ?? 0
   const requiredRank = planRank[requiredPlan] ?? 1
 
   if (userRank >= requiredRank) {

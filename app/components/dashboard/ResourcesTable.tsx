@@ -7,7 +7,9 @@ const TYPE_ICONS: Record<string, string> = {
   ec2_instance: '🖥️', security_group: '🔒', aws_cost: '💰', s3_bucket: '🪣',
   rds_instance: '🗄️', lambda_function: 'λ', ebs_volume: '💾',
   gce_instance: '🖥️', gcs_bucket: '🪣', gcp_firewall_rule: '🔒',
+  bigquery_dataset: '📊', gcp_cloudsql_instance: '🗄️', gcp_cost: '💰',
   azure_vm: '🖥️', azure_nsg: '🔒', azure_storage_account: '🪣',
+  azure_public_ip: '🌐', azure_managed_disk: '💾', azure_cost: '💰',
 }
 const PROVIDER_COLORS: Record<string, string> = {
   aws: 'bg-orange-50 text-orange-700 border-orange-200',
@@ -21,8 +23,11 @@ const ISSUE_COLORS: Record<string, string> = {
   no_encryption: 'bg-yellow-100 text-yellow-700',
   versioning_disabled: 'bg-slate-100 text-slate-600',
   no_automated_backups: 'bg-orange-100 text-orange-700',
+  no_backup_configuration: 'bg-orange-100 text-orange-700',
   unattached: 'bg-orange-100 text-orange-700',
+  unattached_disk: 'bg-orange-100 text-orange-700',
   https_not_enforced: 'bg-red-100 text-red-700',
+  public_ip_assigned: 'bg-red-100 text-red-700',
 }
 
 function IssueTag({ issue }: { issue: string }) {
@@ -74,6 +79,38 @@ function ResourceDetail({ r }: { r: any }) {
     <div>
       <span className="font-medium text-slate-700 mr-2">{p.name}</span>
       {p.engine && <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.engine} {p.engine_version}</span>}
+      <div className="flex flex-wrap gap-1 mt-1">{(p.issues || []).map((iss: string, i: number) => <IssueTag key={i} issue={iss} />)}</div>
+    </div>
+  )
+  if (type === 'bigquery_dataset') return (
+    <div>
+      <span className="font-medium text-slate-700 mr-2">{p.dataset_id || p.name || r.resource_id}</span>
+      {p.project_id && <span className="text-slate-400 mr-2 text-xs">{p.project_id}</span>}
+      {p.location && <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.location}</span>}
+      <div className="flex flex-wrap gap-1 mt-1">{(p.issues || []).map((iss: string, i: number) => <IssueTag key={i} issue={iss} />)}</div>
+    </div>
+  )
+  if (type === 'gcp_cloudsql_instance') return (
+    <div>
+      <span className="font-medium text-slate-700 mr-2">{p.name || r.resource_id}</span>
+      {p.database_version && <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.database_version}</span>}
+      {p.project_id && <span className="text-slate-400 mr-2 text-xs">{p.project_id}</span>}
+      <div className="flex flex-wrap gap-1 mt-1">{(p.issues || []).map((iss: string, i: number) => <IssueTag key={i} issue={iss} />)}</div>
+    </div>
+  )
+  if (type === 'azure_public_ip') return (
+    <div>
+      <span className="font-medium text-slate-700 mr-2">{p.name || r.resource_id}</span>
+      {p.ip_address && <span className="text-slate-500 text-xs mr-2">{p.ip_address}</span>}
+      {p.sku && <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.sku}</span>}
+      <div className="flex flex-wrap gap-1 mt-1">{(p.issues || []).map((iss: string, i: number) => <IssueTag key={i} issue={iss} />)}</div>
+    </div>
+  )
+  if (type === 'azure_managed_disk') return (
+    <div>
+      <span className="font-medium text-slate-700 mr-2">{p.name || r.resource_id}</span>
+      {p.disk_size_gb != null && <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.disk_size_gb} GB</span>}
+      {p.sku && <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.sku}</span>}
       <div className="flex flex-wrap gap-1 mt-1">{(p.issues || []).map((iss: string, i: number) => <IssueTag key={i} issue={iss} />)}</div>
     </div>
   )

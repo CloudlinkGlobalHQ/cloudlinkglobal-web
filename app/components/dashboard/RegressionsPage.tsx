@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getRegressions, acknowledgeRegression, resolveRegression, runRegressionDetection } from '../../lib/api'
+import { getDeployRisk, getRegressions, acknowledgeRegression, resolveRegression, runAutofixRegression, runRegressionDetection } from '../../lib/api'
 
 function timeAgo(iso: string | null) {
   if (!iso) return '—'
@@ -52,6 +52,7 @@ export default function RegressionsPage() {
   const [busy, setBusy]               = useState<Record<string, string>>({})
   const [running, setRunning]         = useState(false)
   const [msg, setMsg]                 = useState('')
+  const [risk, setRisk]               = useState<Record<string, any>>({})
 
   const load = async (f = filter) => {
     setLoading(true)
@@ -83,6 +84,31 @@ export default function RegressionsPage() {
     } catch (e: any) { setMsg(`Error: ${e.message}`) }
     setRunning(false)
     setTimeout(() => setMsg(''), 5000)
+  }
+
+  const handleAutofixPreview = async (regression: any) => {
+    setBusy(b => ({ ...b, [regression.regression_id]: 'autofix' }))
+    try {
+      const preview = await runAutofixRegression(regression.regression_id, {
+        dry_run: true,
+        repo: 'CloudlinkGlobalHQ/cloudlink-agents',
+      })
+      const changes = (preview.recommended_changes || []).map((item: any) => `- ${item.title}`).join('\n')
+      alert(`AutoFix preview for ${regression.service}\n\n${changes || 'No recommendations generated.'}`)
+    } catch (e: any) {
+      setMsg(`Error: ${e.message}`)
+    }
+    setBusy(b => { const n = { ...b }; delete n[regression.regression_id]; return n })
+  }
+
+  const handleRiskPreview = async (service: string) => {
+    if (risk[service]) return
+    try {
+      const result = await getDeployRisk(service)
+      setRisk((current) => ({ ...current, [service]: result }))
+    } catch {
+      // keep quiet in the card if this fails
+    }
   }
 
   const openCount = regressions.filter(r => r.status === 'open').length
@@ -179,10 +205,30 @@ export default function RegressionsPage() {
                       {r.source && <span className="text-slate-400">via {r.source}</span>}
                     </div>
                   )}
+
+                  <div className="mt-3">
+                    <button
+                      onClick={() => handleRiskPreview(r.service)}
+                      className="text-xs text-green-600 hover:underline"
+                    >
+                      Load deploy risk context
+                    </button>
+                    {risk[r.service] && (
+                      <div className="mt-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-xs text-slate-600">
+                        <span className="font-semibold text-slate-700">Deploy risk:</span> {risk[r.service].score}/100 ({risk[r.service].level})
+                        <p className="mt-1 text-slate-500">{risk[r.service].recommendation}</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Actions */}
                 <div className="flex flex-col gap-2 flex-shrink-0">
+                  <button onClick={() => handleAutofixPreview(r)}
+                    disabled={!!busy[r.regression_id]}
+                    className="text-xs px-3 py-1.5 border border-indigo-300 text-indigo-700 hover:bg-indigo-50 rounded-lg transition disabled:opacity-50">
+                    {busy[r.regression_id] === 'autofix' ? '⟳' : 'AutoFix preview'}
+                  </button>
                   {r.status === 'open' && (
                     <button onClick={() => handleAction(r.regression_id, 'acknowledge')}
                       disabled={!!busy[r.regression_id]}

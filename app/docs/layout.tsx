@@ -4,6 +4,8 @@ const DOCS_NAV = [
   { label: 'Setup Guide', href: '/docs/setup' },
   { label: 'CI Integration', href: '/docs/ci-integration' },
   { label: 'API Reference', href: '/docs/api-reference' },
+  { label: 'API Playground', href: '/docs/api-playground' },
+  { label: 'CLI', href: '/docs/cli' },
 ]
 
 export default function DocsLayout({ children }: { children: React.ReactNode }) {

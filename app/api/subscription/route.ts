@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents-production.up.railway.app'
+const API_URL = process.env.CLOUDLINK_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents-production.up.railway.app'
 
 export async function GET() {
   const { userId, getToken } = await auth()
@@ -11,6 +11,7 @@ export async function GET() {
     const token = await getToken()
     const res = await fetch(`${API_URL}/subscription/${userId}`, {
       headers: { Authorization: `Bearer ${token}` },
+      cache: 'no-store',
     })
     if (!res.ok) {
       return NextResponse.json({ plan: 'free', status: 'none', clerk_user_id: userId })

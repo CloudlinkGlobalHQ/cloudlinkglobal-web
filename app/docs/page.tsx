@@ -4,6 +4,8 @@ const pages = [
   { title: 'Setup Guide', href: '/docs/setup', desc: 'Connect your AWS account and run your first scan in under 5 minutes.' },
   { title: 'CI Integration', href: '/docs/ci-integration', desc: 'Send deploy events from GitHub Actions, GitLab CI, or any CI/CD pipeline.' },
   { title: 'API Reference', href: '/docs/api-reference', desc: 'Full REST API documentation for programmatic access.' },
+  { title: 'API Playground', href: '/docs/api-playground', desc: 'Send live requests against your Cloudlink API from the browser.' },
+  { title: 'CLI', href: '/docs/cli', desc: 'Use Cloudlink from your terminal for deploys, scans, costs, and regressions.' },
 ]
 
 export default function DocsIndex() {

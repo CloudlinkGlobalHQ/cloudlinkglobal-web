@@ -22,9 +22,12 @@ const API_SECTIONS: Section[] = [
   {
     name: 'Public API v1', emoji: '🌐',
     endpoints: [
-      { method: 'GET', path: '/v1/costs', description: 'Aggregated cost data with per-service breakdown', params: '?days=30' },
+      { method: 'GET', path: '/v1/costs', description: 'Aggregated cost data with per-service breakdown', params: '?days=30&provider=gcp' },
       { method: 'GET', path: '/v1/regressions', description: 'Active cost regressions', params: '?status=open|acknowledged|resolved' },
-      { method: 'GET', path: '/v1/resources', description: 'All tracked cloud resources' },
+      { method: 'GET', path: '/v1/resources', description: 'All tracked cloud resources', params: '?provider=azure&resource_type=azure_vm' },
+      { method: 'GET', path: '/v1/multi-cloud/summary', description: 'Connected clouds, provider coverage, and cloud-level cost totals' },
+      { method: 'GET', path: '/v1/governance', description: 'Approval policy posture and budget coverage summary' },
+      { method: 'GET', path: '/v1/drift', description: 'White-label drift summary for partner integrations' },
       { method: 'GET', path: '/v1/anomalies', description: 'Cost anomalies (last 7 days)' },
       { method: 'GET', path: '/v1/deploys', description: 'Deploy events', params: '?service=&limit=50' },
       { method: 'GET', path: '/v1/budgets', description: 'Budget guardrails + recent alerts' },
@@ -35,9 +38,31 @@ const API_SECTIONS: Section[] = [
     name: 'Cost Data', emoji: '💰',
     endpoints: [
       { method: 'GET', path: '/cost-summary', description: 'High-level cost summary' },
+      { method: 'GET', path: '/multi-cloud/summary', description: 'Provider-by-provider connected cloud summary' },
+      { method: 'POST', path: '/cloud-costs/ingest', description: 'Ingest normalized AWS/GCP/Azure cost records', body: '{"records":[{"provider":"gcp","service":"BigQuery","cost_usd":0.42,"monthly_cost_usd":120.5,"project_id":"demo-project"}]}' },
       { method: 'GET', path: '/cost-forecast', description: 'Linear regression cost forecast', params: '?days_back=30&days_ahead=30' },
       { method: 'GET', path: '/tag-costs', description: 'Cost by AWS tag key-value', params: '?tag_key=Environment' },
       { method: 'GET', path: '/unit-economics', description: 'Cost per resource type and action', params: '?days=30' },
+    ]
+  },
+  {
+    name: 'Governance & Drift', emoji: '🛡️',
+    endpoints: [
+      { method: 'GET', path: '/approval-policies', description: 'List action approval policies' },
+      { method: 'PUT', path: '/approval-policies/{action_type}', description: 'Update approval rules for an action type', body: '{"require_approval":true,"auto_approve_min_confidence":0.9}' },
+      { method: 'GET', path: '/drift/summary', description: 'Operational drift summary with severity counts' },
+      { method: 'GET', path: '/drift/baselines', description: 'List all drift baselines' },
+      { method: 'POST', path: '/drift/baselines', description: 'Create a drift baseline', body: '{"resource_id":"i-123","resource_type":"ec2_instance","region":"us-east-1","expected_state":{"instance_type":"t3.micro"}}' },
+      { method: 'POST', path: '/drift/scan', description: 'Run drift detection now' },
+      { method: 'GET', path: '/drift/events', description: 'List drift events', params: '?limit=50&severity=high' },
+    ]
+  },
+  {
+    name: 'Deploy Risk & AutoFix', emoji: '🧠',
+    endpoints: [
+      { method: 'GET', path: '/deploy-risk/{service}', description: 'Get deploy risk score for a service' },
+      { method: 'POST', path: '/deploy-risk/batch', description: 'Get risk scores for multiple services', body: '{"services":["api","worker","dashboard"]}' },
+      { method: 'POST', path: '/autofix/regressions/{regression_id}', description: 'Generate a remediation PR preview or create one', body: '{"dry_run":true,"provider":"github","repo":"CloudlinkGlobalHQ/cloudlink-agents"}' },
     ]
   },
   {

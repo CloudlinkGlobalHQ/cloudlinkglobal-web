@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getDemoSummary, getCostSummary, getCredentials, getDeploys, getTrackedServices, getCostSnapshots, getAnomalies } from '../../lib/api'
+import { getDemoSummary, getCostSummary, getCredentials, getDeploys, getTrackedServices, getCostSnapshots, getAnomalies, getMultiCloudSummary } from '../../lib/api'
 import dynamic from 'next/dynamic'
 
 const CostTrendChart = dynamic(() => import('./CostTrendChart'), { ssr: false })
@@ -11,8 +11,8 @@ const CostTrendChart = dynamic(() => import('./CostTrendChart'), { ssr: false })
 const STEPS = [
   {
     id: 'credential',
-    title: 'Add an AWS credential',
-    desc: 'Connect your AWS account so Cloudlink can scan your infrastructure.',
+    title: 'Add a cloud credential',
+    desc: 'Connect AWS, GCP, or Azure so Cloudlink can scan your infrastructure.',
     href: '/dashboard/credentials',
     cta: 'Go to Credentials →',
   },
@@ -192,6 +192,7 @@ function CostBar({ services }: { services: Record<string, number> }) {
 export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: () => void }) {
   const [summary, setSummary]           = useState<any>(null)
   const [cost, setCost]                 = useState<any>(null)
+  const [multiCloud, setMultiCloud]     = useState<any>(null)
   const [error, setError]               = useState('')
   const [hasCredential, setHasCredential] = useState(false)
   const [hasDeploy, setHasDeploy]       = useState(false)
@@ -204,6 +205,7 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
     setError('')
     getDemoSummary().then(setSummary).catch((e: any) => { setError(e?.message || 'Something went wrong') })
     getCostSummary().then(setCost).catch((e: any) => { setError(e?.message || 'Something went wrong') })
+    getMultiCloudSummary().then(setMultiCloud).catch(() => {})
     getCostSnapshots().then(setSnapshots).catch(() => {})
     getAnomalies().then(r => setAnomalies(r.anomalies || [])).catch(() => {})
   }, [stats])
@@ -291,16 +293,51 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
         <StatCard label="Failed / Retry"    value={failed}                color="red" />
       </div>
 
+      {multiCloud?.providers?.length > 0 && (
+        <div className="bg-white rounded-xl border border-slate-200 p-5 mb-6">
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <div>
+              <h2 className="text-sm font-semibold text-slate-700">Connected clouds</h2>
+              <p className="text-xs text-slate-400 mt-1">
+                {multiCloud.connected_clouds.length} provider{multiCloud.connected_clouds.length === 1 ? '' : 's'} active across {multiCloud.total_credentials} credential{multiCloud.total_credentials === 1 ? '' : 's'}
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {multiCloud.connected_clouds.map((provider: string) => (
+                <span key={provider} className="text-xs font-medium px-2.5 py-1 rounded-full border border-slate-200 bg-slate-50 text-slate-700 uppercase">
+                  {provider}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {multiCloud.providers.map((provider: any) => (
+              <div key={provider.provider} className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-semibold text-slate-800 uppercase">{provider.provider}</p>
+                  <span className="text-xs text-slate-500">{provider.resource_count} resources</span>
+                </div>
+                <p className="text-xl font-bold text-slate-800">${Number(provider.monthly_cost_usd || 0).toLocaleString()}</p>
+                <p className="text-xs text-slate-400 mt-1">{provider.credential_count} credential{provider.credential_count === 1 ? '' : 's'}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {cost && cost.total_mtd_usd > 0 && (
         <div className={`rounded-xl border p-5 mb-6 ${cost.above_threshold ? 'bg-red-50 border-red-200' : 'bg-white border-slate-200'}`}>
           <div className="flex items-center justify-between mb-1">
-            <h2 className="text-sm font-semibold text-slate-700">AWS Spend — Month to Date</h2>
+            <h2 className="text-sm font-semibold text-slate-700">Cloud Spend — Month to Date</h2>
             {cost.above_threshold && <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">Above threshold</span>}
           </div>
           <p className={`text-3xl font-bold mb-1 ${cost.above_threshold ? 'text-red-600' : 'text-slate-800'}`}>
             ${cost.total_mtd_usd.toLocaleString()}
           </p>
-          <p className="text-xs text-slate-400 mb-2">across {cost.credential_count} AWS credential(s)</p>
+          <p className="text-xs text-slate-400 mb-2">
+            across {cost.credential_count} credential{cost.credential_count === 1 ? '' : 's'}
+            {cost.connected_clouds?.length ? ` in ${cost.connected_clouds.map((p: string) => p.toUpperCase()).join(', ')}` : ''}
+          </p>
           <CostBar services={cost.top_services} />
         </div>
       )}

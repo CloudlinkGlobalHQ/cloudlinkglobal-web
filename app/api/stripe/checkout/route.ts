@@ -25,7 +25,11 @@ export async function POST(req: Request) {
       success_url: `${origin}/dashboard?checkout=success`,
       cancel_url: `${origin}/#pricing`,
       client_reference_id: userId,
+      allow_promotion_codes: true,
       metadata: { clerk_user_id: userId, plan },
+      subscription_data: {
+        metadata: { clerk_user_id: userId, plan },
+      },
     })
 
     return NextResponse.json({ url: session.url })

@@ -1,118 +1,144 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from 'react'
+import {
+  acknowledgeDriftEvent,
+  createDriftBaseline,
+  deleteDriftBaseline,
+  getDriftBaselines,
+  getDriftEvents,
+  getDriftSummary,
+  runDriftScan,
+} from '../../lib/api'
 
 interface DriftBaseline {
-  id: string;
-  resource_id: string;
-  resource_type: string;
-  region: string;
-  last_checked?: string;
-  last_drifted?: string;
-  drift_count: number;
-  expected_state: string;
+  id: string
+  resource_id: string
+  resource_type: string
+  region: string
+  last_checked?: string
+  last_drifted?: string
+  drift_count: number
+  expected_state: string
 }
 
 interface DriftEvent {
-  id: string;
-  resource_id: string;
-  resource_type: string;
-  field: string;
-  expected_value: string;
-  actual_value: string;
-  severity: "low" | "medium" | "high" | "critical";
-  acknowledged: boolean;
-  detected_at: string;
+  id: string
+  resource_id: string
+  resource_type: string
+  field: string
+  expected_value: string
+  actual_value: string
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  acknowledged: boolean
+  detected_at: string
 }
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-
 const SEVERITY_COLORS: Record<string, string> = {
-  critical: "bg-red-100 text-red-800 border-red-200",
-  high: "bg-orange-100 text-orange-800 border-orange-200",
-  medium: "bg-yellow-100 text-yellow-800 border-yellow-200",
-  low: "bg-blue-100 text-blue-800 border-blue-200",
-};
+  critical: 'bg-red-100 text-red-800 border-red-200',
+  high: 'bg-orange-100 text-orange-800 border-orange-200',
+  medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  low: 'bg-blue-100 text-blue-800 border-blue-200',
+}
 
 export default function DriftPage() {
-  const [baselines, setBaselines] = useState<DriftBaseline[]>([]);
-  const [events, setEvents] = useState<DriftEvent[]>([]);
-  const [scanning, setScanning] = useState(false);
-  const [showForm, setShowForm] = useState(false);
-  const [scanResult, setScanResult] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [baselines, setBaselines] = useState<DriftBaseline[]>([])
+  const [events, setEvents] = useState<DriftEvent[]>([])
+  const [summary, setSummary] = useState<any>(null)
+  const [scanning, setScanning] = useState(false)
+  const [showForm, setShowForm] = useState(false)
+  const [scanResult, setScanResult] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [severityFilter, setSeverityFilter] = useState('all')
   const [form, setForm] = useState({
-    resource_id: "",
-    resource_type: "ec2",
-    region: "us-east-1",
+    resource_id: '',
+    resource_type: 'ec2_instance',
+    region: 'us-east-1',
     expected_state: '{"state": "running", "instance_type": "t3.micro"}',
-  });
-
-  useEffect(() => {
-    fetchAll();
-  }, []);
+  })
 
   async function fetchAll() {
+    setError('')
     try {
-      const [bRes, eRes] = await Promise.all([
-        fetch(`${API}/drift/baselines`),
-        fetch(`${API}/drift/events?limit=50`),
-      ]);
-      if (bRes.ok) setBaselines(await bRes.json());
-      if (eRes.ok) setEvents(await eRes.json());
-    } catch {
-      // silently fail
+      const [baselineData, eventData, summaryData] = await Promise.all([
+        getDriftBaselines(),
+        getDriftEvents({ limit: 50, ...(severityFilter !== 'all' ? { severity: severityFilter } : {}) }),
+        getDriftSummary(),
+      ])
+      setBaselines(Array.isArray(baselineData) ? baselineData : [])
+      setEvents(Array.isArray(eventData) ? eventData : [])
+      setSummary(summaryData)
+    } catch (e: any) {
+      setError(e?.message || 'Could not load drift data')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
+
+  useEffect(() => {
+    fetchAll()
+  }, [severityFilter])
 
   async function runScan() {
-    setScanning(true);
-    setScanResult(null);
+    setScanning(true)
+    setScanResult(null)
     try {
-      const r = await fetch(`${API}/drift/scan`, { method: "POST" });
-      if (r.ok) {
-        const data = await r.json();
-        setScanResult(data);
-        fetchAll();
-      }
+      const data = await runDriftScan()
+      setScanResult(data)
+      await fetchAll()
+    } catch (e: any) {
+      setError(e?.message || 'Drift scan failed')
     } finally {
-      setScanning(false);
+      setScanning(false)
     }
   }
 
-  async function createBaseline(e: React.FormEvent) {
-    e.preventDefault();
-    let expectedState: any;
+  async function submitBaseline(e: React.FormEvent) {
+    e.preventDefault()
+    let expectedState: any
     try {
-      expectedState = JSON.parse(form.expected_state);
+      expectedState = JSON.parse(form.expected_state)
     } catch {
-      alert("Invalid JSON in expected state");
-      return;
+      alert('Invalid JSON in expected state')
+      return
     }
-    await fetch(`${API}/drift/baselines`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, expected_state: expectedState }),
-    });
-    setShowForm(false);
-    setForm({ resource_id: "", resource_type: "ec2", region: "us-east-1", expected_state: '{"state": "running", "instance_type": "t3.micro"}' });
-    fetchAll();
+    try {
+      await createDriftBaseline({ ...form, expected_state: expectedState })
+      setShowForm(false)
+      setForm({
+        resource_id: '',
+        resource_type: 'ec2_instance',
+        region: 'us-east-1',
+        expected_state: '{"state": "running", "instance_type": "t3.micro"}',
+      })
+      await fetchAll()
+    } catch (e: any) {
+      setError(e?.message || 'Could not create baseline')
+    }
   }
 
-  async function acknowledgeEvent(id: string) {
-    await fetch(`${API}/drift/events/${id}/acknowledge`, { method: "POST" });
-    setEvents(ev => ev.map(e => e.id === id ? { ...e, acknowledged: true } : e));
+  async function onAcknowledge(id: string) {
+    try {
+      await acknowledgeDriftEvent(id)
+      setEvents((current) => current.map((event) => (event.id === id ? { ...event, acknowledged: true } : event)))
+      await fetchAll()
+    } catch (e: any) {
+      setError(e?.message || 'Could not acknowledge drift event')
+    }
   }
 
-  async function deleteBaseline(id: string) {
-    await fetch(`${API}/drift/baselines/${id}`, { method: "DELETE" });
-    fetchAll();
+  async function onDeleteBaseline(id: string) {
+    try {
+      await deleteDriftBaseline(id)
+      await fetchAll()
+    } catch (e: any) {
+      setError(e?.message || 'Could not delete baseline')
+    }
   }
 
-  const unackEvents = events.filter(e => !e.acknowledged);
-  const criticalCount = unackEvents.filter(e => e.severity === "critical").length;
+  const unackEvents = events.filter((event) => !event.acknowledged)
+  const criticalCount = unackEvents.filter((event) => event.severity === 'critical').length
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
@@ -120,7 +146,7 @@ export default function DriftPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Drift Detection</h1>
           <p className="text-gray-500 text-sm mt-1">
-            Alert when actual AWS infrastructure diverges from expected state.
+            Monitor when live infrastructure drifts away from your expected state definitions.
           </p>
         </div>
         <div className="flex gap-3">
@@ -135,49 +161,80 @@ export default function DriftPage() {
             disabled={scanning}
             className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm font-medium"
           >
-            {scanning ? "Scanning..." : "🔍 Scan Now"}
+            {scanning ? 'Scanning...' : 'Scan Now'}
           </button>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         {[
-          { label: "Baselines Monitored", value: baselines.length, color: "text-gray-900" },
-          { label: "Unacknowledged Drifts", value: unackEvents.length, color: unackEvents.length > 0 ? "text-orange-600" : "text-gray-900" },
-          { label: "Critical Drifts", value: criticalCount, color: criticalCount > 0 ? "text-red-600" : "text-gray-900" },
-        ].map(s => (
-          <div key={s.label} className="bg-white rounded-xl border border-gray-200 p-4 text-center">
-            <div className={`text-3xl font-bold ${s.color}`}>{s.value}</div>
-            <div className="text-sm text-gray-500 mt-1">{s.label}</div>
+          { label: 'Baselines Monitored', value: summary?.baseline_count ?? baselines.length, color: 'text-gray-900' },
+          { label: 'Open Drift Events', value: summary?.open_event_count ?? unackEvents.length, color: (summary?.open_event_count ?? unackEvents.length) > 0 ? 'text-orange-600' : 'text-gray-900' },
+          { label: 'Critical Drifts', value: criticalCount, color: criticalCount > 0 ? 'text-red-600' : 'text-gray-900' },
+          { label: 'Tracked Events', value: summary?.event_count ?? events.length, color: 'text-gray-900' },
+        ].map((stat) => (
+          <div key={stat.label} className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+            <div className={`text-3xl font-bold ${stat.color}`}>{stat.value}</div>
+            <div className="text-sm text-gray-500 mt-1">{stat.label}</div>
           </div>
         ))}
       </div>
 
-      {/* Scan result */}
+      {summary?.severity_counts && Object.keys(summary.severity_counts).length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-sm font-semibold text-slate-800">Drift severity mix</h2>
+              <p className="text-xs text-slate-400 mt-0.5">Use this to prioritize investigation and approvals.</p>
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              {['all', 'critical', 'high', 'medium', 'low'].map((level) => (
+                <button
+                  key={level}
+                  onClick={() => setSeverityFilter(level)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
+                    severityFilter === level ? 'bg-green-600 text-white border-green-600' : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  {level}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            {Object.entries(summary.severity_counts).map(([severity, count]) => (
+              <span key={severity} className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${SEVERITY_COLORS[severity] || 'bg-slate-100 text-slate-700 border-slate-200'}`}>
+                {severity}: {Number(count)}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {scanResult && (
-        <div className={`rounded-xl border p-4 mb-6 ${scanResult.drifts_found > 0 ? "bg-orange-50 border-orange-200" : "bg-green-50 border-green-200"}`}>
+        <div className={`rounded-xl border p-4 mb-6 ${scanResult.drifts_found > 0 ? 'bg-orange-50 border-orange-200' : 'bg-green-50 border-green-200'}`}>
           <div className="font-medium text-gray-900">
             {scanResult.drifts_found > 0
-              ? `⚠️ ${scanResult.drifts_found} drift(s) detected across ${scanResult.baselines_checked} baselines`
-              : `✅ No drift detected across ${scanResult.baselines_checked} baselines`}
+              ? `${scanResult.drifts_found} drift(s) detected across ${scanResult.baselines_checked} baselines`
+              : `No drift detected across ${scanResult.baselines_checked} baselines`}
           </div>
           <div className="text-sm text-gray-500 mt-1">Scanned at {new Date(scanResult.scanned_at).toLocaleTimeString()}</div>
         </div>
       )}
 
-      {/* Create baseline form */}
       {showForm && (
         <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Add Drift Baseline</h2>
-          <form onSubmit={createBaseline} className="grid grid-cols-2 gap-4">
+          <form onSubmit={submitBaseline} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Resource ID</label>
               <input
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
                 placeholder="i-0abc123, sg-0abc123, my-bucket"
                 value={form.resource_id}
-                onChange={e => setForm(f => ({ ...f, resource_id: e.target.value }))}
+                onChange={(e) => setForm((current) => ({ ...current, resource_id: e.target.value }))}
                 required
               />
             </div>
@@ -186,12 +243,12 @@ export default function DriftPage() {
               <select
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
                 value={form.resource_type}
-                onChange={e => setForm(f => ({ ...f, resource_type: e.target.value }))}
+                onChange={(e) => setForm((current) => ({ ...current, resource_type: e.target.value }))}
               >
-                <option value="ec2">EC2 Instance</option>
+                <option value="ec2_instance">EC2 Instance</option>
                 <option value="security_group">Security Group</option>
                 <option value="s3_bucket">S3 Bucket</option>
-                <option value="rds">RDS Instance</option>
+                <option value="rds_instance">RDS Instance</option>
               </select>
             </div>
             <div>
@@ -199,7 +256,7 @@ export default function DriftPage() {
               <input
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
                 value={form.region}
-                onChange={e => setForm(f => ({ ...f, region: e.target.value }))}
+                onChange={(e) => setForm((current) => ({ ...current, region: e.target.value }))}
               />
             </div>
             <div>
@@ -208,11 +265,11 @@ export default function DriftPage() {
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono"
                 rows={3}
                 value={form.expected_state}
-                onChange={e => setForm(f => ({ ...f, expected_state: e.target.value }))}
+                onChange={(e) => setForm((current) => ({ ...current, expected_state: e.target.value }))}
                 required
               />
             </div>
-            <div className="col-span-2 flex gap-3">
+            <div className="md:col-span-2 flex gap-3">
               <button type="submit" className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
                 Add Baseline
               </button>
@@ -224,12 +281,11 @@ export default function DriftPage() {
         </div>
       )}
 
-      {/* Drift Events */}
       {unackEvents.length > 0 && (
         <div className="mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-3">Active Drift Events</h2>
           <div className="space-y-2">
-            {unackEvents.map(event => (
+            {unackEvents.map((event) => (
               <div key={event.id} className={`rounded-xl border p-4 flex items-center justify-between ${SEVERITY_COLORS[event.severity]}`}>
                 <div>
                   <div className="font-medium">
@@ -242,7 +298,7 @@ export default function DriftPage() {
                   <div className="text-xs mt-1 opacity-70">{new Date(event.detected_at).toLocaleString()}</div>
                 </div>
                 <button
-                  onClick={() => acknowledgeEvent(event.id)}
+                  onClick={() => onAcknowledge(event.id)}
                   className="ml-4 px-3 py-1.5 bg-white rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 border border-gray-200 shrink-0"
                 >
                   Acknowledge
@@ -253,7 +309,6 @@ export default function DriftPage() {
         </div>
       )}
 
-      {/* Baselines Table */}
       <div>
         <h2 className="text-lg font-semibold text-gray-900 mb-3">Monitored Baselines</h2>
         {loading ? (
@@ -268,30 +323,30 @@ export default function DriftPage() {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  {["Resource", "Type", "Region", "Drift Count", "Last Checked", ""].map(h => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">{h}</th>
+                  {['Resource', 'Type', 'Region', 'Drift Count', 'Last Checked', ''].map((heading) => (
+                    <th key={heading} className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">{heading}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {baselines.map(b => (
-                  <tr key={b.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 font-mono text-xs">{b.resource_id}</td>
-                    <td className="px-4 py-3 text-gray-600">{b.resource_type}</td>
-                    <td className="px-4 py-3 text-gray-600">{b.region}</td>
+                {baselines.map((baseline) => (
+                  <tr key={baseline.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 font-mono text-xs">{baseline.resource_id}</td>
+                    <td className="px-4 py-3 text-gray-600">{baseline.resource_type}</td>
+                    <td className="px-4 py-3 text-gray-600">{baseline.region}</td>
                     <td className="px-4 py-3">
-                      {b.drift_count > 0 ? (
-                        <span className="text-orange-600 font-semibold">{b.drift_count}</span>
+                      {baseline.drift_count > 0 ? (
+                        <span className="text-orange-600 font-semibold">{baseline.drift_count}</span>
                       ) : (
                         <span className="text-green-600">0</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-gray-500">
-                      {b.last_checked ? new Date(b.last_checked).toLocaleString() : "Never"}
+                      {baseline.last_checked ? new Date(baseline.last_checked).toLocaleString() : 'Never'}
                     </td>
                     <td className="px-4 py-3">
                       <button
-                        onClick={() => deleteBaseline(b.id)}
+                        onClick={() => onDeleteBaseline(baseline.id)}
                         className="text-gray-400 hover:text-red-500 text-xs"
                       >
                         Remove
@@ -305,5 +360,5 @@ export default function DriftPage() {
         )}
       </div>
     </div>
-  );
+  )
 }

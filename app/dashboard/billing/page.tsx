@@ -23,10 +23,10 @@ export default function BillingPage() {
       const res = await fetch('/api/stripe/portal', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customerId: subscription.stripe_customer_id }),
       })
       const data = await res.json()
       if (data.url) window.location.href = data.url
+      else throw new Error(data.error || 'Could not open billing portal')
     } catch (e: any) {
       alert(e.message || 'Could not open billing portal')
     } finally {
@@ -96,7 +96,7 @@ export default function BillingPage() {
           <div className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">Plan limits</div>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">AWS services</span>
+              <span className="text-sm text-gray-600">Cloud credentials</span>
               <span className="text-sm font-medium text-gray-900">
                 {limits.services === Infinity ? 'Unlimited' : limits.services}
               </span>
@@ -114,6 +114,15 @@ export default function BillingPage() {
           </div>
         </div>
       </div>
+
+      {plan === 'enterprise' && (
+        <div className="mt-5 rounded-xl border border-green-200 bg-green-50 p-5">
+          <h2 className="text-sm font-semibold text-green-900">Enterprise support</h2>
+          <p className="text-sm text-green-800 mt-1">
+            Enterprise billing, onboarding, and procurement are handled directly with the Cloudlink team.
+          </p>
+        </div>
+      )}
     </div>
   )
 }
