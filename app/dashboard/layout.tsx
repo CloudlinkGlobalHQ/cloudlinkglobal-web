@@ -33,6 +33,7 @@ const NAV = [
   { label: 'Unit Economics', href: '/dashboard/unit-economics' },
   { label: 'Tag Costs',      href: '/dashboard/tags' },
   { label: 'Virtual Tags',   href: '/dashboard/virtual-tags' },
+  { label: 'Savings Plans',  href: '/dashboard/savings-plans' },
   { label: 'Kubernetes',     href: '/dashboard/kubernetes' },
   { label: 'AutoStop',       href: '/dashboard/autostop' },
   { label: 'Reserved',       href: '/dashboard/reserved-instances' },

@@ -179,3 +179,12 @@ export const getV1Savings          = ()                          => request('/v1
 // API key management
 export const getApiKeys            = ()                          => request('/api-keys')
 export const createApiKey          = (data: object)              => request('/api-keys', { method: 'POST', body: JSON.stringify(data) })
+
+// Savings Plans
+export const analyzeSavingsPlans   = (data: object)              => request('/savings-plans/analyze', { method: 'POST', body: JSON.stringify(data) })
+export const getSavingsPlansOptions = ()                         => request('/savings-plans/options')
+export const getSavingsPlansCoverage = (days = 30)               => request(`/savings-plans/coverage?days=${days}`)
+
+// SDK cost-per-customer
+export const getSdkCostsByCustomer = (days = 30, feature?: string) =>
+  request(`/sdk/costs/by-customer?days=${days}${feature ? `&feature=${encodeURIComponent(feature)}` : ''}`)
