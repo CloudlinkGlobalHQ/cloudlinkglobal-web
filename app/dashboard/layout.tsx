@@ -52,6 +52,7 @@ const NAV = [
   { label: 'Budgets',        href: '/dashboard/budgets' },
   { label: 'Team',           href: '/dashboard/team' },
   { label: 'API Keys',       href: '/dashboard/api-keys' },
+  { label: 'API Docs',       href: '/dashboard/api-docs' },
   { label: 'Billing',        href: '/dashboard/billing' },
 ]
 
