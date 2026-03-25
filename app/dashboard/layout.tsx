@@ -36,6 +36,8 @@ const NAV = [
   { label: 'Savings Plans',  href: '/dashboard/savings-plans' },
   { label: 'Kubernetes',     href: '/dashboard/kubernetes' },
   { label: 'AutoStop',       href: '/dashboard/autostop' },
+  { label: 'TTL Destroy',    href: '/dashboard/ttl' },
+  { label: 'Drift',          href: '/dashboard/drift' },
   { label: 'Reserved',       href: '/dashboard/reserved-instances' },
   { label: 'Rightsizing',    href: '/dashboard/rightsizing' },
   { label: 'Savings Report', href: '/dashboard/savings-report' },
