@@ -14,7 +14,13 @@ export async function POST(req: Request) {
 
     const { plan } = await req.json()
     const priceId = PRICES[plan]
-    if (!priceId) return NextResponse.json({ error: `Invalid plan or missing price ID for: ${plan}` }, { status: 400 })
+    if (!priceId) {
+      const configured = Object.entries(PRICES).filter(([, v]) => v).map(([k]) => k)
+      console.error(`[stripe/checkout] Missing price ID for plan "${plan}". Set STRIPE_${plan.toUpperCase()}_PRICE_ID in Vercel env vars. Configured plans: ${configured.join(', ') || 'none'}`)
+      return NextResponse.json({
+        error: `Billing is not fully configured yet. Please contact support to upgrade your plan.`,
+      }, { status: 503 })
+    }
 
     const origin = req.headers.get('origin') || 'https://cloudlinkglobal.com'
 

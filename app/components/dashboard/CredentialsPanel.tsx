@@ -151,48 +151,53 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
 
           {cloudTab === 'AWS' && (
             <>
-              <h2 className="font-semibold text-slate-800 mb-4">Connect AWS Account</h2>
-              <div className="flex gap-1 mb-5 bg-slate-100 p-1 rounded-lg w-fit">
-                {['IAM Role', 'Access Key'].map(t => (
-                  <button key={t} onClick={() => setAwsAuthTab(t)}
-                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition ${awsAuthTab === t ? 'bg-white text-green-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>{t}</button>
-                ))}
-              </div>
+              <h2 className="font-semibold text-slate-800 mb-1">Connect AWS Account</h2>
+              <p className="text-xs text-slate-500 mb-4">
+                Cloudlink uses a read-only IAM Role — no credentials are stored, and you can revoke access instantly.
+              </p>
 
               {awsAuthTab === 'IAM Role' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div><label className="block text-xs font-medium text-slate-600 mb-1">Label</label><input value={awsRoleForm.label} onChange={e => setAwsRoleForm(f => ({ ...f, label: e.target.value }))} placeholder="e.g. Acme Production" className={inp} /></div>
                   <div><label className="block text-xs font-medium text-slate-600 mb-1">Role ARN *</label><input value={awsRoleForm.role_arn} onChange={e => setAwsRoleForm(f => ({ ...f, role_arn: e.target.value }))} placeholder="arn:aws:iam::123456789012:role/CloudlinkRole" className={`${inp} font-mono`} /></div>
-                  <div><label className="block text-xs font-medium text-slate-600 mb-1">External ID</label><input value={awsRoleForm.external_id} onChange={e => setAwsRoleForm(f => ({ ...f, external_id: e.target.value }))} placeholder="optional" className={inp} /></div>
+                  <div><label className="block text-xs font-medium text-slate-600 mb-1">External ID <span className="font-normal text-slate-400">(from your Cloudlink onboarding)</span></label><input value={awsRoleForm.external_id} onChange={e => setAwsRoleForm(f => ({ ...f, external_id: e.target.value }))} placeholder="optional" className={inp} /></div>
                   <div><label className="block text-xs font-medium text-slate-600 mb-1">Regions</label><input value={awsRoleForm.regions} onChange={e => setAwsRoleForm(f => ({ ...f, regions: e.target.value }))} placeholder="us-east-1, us-west-2" className={inp} /></div>
-                  <div className="md:col-span-2 bg-slate-50 rounded-lg p-4 text-xs text-slate-600">
-                    <p className="font-medium text-slate-700 mb-2">Deploy the Cloudlink IAM Role via CloudFormation</p>
+                  <div className="md:col-span-2 bg-green-50 border border-green-200 rounded-lg p-4 text-xs text-slate-600">
+                    <p className="font-medium text-slate-700 mb-2">Step 1 — Deploy the IAM Role into your AWS account</p>
+                    <p className="text-slate-500 mb-3">Download the CloudFormation template, then deploy it in your AWS Console. It creates a read-only role that Cloudlink can assume — nothing else. Takes about 60 seconds.</p>
                     <div className="flex gap-2 flex-wrap">
-                      <a href={`${getBase()}/setup/cloudformation-template`} download="cloudlink-role.yaml" className="inline-flex items-center gap-1 bg-orange-600 hover:bg-orange-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition">↓ Download cloudlink-role.yaml</a>
-                      <a href="https://console.aws.amazon.com/cloudformation/home#/stacks/create" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 border border-slate-300 text-slate-600 hover:bg-slate-100 text-xs font-medium px-3 py-1.5 rounded-lg transition">Open CloudFormation ↗</a>
+                      <a href={`${getBase()}/setup/cloudformation-template`} download="cloudlink-role.yaml" className="inline-flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition">↓ Download cloudlink-role.yaml</a>
+                      <a href="https://console.aws.amazon.com/cloudformation/home#/stacks/create" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 border border-slate-300 text-slate-600 hover:bg-slate-100 text-xs font-medium px-3 py-1.5 rounded-lg transition">Open CloudFormation Console ↗</a>
                     </div>
+                    <p className="mt-3 text-slate-500">Step 2 — Copy the <code className="bg-green-100 px-1 rounded font-mono">RoleArn</code> from the CloudFormation Outputs tab and paste it above.</p>
                   </div>
                 </div>
               )}
 
               {awsAuthTab === 'Access Key' && (
                 <>
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 text-xs text-red-800">
+                    <p className="font-semibold mb-1">⚠️ Not recommended for production</p>
+                    <p>Access keys are long-lived credentials. If exposed, they grant permanent access to your AWS account. Use IAM Role assumption instead — it uses short-lived tokens and is the industry standard.</p>
+                    <button onClick={() => setAwsAuthTab('IAM Role')} className="mt-2 underline text-red-700 hover:text-red-900">Switch to IAM Role (recommended)</button>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div><label className="block text-xs font-medium text-slate-600 mb-1">Label</label><input value={awsKeyForm.label} onChange={e => setAwsKeyForm(f => ({ ...f, label: e.target.value }))} placeholder="e.g. My AWS Account" className={inp} /></div>
                     <div><label className="block text-xs font-medium text-slate-600 mb-1">Access Key ID *</label><input value={awsKeyForm.access_key_id} onChange={e => setAwsKeyForm(f => ({ ...f, access_key_id: e.target.value }))} placeholder="AKIAIOSFODNN7EXAMPLE" className={`${inp} font-mono`} /></div>
                     <div><label className="block text-xs font-medium text-slate-600 mb-1">Secret Access Key *</label><input value={awsKeyForm.secret_access_key} onChange={e => setAwsKeyForm(f => ({ ...f, secret_access_key: e.target.value }))} type="password" placeholder="••••••••••••••••••••••••••••••••••••••••" className={`${inp} font-mono`} /></div>
                     <div><label className="block text-xs font-medium text-slate-600 mb-1">Regions</label><input value={awsKeyForm.regions} onChange={e => setAwsKeyForm(f => ({ ...f, regions: e.target.value }))} placeholder="us-east-1, us-west-2" className={inp} /></div>
                   </div>
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4 text-xs text-amber-800">
-                    <p className="font-medium mb-1">How to create AWS access keys</p>
-                    <ol className="list-decimal list-inside space-y-1">
-                      <li>AWS Console → IAM → Users → Create user</li>
-                      <li>Attach <code className="bg-amber-100 px-1 rounded">ReadOnlyAccess</code> + remediation policies</li>
-                      <li>Security credentials → Create access key</li>
-                      <li>Copy Access Key ID and Secret above</li>
-                    </ol>
-                  </div>
                 </>
+              )}
+
+              {awsAuthTab === 'IAM Role' && (
+                <p className="text-xs text-slate-400 mt-1">
+                  Not using CloudFormation?{' '}
+                  <button onClick={() => setAwsAuthTab('Access Key')} className="underline hover:text-slate-600">
+                    Use an access key instead
+                  </button>
+                  {' '}(not recommended)
+                </p>
               )}
             </>
           )}

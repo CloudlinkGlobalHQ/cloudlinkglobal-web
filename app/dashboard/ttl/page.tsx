@@ -15,7 +15,7 @@ interface TTLRule {
   notes?: string;
 }
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://cloudlink-agents-production.up.railway.app";
 
 function formatDuration(seconds: number): string {
   if (seconds <= 0) return "Expired";
