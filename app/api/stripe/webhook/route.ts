@@ -34,9 +34,26 @@ async function syncSubscription(data: {
   }
 }
 
+async function notifyBackend(path: string, body: object) {
+  if (!BACKEND_SYNC_SECRET) return
+  try {
+    await fetch(`${API_URL}${path}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${BACKEND_SYNC_SECRET}`,
+      },
+      body: JSON.stringify(body),
+    })
+  } catch (err) {
+    console.error(`Failed to notify backend ${path}:`, err)
+  }
+}
+
 function planFromPriceId(priceId: string): string {
   if (priceId === process.env.STRIPE_STARTER_PRICE_ID) return 'starter'
   if (priceId === process.env.STRIPE_GROWTH_PRICE_ID) return 'growth'
+  if (priceId === process.env.STRIPE_METERED_PRICE_ID) return 'performance'
   return 'unknown'
 }
 
@@ -54,15 +71,30 @@ export async function POST(req: Request) {
   }
 
   switch (event.type) {
+    // ── Checkout / Setup ────────────────────────────────────────────────────
     case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session
       const clerkUserId = session.metadata?.clerk_user_id
+
+      if (session.mode === 'setup') {
+        // Customer saved a payment method — mark on file in backend
+        if (clerkUserId) {
+          await notifyBackend('/subscription/payment-method-saved', {
+            clerk_user_id: clerkUserId,
+            stripe_customer_id: session.customer,
+            setup_intent: session.setup_intent,
+          })
+          console.log(`Payment method saved: user=${clerkUserId}`)
+        }
+        break
+      }
+
+      // mode === 'subscription' (legacy tiered plans, kept for backward compat)
       const plan = session.metadata?.plan || 'starter'
       const stripeCustomerId = session.customer as string
       const subscriptionId = session.subscription as string
 
       if (clerkUserId) {
-        // Fetch subscription to get period end
         let periodEnd: string | undefined
         try {
           const sub = await getStripe().subscriptions.retrieve(subscriptionId) as any
@@ -84,14 +116,13 @@ export async function POST(req: Request) {
       break
     }
 
+    // ── Subscription updates ─────────────────────────────────────────────────
     case 'customer.subscription.updated': {
       const sub = event.data.object as any
       const customerId = sub.customer as string
       const priceId = sub.items?.data?.[0]?.price?.id || ''
       const plan = planFromPriceId(priceId)
       const periodEnd = sub.current_period_end ? new Date(sub.current_period_end * 1000).toISOString() : undefined
-
-      // Look up clerk_user_id from metadata or find by customer
       const clerkUserId = sub.metadata?.clerk_user_id
       if (clerkUserId) {
         await syncSubscription({
@@ -118,8 +149,44 @@ export async function POST(req: Request) {
           plan: 'free',
           status: 'cancelled',
         })
+        // Flag account as having a payment issue / subscription removed
+        await notifyBackend('/subscription/cancelled', {
+          clerk_user_id: clerkUserId,
+          stripe_subscription_id: sub.id,
+          cancelled_at: new Date().toISOString(),
+        })
       }
       console.log(`Subscription cancelled: ${sub.id}`)
+      break
+    }
+
+    // ── Invoice events ───────────────────────────────────────────────────────
+    case 'invoice.payment_succeeded': {
+      const invoice = event.data.object as any
+      const customerId = invoice.customer as string
+      const amountPaidCents = invoice.amount_paid as number
+      const invoiceId = invoice.id as string
+
+      // Look up clerk_user_id from the subscription metadata
+      let clerkUserId: string | undefined
+      if (invoice.subscription) {
+        try {
+          const sub = await getStripe().subscriptions.retrieve(invoice.subscription as string) as any
+          clerkUserId = sub.metadata?.clerk_user_id
+        } catch {}
+      }
+
+      if (clerkUserId) {
+        await notifyBackend('/billing/invoice-paid', {
+          clerk_user_id: clerkUserId,
+          stripe_customer_id: customerId,
+          stripe_invoice_id: invoiceId,
+          amount_paid_usd: amountPaidCents / 100,
+          invoice_pdf: invoice.invoice_pdf,
+          paid_at: new Date().toISOString(),
+        })
+      }
+      console.log(`Invoice paid: ${invoiceId}, customer=${customerId}, amount=$${(amountPaidCents / 100).toFixed(2)}`)
       break
     }
 
@@ -136,6 +203,13 @@ export async function POST(req: Request) {
               stripe_customer_id: invoice.customer as string,
               plan: planFromPriceId(subscription.items?.data?.[0]?.price?.id || ''),
               status: 'past_due',
+            })
+            await notifyBackend('/billing/payment-failed', {
+              clerk_user_id: clerkUserId,
+              stripe_customer_id: invoice.customer,
+              stripe_invoice_id: invoice.id,
+              amount_due_usd: (invoice.amount_due || 0) / 100,
+              failed_at: new Date().toISOString(),
             })
           }
         } catch {}

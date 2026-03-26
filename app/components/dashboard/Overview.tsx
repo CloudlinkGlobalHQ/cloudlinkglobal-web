@@ -5,6 +5,7 @@ import { getDemoSummary, getCostSummary, getCredentials, getDeploys, getTrackedS
 import dynamic from 'next/dynamic'
 
 const CostTrendChart = dynamic(() => import('./CostTrendChart'), { ssr: false })
+const SavingsWidget = dynamic(() => import('./SavingsWidget'), { ssr: false })
 
 // ─── Onboarding checklist ────────────────────────────────────────────────────
 
@@ -341,6 +342,9 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
           <CostBar services={cost.top_services} />
         </div>
       )}
+
+      {/* Savings performance widget */}
+      <SavingsWidget />
 
       {/* Cost trend chart */}
       {snapshots.length > 0 && <CostTrendChart snapshots={snapshots} />}
