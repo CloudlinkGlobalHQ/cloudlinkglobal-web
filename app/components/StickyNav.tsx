@@ -40,15 +40,18 @@ export default function StickyNav({ items }: { items: Item[] }) {
       className={[
         "sticky top-0 z-30 w-full transition-all duration-300",
         scrolled
-          ? "bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-sm"
-          : "bg-white border-b border-gray-100",
+          ? "bg-white/92 backdrop-blur-xl border-b border-slate-200 shadow-sm"
+          : "bg-white/88 backdrop-blur-md border-b border-transparent",
       ].join(" ")}
     >
       <div className="mx-auto max-w-6xl px-6 h-14 flex items-center justify-between gap-4">
         {/* Logo */}
         <a href="#top" className="flex items-center gap-2 shrink-0">
           <LogoMark size={26} />
-          <span className="text-sm font-bold tracking-tight text-gray-900">Cloudlink</span>
+          <div>
+            <div className="text-sm font-bold tracking-tight text-gray-900">Cloudlink</div>
+            <div className="hidden text-[10px] uppercase tracking-[0.18em] text-slate-400 sm:block">Deploy-aware FinOps</div>
+          </div>
         </a>
 
         {/* Nav links */}
@@ -84,7 +87,7 @@ export default function StickyNav({ items }: { items: Item[] }) {
             href="#waitlist"
             className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-green-600 hover:bg-green-700 text-white text-sm font-semibold transition-colors shadow-sm shadow-green-600/20"
           >
-            Get started
+            Request access
           </a>
         </div>
       </div>

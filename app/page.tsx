@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import WaitlistForm from "./components/WaitlistForm";
 import StickyNav from "./components/StickyNav";
 import InteractiveAlert from "./components/InteractiveAlert";
@@ -24,8 +23,8 @@ const item = {
 };
 
 const card = "rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:border-green-200";
-const primaryBtn = "inline-flex items-center justify-center gap-2 rounded-full bg-green-600 hover:bg-green-700 active:bg-green-800 px-7 py-3 text-sm font-semibold text-white shadow-sm shadow-green-600/20 transition-all duration-200";
-const secondaryBtn = "inline-flex items-center justify-center gap-2 rounded-full border border-gray-200 bg-white hover:border-green-300 hover:bg-green-50 px-7 py-3 text-sm font-semibold text-gray-700 transition-all duration-200";
+const primaryBtn = "inline-flex items-center justify-center gap-2 rounded-full bg-green-600 hover:bg-green-500 active:bg-green-700 px-7 py-3 text-sm font-semibold text-white shadow-lg shadow-green-600/20 transition-all duration-200";
+const secondaryBtn = "inline-flex items-center justify-center gap-2 rounded-full border border-slate-700/80 bg-slate-900/75 hover:border-slate-500 hover:bg-slate-900 px-7 py-3 text-sm font-semibold text-slate-100 transition-all duration-200";
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -52,8 +51,8 @@ const steps = [
         <rect x="3" y="11" width="16" height="8" rx="2"/><path d="M7 11V7a4 4 0 018 0v4"/><circle cx="11" cy="15" r="1" fill="currentColor" stroke="none"/>
       </svg>
     ),
-    title: "Connect AWS read-only",
-    desc: "Create a scoped IAM role using our one-click CloudFormation template. No agents, no credentials, no write access — ever.",
+    title: "Connect your cloud — free",
+    desc: "Create a scoped IAM role using our one-click CloudFormation template. No agents, no write access, no upfront cost — ever.",
   },
   {
     n: "02",
@@ -62,8 +61,8 @@ const steps = [
         <path d="M3 17l4-8 4 5 3-3 4 6"/><circle cx="18" cy="5" r="2"/>
       </svg>
     ),
-    title: "We learn your cost baselines",
-    desc: "Cloudlink builds per-service cost baselines automatically. No configuration needed — we handle the pattern detection.",
+    title: "We scan, detect, and fix waste",
+    desc: "Cloudlink finds idle resources, cost regressions, misconfigurations, and overspending — then remediates them automatically or with your approval.",
   },
   {
     n: "03",
@@ -72,8 +71,18 @@ const steps = [
         <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
       </svg>
     ),
-    title: "Get instant deploy-linked alerts",
-    desc: "See the exact % change, monthly dollar impact, and which deploy triggered it — delivered to Slack or email.",
+    title: "You save money",
+    desc: "Savings are tracked and verified — idle resources stopped, regressions caught, waste eliminated. Every dollar saved is attributed and confirmed.",
+  },
+  {
+    n: "04",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="11" y1="1" x2="11" y2="21"/><path d="M17 5H8.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+      </svg>
+    ),
+    title: "We take 15% — nothing before",
+    desc: "Once savings are confirmed, we invoice 15% of the amount saved. No savings, no invoice. You always keep 85% of everything we find.",
   },
 ];
 
@@ -168,88 +177,86 @@ const navItems = [
 // ── PAGE ──────────────────────────────────────────────────────────────────────
 
 export default function Home() {
-  const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const heroY       = useTransform(scrollYProgress, [0, 0.5], [0, 60]);
-
   return (
     <main className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
       <StickyNav items={navItems} />
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section ref={heroRef} id="top" className="relative overflow-hidden bg-white pt-16 pb-8">
-        {/* Dot grid */}
-        <div className="dot-grid pointer-events-none absolute inset-0 opacity-60" />
-        {/* Green radial wash */}
-        <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] rounded-full bg-green-500/8 blur-3xl" />
+      <section id="top" className="relative overflow-hidden bg-[#08111f] pt-16 pb-12 text-white">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(34,197,94,0.14),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(56,189,248,0.12),_transparent_28%),linear-gradient(180deg,_rgba(8,17,31,1)_0%,_rgba(12,22,38,1)_100%)]" />
+        <div className="dot-grid pointer-events-none absolute inset-0 opacity-[0.14]" />
+        <div className="pointer-events-none absolute top-24 left-1/2 h-[540px] w-[980px] -translate-x-1/2 rounded-full bg-green-500/10 blur-3xl" />
 
-        <motion.div style={{ opacity: heroOpacity, y: heroY }} className="relative z-10 mx-auto max-w-6xl px-6">
+        <div className="relative z-10 mx-auto max-w-6xl px-6">
           {/* Badge */}
           <motion.div initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.1, ease: E }}
             className="flex justify-center mb-8">
-            <a href="#waitlist" className="group inline-flex items-center gap-2.5 rounded-full border border-green-200 bg-green-50 px-4 py-2 text-xs font-semibold text-green-700 hover:bg-green-100 hover:border-green-300 transition-all duration-200 shadow-sm">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-60" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
-              </span>
-              Now accepting early access applications
-              <span className="text-green-500 group-hover:translate-x-0.5 transition-transform duration-200">→</span>
+            <a href="#waitlist" className="group inline-flex items-center gap-2.5 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200 transition-all duration-200 shadow-sm">
+              <span className="inline-flex h-2 w-2 rounded-full bg-green-500" />
+              We only get paid when you save money
             </a>
           </motion.div>
 
           {/* Headline */}
           <motion.h1 initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: E }}
-            className="mx-auto max-w-4xl text-center text-5xl font-bold tracking-tight leading-[1.08] text-gray-900 md:text-6xl lg:text-7xl">
-            Know instantly when a deploy{" "}
-            <span className="text-gradient">costs you money</span>
+            className="mx-auto max-w-5xl text-center text-5xl font-bold tracking-tight leading-[1.04] text-white md:text-6xl lg:text-7xl">
+            Stop paying for cloud waste.{" "}
+            <span className="text-gradient">We&apos;ll fix it — and only charge you after we do.</span>
           </motion.h1>
 
           {/* Sub */}
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.35, ease: E }}
-            className="mx-auto mt-6 max-w-2xl text-center text-lg leading-relaxed text-gray-500">
-            Cloudlink correlates AWS cost changes to specific deploys — per service, per deploy window.
-            Catch expensive regressions in under 2 hours, before the bill compounds.
+            className="mx-auto mt-6 max-w-3xl text-center text-lg leading-relaxed text-slate-300">
+            Cloudlink scans your AWS, Azure, and GCP accounts, finds waste, and fixes it automatically. We take 15% of what we save you. If we save you nothing, you pay nothing. Zero risk.
           </motion.p>
 
           {/* CTAs */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5, ease: E }}
             className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a href="#waitlist" className={primaryBtn}>
-              Get early access — it&apos;s free →
+              Start Saving — It&apos;s Free Until We Do
             </a>
             <a href="#how" className={secondaryBtn}>
-              See how it works ↓
+              See how it works
             </a>
           </motion.div>
 
-          {/* Trust pills */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.65 }}
-            className="mt-6 flex flex-wrap items-center justify-center gap-2">
-            {["Read-only AWS access", "No agents or code changes", "5-minute setup", "Free during beta"].map((t) => (
-              <span key={t} className="rounded-full border border-gray-200 bg-gray-50 px-3.5 py-1.5 text-xs font-medium text-gray-500">
-                <span className="mr-1.5 text-green-500">✓</span>{t}
-              </span>
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.65, ease: E }}
+            className="mx-auto mt-10 grid max-w-5xl gap-4 md:grid-cols-3"
+          >
+            {[
+              { label: "Our fee", value: "15% of savings", detail: "Only charged on verified, confirmed savings" },
+              { label: "If we save you nothing", value: "$0", detail: "No savings, no charge. Zero risk to you." },
+              { label: "How we work", value: "Connect → Fix → Save", detail: "We act, you approve, we invoice after" },
+            ].map((item) => (
+              <div key={item.label} className="rounded-2xl border border-slate-800 bg-slate-950/55 px-5 py-4 text-left shadow-lg shadow-slate-950/20">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">{item.label}</div>
+                <div className="mt-2 text-2xl font-semibold text-white">{item.value}</div>
+                <div className="mt-1 text-sm text-slate-400">{item.detail}</div>
+              </div>
             ))}
           </motion.div>
 
           {/* Hero dashboard */}
           <HeroDashboard />
-        </motion.div>
+        </div>
       </section>
 
       {/* ── STATS BAR ────────────────────────────────────────────────────── */}
-      <section className="border-y border-gray-100 bg-gray-50">
+      <section className="border-y border-slate-200 bg-white">
         <div className="mx-auto max-w-6xl px-6 py-10">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             {stats.map((s, i) => (
               <motion.div key={s.label} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08, ease: E }}
                 className="text-center">
-                <div className="text-3xl font-bold text-gray-900 tracking-tight">
+                <div className="text-3xl font-bold text-slate-950 tracking-tight">
                   <AnimatedCounter end={s.value} prefix={s.prefix} suffix={s.suffix} />
                 </div>
-                <div className="mt-1 text-xs text-gray-500">{s.label}</div>
+                <div className="mt-1 text-xs text-slate-500">{s.label}</div>
               </motion.div>
             ))}
           </div>
@@ -311,7 +318,11 @@ export default function Home() {
                   "Next month — same problem, different service",
                 ].map((t) => (
                   <li key={t} className="flex items-start gap-2.5 text-sm text-red-800">
-                    <span className="mt-0.5 shrink-0 text-red-400">✗</span>{t}
+                    <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-red-200 bg-red-100">
+                      <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                        <path d="M2 2l4 4M6 2L2 6" stroke="#ef4444" strokeWidth="1.3" strokeLinecap="round" />
+                      </svg>
+                    </span>{t}
                   </li>
                 ))}
               </ul>
@@ -336,7 +347,11 @@ export default function Home() {
                   "Fixed the same day. Bill impact: minimal.",
                 ].map((t) => (
                   <li key={t} className="flex items-start gap-2.5 text-sm text-green-800">
-                    <span className="mt-0.5 shrink-0 text-green-500">✓</span>{t}
+                    <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-green-200 bg-green-100">
+                      <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                        <path d="M1.5 4l2 2 3-3" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>{t}
                   </li>
                 ))}
               </ul>
@@ -352,17 +367,17 @@ export default function Home() {
             <motion.div variants={item} className="mb-14 text-center">
               <SectionLabel>How it works</SectionLabel>
               <h2 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
-                Three steps to deploy-aware cost tracking
+                Connect. We fix it. You win. We split it.
               </h2>
               <p className="mt-3 mx-auto max-w-xl text-gray-500">
-                Connect in 5 minutes. We handle everything else automatically.
+                Four steps — zero risk to you. We only make money when you do.
               </p>
             </motion.div>
 
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               {steps.map((s) => (
                 <motion.div key={s.n} variants={item}>
-                  <div className={card + " h-full relative overflow-hidden"}>
+            <div className={card + " h-full relative overflow-hidden bg-white"}>
                     <div className="flex items-start justify-between mb-5">
                       <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-green-200 bg-green-50 text-green-600">
                         {s.icon}
@@ -445,7 +460,7 @@ export default function Home() {
             </motion.div>
             <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.1, ease: E }}
-              className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+              className="rounded-[26px] border border-slate-200 bg-white p-6 shadow-sm">
               <InteractiveAlert cardClass="" />
             </motion.div>
           </div>
@@ -454,7 +469,7 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
               transition={{ duration: 0.7, ease: E }}
-              className="order-2 md:order-1 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+              className="order-2 md:order-1 rounded-[26px] border border-slate-200 bg-white p-6 shadow-sm">
               <DemoPanel cardClass="" />
             </motion.div>
             <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
@@ -607,20 +622,20 @@ export default function Home() {
           <motion.div variants={container} initial="hidden" whileInView="show" viewport={{ once: true }}>
             <motion.div variants={item}>
               <span className="inline-flex items-center gap-2 rounded-full border border-green-500/40 bg-green-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-green-400">
-                Early access
+                Free to start — 15% of savings only
               </span>
             </motion.div>
             <motion.h2 variants={item} className="mt-5 text-4xl font-bold tracking-tight text-white md:text-5xl">
-              Stop finding out about cost spikes from your AWS bill
+              Connect your cloud. Pay nothing until we save you money.
             </motion.h2>
             <motion.p variants={item} className="mt-4 text-gray-400 text-lg">
-              Join engineers already on the waitlist. Free during beta — no credit card, no agents, no infrastructure changes.
+              No subscriptions. No monthly fees. No upfront cost. We win when you win — and not a second before.
             </motion.p>
             <motion.div variants={item}>
               <WaitlistForm />
             </motion.div>
             <motion.p variants={item} className="mt-4 text-xs text-gray-600">
-              Early access members get 40% off when paid plans launch — locked in forever.
+              Free to connect. 15% of verified savings only. Zero if we save you zero.
             </motion.p>
           </motion.div>
         </div>

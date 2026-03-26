@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react'
 import { getResources } from '../../lib/api'
 
 const TYPE_ICONS: Record<string, string> = {
-  ec2_instance: '🖥️', security_group: '🔒', aws_cost: '💰', s3_bucket: '🪣',
-  rds_instance: '🗄️', lambda_function: 'λ', ebs_volume: '💾',
-  gce_instance: '🖥️', gcs_bucket: '🪣', gcp_firewall_rule: '🔒',
-  bigquery_dataset: '📊', gcp_cloudsql_instance: '🗄️', gcp_cost: '💰',
-  azure_vm: '🖥️', azure_nsg: '🔒', azure_storage_account: '🪣',
-  azure_public_ip: '🌐', azure_managed_disk: '💾', azure_cost: '💰',
+  ec2_instance: 'EC2', security_group: 'SG', aws_cost: 'COST', s3_bucket: 'S3',
+  rds_instance: 'RDS', lambda_function: 'LAMBDA', ebs_volume: 'EBS',
+  gce_instance: 'GCE', gcs_bucket: 'GCS', gcp_firewall_rule: 'FW',
+  bigquery_dataset: 'BQ', gcp_cloudsql_instance: 'SQL', gcp_cost: 'COST',
+  azure_vm: 'VM', azure_nsg: 'NSG', azure_storage_account: 'STO',
+  azure_public_ip: 'IP', azure_managed_disk: 'DISK', azure_cost: 'COST',
 }
 const PROVIDER_COLORS: Record<string, string> = {
   aws: 'bg-orange-50 text-orange-700 border-orange-200',
@@ -44,7 +44,7 @@ function ResourceDetail({ r }: { r: any }) {
       {p.name && p.name !== r.resource_id && <span className="font-medium text-slate-700">{p.name}</span>}
       {p.instance_type && <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-xs">{p.instance_type}</span>}
       {p.avg_cpu_7d != null && <span className={`px-1.5 py-0.5 rounded text-xs ${p.is_idle ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}`}>CPU {p.avg_cpu_7d}%</span>}
-      {p.is_idle && <span className="bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded text-xs font-medium">⚠ Idle</span>}
+      {p.is_idle && <span className="bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded text-xs font-medium">Idle</span>}
     </div>
   )
   if (type === 'security_group') return (
@@ -54,7 +54,7 @@ function ResourceDetail({ r }: { r: any }) {
       {p.open_ports?.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-1">
           {p.open_ports.map((x: any, i: number) => (
-            <span key={i} className="bg-red-100 text-red-700 px-1.5 py-0.5 rounded text-xs font-medium">🚨 {x.label} :{x.port} ({x.cidr})</span>
+            <span key={i} className="bg-red-100 text-red-700 px-1.5 py-0.5 rounded text-xs font-medium">{x.label} :{x.port} ({x.cidr})</span>
           ))}
         </div>
       )}
@@ -118,7 +118,7 @@ function ResourceDetail({ r }: { r: any }) {
     <div className="flex flex-wrap gap-1">
       {(p.issues || []).map((iss: string, i: number) => <IssueTag key={i} issue={iss} />)}
       {(p.open_ports || []).map((x: any, i: number) => (
-        <span key={i} className="bg-red-100 text-red-700 px-1.5 py-0.5 rounded text-xs font-medium">🚨 :{x.port}</span>
+        <span key={i} className="bg-red-100 text-red-700 px-1.5 py-0.5 rounded text-xs font-medium">:{x.port}</span>
       ))}
     </div>
   )
@@ -153,35 +153,35 @@ export default function ResourcesTable() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Resources</h1>
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-950">Resources</h1>
           <p className="text-slate-500 text-sm mt-1">
             {resources.length} cloud resources discovered
             {withIssues.length > 0 && <span className="ml-2 text-orange-600 font-medium">• {withIssues.length} with issues</span>}
           </p>
         </div>
-        <button onClick={load} className="text-sm text-green-600 hover:underline">↻ Refresh</button>
+        <button onClick={load} className="rounded-xl border border-slate-200 px-3.5 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Refresh</button>
       </div>
 
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
 
       {resources.length > 0 && (
-        <div className="flex gap-2 mb-4 flex-wrap items-center">
+        <div className="mb-4 flex flex-wrap items-center gap-2">
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search resources…"
-            className="border border-slate-200 text-sm rounded-lg px-3 py-1.5 text-slate-600 focus:outline-none focus:ring-2 focus:ring-green-500 min-w-48" />
+            className="min-w-48 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-green-500" />
           <div className="flex gap-1.5 flex-wrap">
             {types.map(t => (
               <button key={t} onClick={() => setFilterType(t)}
                 className={`text-xs px-3 py-1.5 rounded-full border transition font-medium ${filterType === t ? 'bg-green-600 text-white border-green-600' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
-                {t === 'all' ? `All (${resources.length})` : `${TYPE_ICONS[t] || '☁️'} ${t.replace(/_/g, ' ')} (${resources.filter(r => r.resource_type === t).length})`}
+                {t === 'all' ? `All (${resources.length})` : `${TYPE_ICONS[t] || 'GEN'} ${t.replace(/_/g, ' ')} (${resources.filter(r => r.resource_type === t).length})`}
               </button>
             ))}
           </div>
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm">
         {loading ? (
           <div className="p-10 text-center text-slate-400 text-sm">Loading…</div>
         ) : visible.length === 0 ? (
@@ -190,18 +190,18 @@ export default function ResourcesTable() {
           </div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-slate-50 border-b border-slate-200">
+            <thead className="border-b border-slate-200 bg-slate-50">
               <tr>
                 {['Type', 'Resource ID', 'Cloud', 'Region', 'Details'].map(h => (
-                  <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">{h}</th>
+                  <th key={h} className="text-left px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {visible.map(r => (
-                <tr key={r.resource_id} className="hover:bg-slate-50">
+                <tr key={r.resource_id} className="transition hover:bg-slate-50/80">
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <span className="mr-1">{TYPE_ICONS[r.resource_type] || '☁️'}</span>
+                    <span className="mr-2 inline-flex rounded-md border border-slate-200 bg-slate-50 px-1.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-600">{TYPE_ICONS[r.resource_type] || 'GEN'}</span>
                     <span className="text-slate-600 text-xs">{r.resource_type?.replace(/_/g, ' ')}</span>
                   </td>
                   <td className="px-4 py-3 font-mono text-xs text-slate-700 max-w-[200px]">

@@ -29,7 +29,7 @@ export default function DemoPanel({ cardClass }: { cardClass: string }) {
     <div className={cardClass}>
       <div className="flex items-start justify-between gap-4">
         <div>
-          <div className="text-sm font-semibold text-gray-900">Live demo: deploy → cost change</div>
+          <div className="text-sm font-semibold text-gray-900">Live demo: deploy-linked cost change</div>
           <div className="mt-1 text-xs text-gray-500">Toggle Before / After and watch the signal shift.</div>
         </div>
         <div className="flex gap-2">

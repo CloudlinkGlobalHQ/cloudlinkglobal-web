@@ -144,9 +144,9 @@ function StatCard({ label, value, sub, color = 'indigo' }: { label: string; valu
     yellow: 'text-yellow-700', red: 'text-red-700', orange: 'text-orange-600',
   }
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5">
-      <p className="text-sm text-slate-500 mb-1">{label}</p>
-      <p className={`text-3xl font-bold ${colors[color] || colors.indigo}`}>{value ?? '—'}</p>
+    <div className="rounded-[22px] border border-slate-200 bg-white p-5 shadow-sm">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">{label}</p>
+      <p className={`mt-2 text-3xl font-semibold tracking-tight ${colors[color] || colors.indigo}`}>{value ?? '—'}</p>
       {sub && <p className="text-xs text-slate-400 mt-1">{sub}</p>}
     </div>
   )
@@ -249,12 +249,12 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Overview</h1>
-          <p className="text-slate-500 text-sm mt-1">Live view of your cloud infrastructure</p>
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-950">Overview</h1>
+          <p className="mt-1 text-sm text-slate-500">Live operational summary across cloud spend, deploy risk, and platform activity.</p>
         </div>
-        <button onClick={onRefresh} className="text-sm text-green-600 hover:underline">↻ Refresh</button>
+        <button onClick={onRefresh} className="rounded-xl border border-slate-200 px-3.5 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Refresh</button>
       </div>
 
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
@@ -268,7 +268,7 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
       />
 
       {(lastScan || lastRun) && (
-        <div className="bg-white rounded-xl border border-slate-200 px-5 py-3 mb-6 flex flex-wrap gap-6 text-sm text-slate-500">
+        <div className="mb-6 flex flex-wrap gap-6 rounded-[22px] border border-slate-200 bg-white px-5 py-4 text-sm text-slate-500 shadow-sm">
           {lastScan && (
             <div className="flex items-center gap-2">
               <span className={`w-2 h-2 rounded-full ${lastScan.status === 'finished' ? 'bg-green-400' : lastScan.status === 'error' ? 'bg-red-400' : 'bg-blue-400'}`} />
@@ -286,7 +286,7 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
         </div>
       )}
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
         <StatCard label="Resources tracked" value={stats?.resources_count} color="indigo" />
         <StatCard label="Actions completed" value={success}               color="green" />
         <StatCard label="Awaiting approval" value={awaiting}              color="yellow" />
@@ -294,10 +294,10 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
       </div>
 
       {multiCloud?.providers?.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 p-5 mb-6">
+        <div className="mb-6 rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex items-center justify-between gap-4 mb-4">
             <div>
-              <h2 className="text-sm font-semibold text-slate-700">Connected clouds</h2>
+              <h2 className="text-sm font-semibold text-slate-900">Connected clouds</h2>
               <p className="text-xs text-slate-400 mt-1">
                 {multiCloud.connected_clouds.length} provider{multiCloud.connected_clouds.length === 1 ? '' : 's'} active across {multiCloud.total_credentials} credential{multiCloud.total_credentials === 1 ? '' : 's'}
               </p>
@@ -312,7 +312,7 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {multiCloud.providers.map((provider: any) => (
-              <div key={provider.provider} className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+              <div key={provider.provider} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-sm font-semibold text-slate-800 uppercase">{provider.provider}</p>
                   <span className="text-xs text-slate-500">{provider.resource_count} resources</span>
@@ -326,9 +326,9 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
       )}
 
       {cost && cost.total_mtd_usd > 0 && (
-        <div className={`rounded-xl border p-5 mb-6 ${cost.above_threshold ? 'bg-red-50 border-red-200' : 'bg-white border-slate-200'}`}>
+        <div className={`mb-6 rounded-[24px] border p-5 shadow-sm ${cost.above_threshold ? 'bg-red-50 border-red-200' : 'bg-white border-slate-200'}`}>
           <div className="flex items-center justify-between mb-1">
-            <h2 className="text-sm font-semibold text-slate-700">Cloud Spend — Month to Date</h2>
+            <h2 className="text-sm font-semibold text-slate-900">Cloud Spend — Month to Date</h2>
             {cost.above_threshold && <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">Above threshold</span>}
           </div>
           <p className={`text-3xl font-bold mb-1 ${cost.above_threshold ? 'text-red-600' : 'text-slate-800'}`}>
@@ -347,8 +347,8 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
 
       {/* Anomalies */}
       {anomalies.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 p-5 mb-6">
-          <h2 className="text-sm font-semibold text-slate-700 mb-3">Cost Anomalies Detected</h2>
+        <div className="mb-6 rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="mb-3 text-sm font-semibold text-slate-900">Cost Anomalies Detected</h2>
           <div className="space-y-2">
             {anomalies.map((a: any, i: number) => (
               <div key={i} className={`flex items-center justify-between p-3 rounded-lg ${
@@ -373,8 +373,8 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
       )}
 
       {total > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 p-5 mb-6">
-          <h2 className="text-sm font-semibold text-slate-700 mb-4">Action status breakdown</h2>
+        <div className="mb-6 rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="mb-4 text-sm font-semibold text-slate-900">Action status breakdown</h2>
           <div className="flex flex-wrap gap-2 mb-4">
             {Object.entries(byStatus).map(([status, count]) => (
               <span key={status} className={`px-3 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[status] || 'bg-slate-100 text-slate-600'}`}>
@@ -388,18 +388,18 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
             {awaiting > 0 && <div className="bg-yellow-400 transition-all" style={{ width: `${(awaiting/total)*100}%` }} />}
             {failed   > 0 && <div className="bg-red-400 transition-all"    style={{ width: `${(failed  /total)*100}%` }} />}
           </div>
-          <div className="flex flex-wrap gap-4 mt-2 text-xs text-slate-500">
-            <span>🟢 Success: {success}</span>
-            <span>🔵 Pending: {pending}</span>
-            <span>🟡 Awaiting: {awaiting}</span>
-            <span>🔴 Failed+Retry: {failed}</span>
+          <div className="mt-3 grid gap-2 text-xs text-slate-500 md:grid-cols-4">
+            <span className="rounded-lg bg-slate-50 px-3 py-2">Success: {success}</span>
+            <span className="rounded-lg bg-slate-50 px-3 py-2">Pending: {pending}</span>
+            <span className="rounded-lg bg-slate-50 px-3 py-2">Awaiting: {awaiting}</span>
+            <span className="rounded-lg bg-slate-50 px-3 py-2">Failed + Retry: {failed}</span>
           </div>
         </div>
       )}
 
       {summary?.recent_actions?.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 p-5 mb-6">
-          <h2 className="text-sm font-semibold text-slate-700 mb-4">Recent actions</h2>
+        <div className="mb-6 rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="mb-4 text-sm font-semibold text-slate-900">Recent actions</h2>
           <div className="space-y-1">
             {summary.recent_actions.slice(0, 8).map((a: any) => (
               <div key={a.action_id} className="flex items-center justify-between text-sm py-2 border-b border-slate-100 last:border-0">

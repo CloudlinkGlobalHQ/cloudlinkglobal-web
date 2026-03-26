@@ -34,7 +34,7 @@ export default function InteractiveAlert({ cardClass }: { cardClass: string }) {
     <div className={cardClass}>
       <div className="flex items-start justify-between gap-4">
         <div>
-          <div className="text-sm font-semibold text-gray-900">Deploy detected → Cost regression</div>
+          <div className="text-sm font-semibold text-gray-900">Deploy detected and cost regression confirmed</div>
           <div className="mt-1 text-xs text-gray-500">Detected 2h after deploy · Confidence: <SwapText>{preset.confidence}</SwapText></div>
         </div>
         <span className="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold text-red-600">

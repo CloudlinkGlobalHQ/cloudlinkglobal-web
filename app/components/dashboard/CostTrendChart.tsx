@@ -71,9 +71,12 @@ export default function CostTrendChart({ snapshots }: { snapshots: Snapshot[] })
   if (!chartData.length) return null
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5 mb-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold text-slate-700">Cost Trend</h2>
+    <div className="mb-6 overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm">
+      <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+        <div>
+          <h2 className="text-sm font-semibold text-slate-900">Cost Trend</h2>
+          <p className="mt-1 text-xs text-slate-500">Service-level spend over time across the selected window.</p>
+        </div>
         <div className="flex gap-1">
           {(['24h', '7d', '30d'] as const).map(r => (
             <button key={r} onClick={() => setRange(r)}
@@ -85,6 +88,7 @@ export default function CostTrendChart({ snapshots }: { snapshots: Snapshot[] })
           ))}
         </div>
       </div>
+      <div className="px-5 py-5">
       <ResponsiveContainer width="100%" height={280}>
         <AreaChart data={chartData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -104,6 +108,7 @@ export default function CostTrendChart({ snapshots }: { snapshots: Snapshot[] })
           ))}
         </AreaChart>
       </ResponsiveContainer>
+      </div>
     </div>
   )
 }

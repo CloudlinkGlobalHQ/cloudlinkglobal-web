@@ -14,7 +14,7 @@ const rows: { feature: string; cloudlink: CellValue; costExplorer: CellValue; da
   { feature: "Slack / webhook alerts on detection",    cloudlink: true,   costExplorer: false,   datadog: "paid" },
   { feature: "Setup in under 5 minutes",               cloudlink: true,   costExplorer: true,    datadog: false  },
   { feature: "No agents or code changes required",     cloudlink: true,   costExplorer: true,    datadog: false  },
-  { feature: "Free during beta",                       cloudlink: true,   costExplorer: true,    datadog: false  },
+  { feature: "Performance-based — pay only on savings", cloudlink: true,   costExplorer: false,   datadog: false  },
 ];
 
 function Cell({ value, highlight }: { value: CellValue; highlight?: boolean }) {

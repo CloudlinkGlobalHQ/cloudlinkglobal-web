@@ -128,10 +128,10 @@ export default function CostForecastPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Cost Forecast</h1>
-          <p className="text-sm text-slate-500 mt-0.5">Linear trend projection based on {data.data_points} days of data</p>
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-950">Cost Forecast</h1>
+          <p className="mt-1 text-sm text-slate-500">Projection model based on {data.data_points} days of spend history with service-level trend views.</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1">
@@ -157,53 +157,59 @@ export default function CostForecastPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-l-4 border-l-slate-400 border-slate-200 p-5 shadow-sm">
-          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Actual ({daysBack}d)</p>
-          <p className="text-2xl font-bold text-slate-900 mt-1">{fmt(data.historical_period_usd)}</p>
+        <div className="rounded-[22px] border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Actual ({daysBack}d)</p>
+          <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">{fmt(data.historical_period_usd)}</p>
         </div>
-        <div className="bg-white rounded-xl border border-l-4 border-l-green-500 border-slate-200 p-5 shadow-sm">
-          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Forecast ({daysAhead}d)</p>
-          <p className="text-2xl font-bold text-slate-900 mt-1">{fmt(data.forecast_period_usd)}</p>
+        <div className="rounded-[22px] border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Forecast ({daysAhead}d)</p>
+          <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">{fmt(data.forecast_period_usd)}</p>
         </div>
-        <div className={`bg-white rounded-xl border border-l-4 border-slate-200 p-5 shadow-sm ${delta > 0 ? 'border-l-red-400' : 'border-l-green-500'}`}>
-          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Projected Change</p>
-          <p className={`text-2xl font-bold mt-1 ${delta > 0 ? 'text-red-500' : 'text-green-600'}`}>
+        <div className={`rounded-[22px] border border-slate-200 bg-white p-5 shadow-sm`}>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Projected Change</p>
+          <p className={`mt-2 text-2xl font-semibold tracking-tight ${delta > 0 ? 'text-red-500' : 'text-green-600'}`}>
             {delta >= 0 ? '+' : ''}{fmt(delta)}
           </p>
           <p className={`text-xs mt-0.5 ${delta > 0 ? 'text-red-400' : 'text-green-500'}`}>
             {deltaPct >= 0 ? '+' : ''}{deltaPct.toFixed(1)}%
           </p>
         </div>
-        <div className={`bg-white rounded-xl border border-l-4 border-slate-200 p-5 shadow-sm`}>
-          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Daily Trend</p>
-          <p className={`text-2xl font-bold mt-1 ${TREND_COLORS[data.trend_direction]}`}>
+        <div className={`rounded-[22px] border border-slate-200 bg-white p-5 shadow-sm`}>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Daily Trend</p>
+          <p className={`mt-2 text-2xl font-semibold tracking-tight ${TREND_COLORS[data.trend_direction]}`}>
             {TREND_ICONS[data.trend_direction]} {data.daily_trend_usd >= 0 ? '+' : ''}{fmt(data.daily_trend_usd)}/d
           </p>
         </div>
       </div>
 
       {/* Chart */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-slate-800">Spend Trend &amp; Forecast</h2>
+      <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm">
+        <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+          <div>
+            <h2 className="font-semibold text-slate-900">Spend Trend &amp; Forecast</h2>
+            <p className="mt-1 text-xs text-slate-500">Historical actuals, forecast projection, and confidence band in a single view.</p>
+          </div>
           <div className="flex items-center gap-4 text-xs text-slate-500">
             <span className="flex items-center gap-1.5"><span className="w-6 h-0.5 bg-slate-500 inline-block" /> Actual</span>
             <span className="flex items-center gap-1.5"><span className="w-6 h-0.5 bg-green-500 border-dashed border-t-2 border-green-500 inline-block" /> Forecast</span>
             <span className="flex items-center gap-1.5"><span className="w-4 h-3 bg-green-500 opacity-10 inline-block rounded" /> 95% CI</span>
           </div>
         </div>
+        <div className="px-5 py-5">
         <SparkForecast historical={data.historical} forecast={data.forecast} />
+        </div>
       </div>
 
       {/* Service forecasts */}
       {data.service_forecasts.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-100">
-            <h2 className="font-semibold text-slate-800">Per-Service Projections</h2>
+        <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm">
+          <div className="border-b border-slate-100 px-5 py-4">
+            <h2 className="font-semibold text-slate-900">Per-Service Projections</h2>
+            <p className="mt-1 text-xs text-slate-500">Compare current spend to the next projected period by service.</p>
           </div>
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide bg-slate-50">
+              <tr className="bg-slate-50 text-left text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
                 <th className="px-5 py-3">Service</th>
                 <th className="px-5 py-3 text-right">Current ({daysBack}d)</th>
                 <th className="px-5 py-3 text-right">Forecast ({daysAhead}d)</th>
