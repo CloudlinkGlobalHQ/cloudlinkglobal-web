@@ -1,145 +1,184 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
+import {
+  LayoutDashboard, LineChart, AlertTriangle, Server, PowerOff, Sparkles,
+  Shield, Sliders, Tag, TrendingDown, BarChart2, GitBranch, Search,
+  ClipboardList, Webhook, Users, Key, CreditCard, Settings, Lock,
+  Zap, Bell, ChevronLeft, ChevronRight, Menu, X,
+} from 'lucide-react'
 import { getStats, scanNow } from '../lib/api'
 import ClerkApiProvider from '../components/ClerkApiProvider'
 import { SubscriptionProvider } from '../components/SubscriptionProvider'
 
-function Logo({ size = 28 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="cl-dash-bg" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#16a34a" />
-          <stop offset="100%" stopColor="#22c55e" />
-        </linearGradient>
-      </defs>
-      <rect width="40" height="40" rx="10" fill="url(#cl-dash-bg)" />
-      <circle cx="12" cy="21" r="3.5" fill="white" />
-      <circle cx="28" cy="21" r="3.5" fill="white" />
-      <line x1="15.5" y1="21" x2="24.5" y2="21" stroke="white" strokeWidth="2" strokeLinecap="round" />
-      <path d="M10 21 C10 11, 30 11, 30 21" stroke="white" strokeOpacity="0.5" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function SectionGlyph({ title }: { title: string }) {
-  if (title === 'Monitor') {
-    return (
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <path d="M2 10.5h2.2L5.8 6l2.3 4 1.6-2.5H12" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    )
-  }
-  if (title === 'Optimize') {
-    return (
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <path d="M2.5 9.5 5 7l2 1.5L11.5 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M9.5 4h2v2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    )
-  }
-  return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-      <rect x="2.25" y="2.25" width="3.5" height="3.5" rx="1" stroke="currentColor" strokeWidth="1.3" />
-      <rect x="8.25" y="2.25" width="3.5" height="3.5" rx="1" stroke="currentColor" strokeWidth="1.3" />
-      <rect x="2.25" y="8.25" width="3.5" height="3.5" rx="1" stroke="currentColor" strokeWidth="1.3" />
-      <rect x="8.25" y="8.25" width="3.5" height="3.5" rx="1" stroke="currentColor" strokeWidth="1.3" />
-    </svg>
-  )
-}
+// ─── Nav structure ────────────────────────────────────────────────────────────
 
 const NAV_SECTIONS = [
   {
-    title: 'Monitor',
+    title: '',
     items: [
-      { label: 'Overview', href: '/dashboard' },
-      { label: 'AI Advisor', href: '/dashboard/advisor' },
-      { label: 'Forecast', href: '/dashboard/forecast' },
-      { label: 'Unit Economics', href: '/dashboard/unit-economics' },
-      { label: 'Tag Costs', href: '/dashboard/tags' },
-      { label: 'Virtual Tags', href: '/dashboard/virtual-tags' },
-      { label: 'Savings Plans', href: '/dashboard/savings-plans' },
-      { label: 'Kubernetes', href: '/dashboard/kubernetes' },
-      { label: 'AutoStop', href: '/dashboard/autostop' },
-      { label: 'TTL Destroy', href: '/dashboard/ttl' },
-      { label: 'Drift', href: '/dashboard/drift' },
+      { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
     ],
   },
   {
-    title: 'Optimize',
+    title: 'MONITOR',
     items: [
-      { label: 'Reserved', href: '/dashboard/reserved-instances' },
-      { label: 'Rightsizing', href: '/dashboard/rightsizing' },
-      { label: 'Savings Report', href: '/dashboard/savings-report' },
-      { label: 'Regressions', href: '/dashboard/regressions' },
-      { label: 'Estimate', href: '/dashboard/cost-estimate' },
-      { label: 'Deploys', href: '/dashboard/deploys' },
-      { label: 'Actions', href: '/dashboard/actions' },
-      { label: 'Resources', href: '/dashboard/resources' },
+      { label: 'Cost Explorer', href: '/dashboard/cost-explorer', icon: LineChart },
+      { label: 'Regressions',   href: '/dashboard/regressions',   icon: AlertTriangle },
+      { label: 'Resources',     href: '/dashboard/resources',      icon: Server },
+      { label: 'AutoStopping',  href: '/dashboard/autostop',       icon: PowerOff },
+      { label: 'AI Advisor',    href: '/dashboard/advisor',        icon: Sparkles },
     ],
   },
   {
-    title: 'Operate',
+    title: 'OPTIMIZE',
     items: [
-      { label: 'Credentials', href: '/dashboard/credentials' },
-      { label: 'Runs', href: '/dashboard/runs' },
-      { label: 'Scans', href: '/dashboard/scans' },
-      { label: 'Audit', href: '/dashboard/audit' },
-      { label: 'Webhooks', href: '/dashboard/webhooks' },
-      { label: 'Budgets', href: '/dashboard/budgets' },
-      { label: 'Team', href: '/dashboard/team' },
-      { label: 'API Keys', href: '/dashboard/api-keys' },
-      { label: 'API Docs', href: '/dashboard/api-docs' },
-      { label: 'Billing', href: '/dashboard/billing' },
+      { label: 'Budgets',            href: '/dashboard/budgets',            icon: Shield },
+      { label: 'Rightsizing',        href: '/dashboard/rightsizing',        icon: Sliders },
+      { label: 'Reserved Instances', href: '/dashboard/reserved-instances', icon: Tag },
+      { label: 'Savings Plans',      href: '/dashboard/savings-plans',      icon: TrendingDown },
+      { label: 'Unit Economics',     href: '/dashboard/unit-economics',     icon: BarChart2 },
+    ],
+  },
+  {
+    title: 'OPERATE',
+    items: [
+      { label: 'Deploys',   href: '/dashboard/deploys',   icon: GitBranch },
+      { label: 'Scans',     href: '/dashboard/scans',     icon: Search },
+      { label: 'Audit',     href: '/dashboard/audit',     icon: ClipboardList },
+      { label: 'Webhooks',  href: '/dashboard/webhooks',  icon: Webhook },
+      { label: 'Team',      href: '/dashboard/team',      icon: Users },
+      { label: 'API Keys',  href: '/dashboard/api-keys',  icon: Key },
+      { label: 'Billing',   href: '/dashboard/billing',   icon: CreditCard },
+      { label: 'Settings',  href: '/dashboard/settings',  icon: Settings },
+      { label: 'Credentials', href: '/dashboard/credentials', icon: Lock },
     ],
   },
 ]
 
 function isActivePath(pathname: string, href: string) {
+  if (href === '/dashboard') return pathname === '/dashboard'
   return pathname === href || pathname.startsWith(`${href}/`)
 }
 
-function NavLink({
-  href,
-  label,
-  pathname,
-  compact = false,
-  onClick,
+// ─── Sidebar NavItem ──────────────────────────────────────────────────────────
+
+function NavItem({
+  href, label, icon: Icon, pathname, collapsed, onClick,
 }: {
-  href: string
-  label: string
-  pathname: string
-  compact?: boolean
-  onClick?: () => void
+  href: string; label: string; icon: React.ComponentType<{ size?: number; className?: string }>
+  pathname: string; collapsed: boolean; onClick?: () => void
 }) {
   const active = isActivePath(pathname, href)
   return (
     <Link
       href={href}
       onClick={onClick}
+      title={collapsed ? label : undefined}
       className={[
-        'rounded-xl border text-sm font-medium transition',
-        compact ? 'px-3 py-2.5' : 'px-3.5 py-3',
+        'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150 relative group',
+        collapsed ? 'justify-center px-2' : '',
         active
-          ? 'border-green-200 bg-green-50 text-green-700 shadow-sm'
-          : 'border-transparent bg-white text-slate-600 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-900',
+          ? 'bg-[#4F6EF7]/10 text-[#4F6EF7] border-l-2 border-[#4F6EF7]'
+          : 'text-[#94A3B8] hover:bg-[#1E2D4F]/60 hover:text-[#CBD5E1] border-l-2 border-transparent',
       ].join(' ')}
     >
-      {label}
+      <Icon size={16} className="flex-shrink-0" />
+      {!collapsed && <span>{label}</span>}
+      {collapsed && (
+        <span className="absolute left-14 z-50 hidden group-hover:flex bg-[#1E2D4F] text-[#F1F5F9] text-xs px-2 py-1 rounded whitespace-nowrap shadow-lg border border-[#2E3D5F]">
+          {label}
+        </span>
+      )}
     </Link>
   )
 }
 
+// ─── Sidebar ─────────────────────────────────────────────────────────────────
+
+function Sidebar({
+  collapsed, pathname, onClose,
+}: {
+  collapsed: boolean; pathname: string; onClose?: () => void
+}) {
+  return (
+    <div className={[
+      'flex flex-col h-full bg-[#0F1629] border-r border-[#1E2D4F] transition-all duration-200',
+      collapsed ? 'w-16' : 'w-60',
+    ].join(' ')}>
+      {/* Logo */}
+      <div className={[
+        'flex items-center gap-2.5 h-14 px-4 border-b border-[#1E2D4F] flex-shrink-0',
+        collapsed ? 'justify-center px-2' : '',
+      ].join(' ')}>
+        <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-[#4F6EF7] flex-shrink-0">
+          <Zap size={14} className="text-white" />
+        </div>
+        {!collapsed && (
+          <span className="font-bold text-[#F1F5F9] text-base tracking-tight">Cloudlink</span>
+        )}
+        {onClose && (
+          <button onClick={onClose} className="ml-auto text-[#64748B] hover:text-[#94A3B8] lg:hidden">
+            <X size={18} />
+          </button>
+        )}
+      </div>
+
+      {/* Nav */}
+      <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-1">
+        {NAV_SECTIONS.map((section) => (
+          <div key={section.title} className="mb-2">
+            {section.title && !collapsed && (
+              <p className="px-3 mb-1 text-[10px] font-semibold tracking-wider text-[#3D5070] uppercase select-none">
+                {section.title}
+              </p>
+            )}
+            {section.title && collapsed && <div className="my-2 border-t border-[#1E2D4F]/60" />}
+            {section.items.map((item) => (
+              <NavItem
+                key={item.href}
+                href={item.href}
+                label={item.label}
+                icon={item.icon}
+                pathname={pathname}
+                collapsed={collapsed}
+                onClick={onClose}
+              />
+            ))}
+          </div>
+        ))}
+      </nav>
+
+      {/* Bottom */}
+      <div className={[
+        'border-t border-[#1E2D4F] p-3 flex-shrink-0',
+        collapsed ? 'flex justify-center items-center' : 'flex items-center gap-2.5',
+      ].join(' ')}>
+        <UserButton appearance={{ elements: { avatarBox: 'w-7 h-7' } }} />
+        {!collapsed && (
+          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-[#1E2D4F] text-[#64748B] border border-[#2E3D5F]">
+            Free Plan
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── Main layout ──────────────────────────────────────────────────────────────
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const [stats, setStats]     = useState<any>(null)
-  const [scanState, setScanState] = useState<'idle'|'scanning'|'running'|'done'|'error'>('idle')
+  const [collapsed, setCollapsed] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [stats, setStats] = useState<any>(null)
+  const [scanState, setScanState] = useState<'idle' | 'scanning' | 'done' | 'error'>('idle')
   const [scanMsg, setScanMsg] = useState('')
-  const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const [activeCloud, setActiveCloud] = useState<'AWS' | 'Azure' | 'GCP'>('AWS')
+  const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d'>('30d')
 
   const refreshStats = useCallback(async () => {
     try { setStats(await getStats()) } catch {}
@@ -152,11 +191,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [refreshStats])
 
   const handleRunScan = async () => {
-    setScanState('scanning'); setScanMsg('Scanning cloud accounts…')
+    setScanState('scanning'); setScanMsg('Scanning...')
     try {
       const res = await scanNow()
       const found = res.total_events_found ?? 0
-      setScanMsg(`Scan done — ${found} resource${found !== 1 ? 's' : ''} found`)
+      setScanMsg(`${found} resource${found !== 1 ? 's' : ''} found`)
       setScanState('done')
       refreshStats()
     } catch (e: any) {
@@ -166,112 +205,146 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     setTimeout(() => { setScanState('idle'); setScanMsg('') }, 5000)
   }
 
-  const scanLabel = { idle: 'Run scan', scanning: 'Scanning...', running: 'Running...', done: 'Complete', error: 'Retry scan' }[scanState]
-
   return (
     <ClerkApiProvider>
     <SubscriptionProvider>
-    <div className="min-h-screen flex flex-col bg-slate-100">
-      {/* Top nav */}
-      <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur md:px-6">
-        <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <Link href="/dashboard" className="flex items-center gap-2.5 group">
-            <Logo size={28} />
-            <span className="font-bold text-gray-900 text-base tracking-tight">Cloudlink</span>
-          </Link>
-          {stats && <span className="text-xs text-slate-400 hidden sm:block">Tenant: {stats.tenant_id?.slice(0,8)}…</span>}
-        </div>
-        <div className="flex items-center gap-2 md:gap-3">
-          <button
-            type="button"
-            onClick={() => setMobileNavOpen((v) => !v)}
-            className="inline-flex items-center rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 lg:hidden"
-          >
-            Menu
-          </button>
-          {scanMsg && (
-            <span className={`text-xs font-medium hidden sm:block ${scanState === 'error' ? 'text-red-500' : scanState === 'done' ? 'text-green-600' : 'text-slate-500'}`}>
-              {scanMsg}
-            </span>
-          )}
-          <button onClick={handleRunScan} disabled={scanState === 'scanning' || scanState === 'running'}
-            className={`text-white text-sm font-medium px-4 py-2 rounded-lg transition disabled:opacity-60 shadow-sm ${
-              scanState === 'done' ? 'bg-green-600' : scanState === 'error' ? 'bg-red-500' : 'bg-green-600 hover:bg-green-700'
-            }`}>
-            {scanLabel}
-          </button>
-          <UserButton
-            appearance={{
-              elements: {
-                avatarBox: 'w-8 h-8',
-              },
-            }}
-          />
-        </div>
-        </div>
-      </header>
+    <div className="min-h-screen flex" style={{ backgroundColor: '#0A0E1A', color: '#F1F5F9' }}>
 
-      {mobileNavOpen && (
-        <div className="border-b border-slate-200 bg-white px-4 py-4 shadow-sm lg:hidden">
-          <div className="mx-auto max-w-[1600px] space-y-4">
-            {NAV_SECTIONS.map((section) => (
-              <div key={section.title}>
-                <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-                  {section.title}
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  {section.items.map((item) => (
-                    <NavLink
-                      key={item.href}
-                      href={item.href}
-                      label={item.label}
-                      pathname={pathname}
-                      compact
-                      onClick={() => setMobileNavOpen(false)}
-                    />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/60 lg:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
       )}
 
-      <div className="mx-auto flex w-full max-w-[1600px] flex-1 gap-6 px-4 py-6 md:px-6">
-        <aside className="sticky top-[88px] hidden h-[calc(100vh-112px)] w-[320px] shrink-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm lg:block">
-          <div className="flex h-full flex-col">
-            <div className="border-b border-slate-100 px-5 py-4">
-              <div className="text-sm font-semibold text-slate-900">Workspace</div>
-              <div className="mt-1 text-xs text-slate-500">All dashboards, operations, and controls in one place.</div>
-              <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Current tenant</div>
-                <div className="mt-2 text-sm font-medium text-slate-900">{stats?.tenant_id ? `${stats.tenant_id.slice(0, 12)}...` : 'Loading...'}</div>
-                <div className="mt-1 text-xs text-slate-500">Navigate every product area without losing your analytics context.</div>
-              </div>
-            </div>
-            <div className="flex-1 space-y-5 overflow-y-auto px-4 py-4">
-              {NAV_SECTIONS.map((section) => (
-                <section key={section.title}>
-                  <div className="mb-2 flex items-center gap-2 px-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-                    <span className="text-slate-500"><SectionGlyph title={section.title} /></span>
-                    {section.title}
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    {section.items.map((item) => (
-                      <NavLink key={item.href} href={item.href} label={item.label} pathname={pathname} compact />
-                    ))}
-                  </div>
-                </section>
+      {/* Mobile sidebar drawer */}
+      <div className={[
+        'fixed inset-y-0 left-0 z-50 lg:hidden transition-transform duration-200',
+        mobileOpen ? 'translate-x-0' : '-translate-x-full',
+      ].join(' ')}>
+        <Sidebar collapsed={false} pathname={pathname} onClose={() => setMobileOpen(false)} />
+      </div>
+
+      {/* Desktop sidebar */}
+      <div className="hidden lg:flex flex-shrink-0 sticky top-0 h-screen">
+        <Sidebar collapsed={collapsed} pathname={pathname} />
+      </div>
+
+      {/* Main column */}
+      <div className="flex flex-col flex-1 min-w-0">
+
+        {/* Top bar */}
+        <header
+          className="sticky top-0 z-30 flex items-center gap-3 px-4 border-b"
+          style={{
+            height: 56,
+            backgroundColor: '#0F1629',
+            borderColor: '#1E2D4F',
+          }}
+        >
+          {/* Left: mobile hamburger + collapse toggle + cloud tabs */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="lg:hidden text-[#64748B] hover:text-[#94A3B8] p-1.5 rounded-md hover:bg-[#1E2D4F]/60"
+            >
+              <Menu size={18} />
+            </button>
+
+            {/* Desktop collapse toggle */}
+            <button
+              onClick={() => setCollapsed((v) => !v)}
+              className="hidden lg:flex items-center justify-center w-7 h-7 rounded-md text-[#64748B] hover:text-[#94A3B8] hover:bg-[#1E2D4F]/60 transition"
+            >
+              {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+            </button>
+
+            {/* Cloud provider tabs */}
+            <div className="hidden sm:flex items-center gap-0.5 bg-[#0A0E1A] rounded-lg p-0.5 border border-[#1E2D4F]">
+              {(['AWS', 'Azure', 'GCP'] as const).map((cloud) => (
+                <button
+                  key={cloud}
+                  onClick={() => setActiveCloud(cloud)}
+                  className={[
+                    'px-3 py-1 text-xs font-semibold rounded-md transition',
+                    activeCloud === cloud
+                      ? 'bg-[#4F6EF7] text-white shadow'
+                      : 'text-[#64748B] hover:text-[#94A3B8]',
+                  ].join(' ')}
+                >
+                  {cloud}
+                </button>
               ))}
             </div>
           </div>
-        </aside>
 
-        <main className="min-w-0 flex-1">
-          <div className="rounded-[28px] border border-slate-200 bg-white p-4 shadow-sm md:p-6">
-            {children}
+          {/* Center: search */}
+          <div className="flex-1 max-w-lg mx-auto">
+            <div className="relative">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#3D5070]" />
+              <input
+                type="text"
+                placeholder="Search resources, services, deploys..."
+                className="w-full bg-[#0A0E1A] border border-[#1E2D4F] rounded-lg pl-8 pr-3 py-1.5 text-sm text-[#94A3B8] placeholder-[#3D5070] focus:outline-none focus:border-[#4F6EF7]/50 transition"
+              />
+            </div>
           </div>
+
+          {/* Right: date range, bell, scan, user */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Date range */}
+            <div className="hidden sm:flex items-center gap-0.5 bg-[#0A0E1A] rounded-lg p-0.5 border border-[#1E2D4F]">
+              {(['7d', '30d', '90d'] as const).map((range) => (
+                <button
+                  key={range}
+                  onClick={() => setDateRange(range)}
+                  className={[
+                    'px-2.5 py-1 text-xs font-medium rounded-md transition',
+                    dateRange === range
+                      ? 'bg-[#1E2D4F] text-[#F1F5F9]'
+                      : 'text-[#64748B] hover:text-[#94A3B8]',
+                  ].join(' ')}
+                >
+                  {range}
+                </button>
+              ))}
+            </div>
+
+            {/* Bell */}
+            <button className="relative p-1.5 text-[#64748B] hover:text-[#94A3B8] rounded-md hover:bg-[#1E2D4F]/60 transition">
+              <Bell size={16} />
+              <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-[#F59E0B] rounded-full border border-[#0F1629]" />
+            </button>
+
+            {/* Scan button */}
+            {scanMsg && (
+              <span className={`text-xs hidden md:block ${scanState === 'error' ? 'text-red-400' : scanState === 'done' ? 'text-green-400' : 'text-[#64748B]'}`}>
+                {scanMsg}
+              </span>
+            )}
+            <button
+              onClick={handleRunScan}
+              disabled={scanState === 'scanning'}
+              className={[
+                'text-xs font-semibold px-3 py-1.5 rounded-lg transition disabled:opacity-60',
+                scanState === 'done'  ? 'bg-green-600/20 text-green-400 border border-green-600/30'
+                : scanState === 'error' ? 'bg-red-600/20 text-red-400 border border-red-600/30'
+                : 'bg-[#4F6EF7]/10 text-[#4F6EF7] border border-[#4F6EF7]/30 hover:bg-[#4F6EF7]/20',
+              ].join(' ')}
+            >
+              {scanState === 'scanning' ? 'Scanning...' : scanState === 'done' ? 'Done' : scanState === 'error' ? 'Retry' : 'Run Scan'}
+            </button>
+
+            {/* User */}
+            <UserButton appearance={{ elements: { avatarBox: 'w-7 h-7' } }} />
+          </div>
+        </header>
+
+        {/* Page content */}
+        <main className="flex-1 overflow-auto p-4 md:p-6" style={{ backgroundColor: '#0A0E1A' }}>
+          {children}
         </main>
       </div>
     </div>

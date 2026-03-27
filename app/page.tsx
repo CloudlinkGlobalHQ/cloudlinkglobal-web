@@ -1,693 +1,1142 @@
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
-import WaitlistForm from "./components/WaitlistForm";
-import StickyNav from "./components/StickyNav";
-import InteractiveAlert from "./components/InteractiveAlert";
-import DemoPanel from "./components/DemoPanel";
-import { LogoWordmark } from "./components/Logo";
-import TiltCard from "./components/TiltCard";
-import AnimatedCounter from "./components/AnimatedCounter";
-import HeroDashboard from "./components/HeroDashboard";
-import Testimonials from "./components/Testimonials";
-import ComparisonTable from "./components/ComparisonTable";
-import Pricing from "./components/Pricing";
-import FAQ from "./components/FAQ";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import {
+  Zap,
+  ArrowRight,
+  AlertTriangle,
+  Clock,
+  TrendingUp,
+  CloudOff,
+  Shield,
+  BarChart2,
+  Cpu,
+  X,
+  Globe,
+  GitBranch,
+  Star,
+} from "lucide-react";
 
-const E: [number, number, number, number] = [0.22, 1, 0.36, 1];
-
-const container = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
-const item = {
-  hidden: { opacity: 0, y: 28, filter: "blur(6px)" },
-  show:   { opacity: 1, y: 0,  filter: "blur(0px)", transition: { duration: 0.65, ease: E } },
+// ─── Animation variants ───────────────────────────────────────────────────────
+import type { Variants } from "framer-motion";
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 32 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+  },
+};
+const stagger: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12 } },
 };
 
-const card = "rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:border-green-200";
-const primaryBtn = "inline-flex items-center justify-center gap-2 rounded-full bg-green-600 hover:bg-green-500 active:bg-green-700 px-7 py-3 text-sm font-semibold text-white shadow-lg shadow-green-600/20 transition-all duration-200";
-const secondaryBtn = "inline-flex items-center justify-center gap-2 rounded-full border border-slate-700/80 bg-slate-900/75 hover:border-slate-500 hover:bg-slate-900 px-7 py-3 text-sm font-semibold text-slate-100 transition-all duration-200";
+// ─── Chart data ───────────────────────────────────────────────────────────────
+const chartData = [
+  { time: "6d ago", cost: 2100 },
+  { time: "5d ago", cost: 2050 },
+  { time: "4d ago", cost: 2180 },
+  { time: "3d ago", cost: 2090 },
+  { time: "2d ago", cost: 2150 },
+  { time: "1d ago", cost: 3890 },
+  { time: "now", cost: 2200 },
+];
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function fmt(n: number) {
+  return "$" + Math.round(n).toLocaleString();
+}
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function HeroDashboardMockup() {
   return (
-    <div className="inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-green-700">
-      {children}
+    <div
+      className="relative rounded-2xl border p-5 shadow-2xl"
+      style={{
+        background: "#141C33",
+        borderColor: "rgba(79,110,247,0.25)",
+        minWidth: 0,
+      }}
+    >
+      {/* Header row */}
+      <div className="mb-3 flex items-center justify-between">
+        <span className="text-xs font-semibold" style={{ color: "#94A3B8" }}>
+          payments-service · daily cost
+        </span>
+        <span
+          className="rounded-full px-2 py-0.5 text-xs font-bold"
+          style={{ background: "rgba(239,68,68,0.15)", color: "#EF4444" }}
+        >
+          REGRESSION DETECTED
+        </span>
+      </div>
+
+      {/* Chart */}
+      <div style={{ height: 140 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
+            <defs>
+              <linearGradient id="costGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#4F6EF7" stopOpacity={0.35} />
+                <stop offset="95%" stopColor="#4F6EF7" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <XAxis
+              dataKey="time"
+              tick={{ fill: "#475569", fontSize: 10 }}
+              axisLine={false}
+              tickLine={false}
+            />
+            <YAxis hide />
+            <Tooltip
+              contentStyle={{
+                background: "#0A0E1A",
+                border: "1px solid rgba(79,110,247,0.3)",
+                borderRadius: 8,
+                color: "#F1F5F9",
+                fontSize: 12,
+              }}
+              formatter={(v: unknown) => [`$${Number(v).toLocaleString()}`, "Cost"]}
+            />
+            <Area
+              type="monotone"
+              dataKey="cost"
+              stroke="#4F6EF7"
+              strokeWidth={2}
+              fill="url(#costGrad)"
+              dot={false}
+              activeDot={{ r: 4, fill: "#4F6EF7" }}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Savings counter */}
+      <div
+        className="mt-3 flex items-center gap-2 rounded-xl px-4 py-2.5"
+        style={{ background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.25)" }}
+      >
+        <span className="relative flex h-2.5 w-2.5">
+          <span
+            className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"
+            style={{ background: "#10B981" }}
+          />
+          <span
+            className="relative inline-flex h-2.5 w-2.5 rounded-full"
+            style={{ background: "#10B981" }}
+          />
+        </span>
+        <span className="text-sm font-bold" style={{ color: "#10B981" }}>
+          +$2,340 saved
+        </span>
+        <span className="text-xs" style={{ color: "#94A3B8" }}>
+          this month
+        </span>
+      </div>
+
+      {/* Deploy card */}
+      <div
+        className="mt-2 rounded-xl px-3 py-2.5"
+        style={{ background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.2)" }}
+      >
+        <div className="flex items-start gap-2">
+          <AlertTriangle size={13} className="mt-0.5 shrink-0" style={{ color: "#EF4444" }} />
+          <div>
+            <div className="text-xs font-semibold" style={{ color: "#F1F5F9" }}>
+              payments-service deploy{" "}
+              <span
+                className="rounded px-1 font-mono text-xs"
+                style={{ background: "rgba(79,110,247,0.15)", color: "#818CF8" }}
+              >
+                #a3f9b2
+              </span>
+            </div>
+            <div className="text-xs" style={{ color: "#EF4444" }}>
+              cost +$847/mo detected
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
-// ── DATA ──────────────────────────────────────────────────────────────────────
+// ─── SECTION 1: Hero ──────────────────────────────────────────────────────────
+function HeroSection() {
+  return (
+    <section
+      className="relative flex min-h-screen items-center overflow-hidden pt-16"
+      style={{ background: "#0A0E1A" }}
+    >
+      {/* Grid background */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(79,110,247,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(79,110,247,0.06) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
+      />
 
-const stats = [
-  { value: 47,      suffix: "",      label: "Engineering teams on waitlist", prefix: "" },
-  { value: 2300000, suffix: "",      label: "In cost regressions tracked",    prefix: "$" },
-  { value: 2,       suffix: "h avg", label: "Detection time after deploy",    prefix: "<" },
-  { value: 99,      suffix: "%",     label: "Read-only — zero write access",  prefix: "" },
+      {/* Glow blobs */}
+      <div
+        className="pointer-events-none absolute left-1/4 top-1/3 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-20 blur-3xl"
+        style={{ background: "#4F6EF7" }}
+      />
+      <div
+        className="pointer-events-none absolute right-1/4 top-2/3 h-64 w-64 -translate-y-1/2 rounded-full opacity-10 blur-3xl"
+        style={{ background: "#7C3AED" }}
+      />
+
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 py-20 lg:py-32">
+        <div className="grid items-center gap-16 lg:grid-cols-2">
+          {/* Left: copy */}
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            animate="show"
+            className="flex flex-col gap-6"
+          >
+            {/* Badge */}
+            <motion.div variants={fadeUp}>
+              <span
+                className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+                style={{
+                  background: "rgba(79,110,247,0.12)",
+                  border: "1px solid rgba(79,110,247,0.3)",
+                  color: "#818CF8",
+                }}
+              >
+                <span
+                  className="inline-block h-1.5 w-1.5 rounded-full"
+                  style={{ background: "#10B981" }}
+                />
+                Now in private beta — join 47 teams
+              </span>
+            </motion.div>
+
+            {/* Headline */}
+            <motion.h1
+              variants={fadeUp}
+              className="font-extrabold leading-[1.05]"
+              style={{
+                fontSize: "clamp(40px, 6vw, 72px)",
+                background: "linear-gradient(135deg, #F1F5F9 0%, #94A3B8 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              Your cloud bill
+              <br />
+              has a leak.
+              <br />
+              <span
+                style={{
+                  background: "linear-gradient(135deg, #4F6EF7 0%, #7C3AED 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                We find it in 2 hours.
+              </span>
+            </motion.h1>
+
+            {/* Subheadline */}
+            <motion.p
+              variants={fadeUp}
+              className="max-w-lg text-xl leading-relaxed"
+              style={{ color: "#94A3B8" }}
+            >
+              Cloudlink connects to your AWS, Azure, or GCP account and automatically detects cost
+              regressions, idle resources, and misconfigurations — then fixes them. You keep{" "}
+              <strong style={{ color: "#10B981" }}>85%</strong> of everything we save.
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-4">
+              <Link
+                href="/signup"
+                className="inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-base font-bold text-white shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-xl"
+                style={{
+                  background: "linear-gradient(135deg, #4F6EF7, #7C3AED)",
+                  boxShadow: "0 8px 32px rgba(79,110,247,0.35)",
+                }}
+              >
+                <Zap size={18} />
+                Connect Your Cloud Free
+              </Link>
+              <Link
+                href="#how-it-works"
+                className="inline-flex items-center gap-2 rounded-xl border px-7 py-3.5 text-base font-semibold transition-all duration-200 hover:scale-105"
+                style={{
+                  borderColor: "rgba(79,110,247,0.35)",
+                  color: "#F1F5F9",
+                  background: "rgba(79,110,247,0.05)",
+                }}
+              >
+                See How It Works
+                <ArrowRight size={16} />
+              </Link>
+            </motion.div>
+
+            {/* Floating stat badges */}
+            <motion.div variants={fadeUp} className="flex flex-wrap gap-3">
+              {[
+                { label: "$2.3M tracked" },
+                { label: "47 teams" },
+                { label: "<2hr detection" },
+              ].map((badge) => (
+                <span
+                  key={badge.label}
+                  className="rounded-full px-3.5 py-1.5 text-xs font-semibold"
+                  style={{
+                    background: "rgba(20,28,51,0.8)",
+                    border: "1px solid rgba(79,110,247,0.3)",
+                    color: "#F1F5F9",
+                    backdropFilter: "blur(8px)",
+                  }}
+                >
+                  {badge.label}
+                </span>
+              ))}
+            </motion.div>
+          </motion.div>
+
+          {/* Right: dashboard mockup */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <HeroDashboardMockup />
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── SECTION 2: Social Proof Bar ─────────────────────────────────────────────
+const companies = ["Vercel", "Stripe", "Linear", "Notion", "Figma", "Loom"];
+
+function SocialProofBar() {
+  return (
+    <section
+      className="overflow-hidden py-10"
+      style={{ background: "#0F1629", borderTop: "1px solid rgba(79,110,247,0.1)", borderBottom: "1px solid rgba(79,110,247,0.1)" }}
+    >
+      <p className="mb-6 text-center text-sm font-medium" style={{ color: "#475569" }}>
+        Trusted by engineering teams at...
+      </p>
+      <div className="relative">
+        <div className="flex animate-marquee gap-16 whitespace-nowrap">
+          {[...companies, ...companies].map((name, i) => (
+            <span
+              key={i}
+              className="text-lg font-bold tracking-tight"
+              style={{ color: "#334155", filter: "grayscale(1)" }}
+            >
+              {name}
+            </span>
+          ))}
+        </div>
+      </div>
+      <style jsx>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 18s linear infinite;
+        }
+      `}</style>
+    </section>
+  );
+}
+
+// ─── SECTION 3: Problem ───────────────────────────────────────────────────────
+const problems = [
+  {
+    icon: Clock,
+    color: "#F59E0B",
+    title: "The bill arrives weeks after the deploy",
+    desc: "By the time Cost Explorer shows you the damage, the regression has been running for 20 days.",
+  },
+  {
+    icon: AlertTriangle,
+    color: "#EF4444",
+    title: "Cost Explorer shows what — not why",
+    desc: "You see the number go up. You don't see which deploy, which service, or which engineer caused it.",
+  },
+  {
+    icon: TrendingUp,
+    color: "#F59E0B",
+    title: "By the time you notice, it's already cost you thousands",
+    desc: "Idle dev environments, over-provisioned RDS, forgotten Lambda — all quietly draining your budget.",
+  },
 ];
 
+function ProblemSection() {
+  return (
+    <section className="py-24" style={{ background: "#0A0E1A" }}>
+      <div className="mx-auto max-w-7xl px-6">
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-80px" }}
+          className="mb-14 text-center"
+        >
+          <motion.h2
+            variants={fadeUp}
+            className="mb-4 text-4xl font-extrabold md:text-5xl"
+            style={{ color: "#F1F5F9" }}
+          >
+            Your team ships fast.
+            <br />
+            <span style={{ color: "#94A3B8" }}>Your cloud bill catches up later.</span>
+          </motion.h2>
+          <motion.p variants={fadeUp} className="text-lg" style={{ color: "#94A3B8" }}>
+            By the time you open Cost Explorer, the damage is done.
+          </motion.p>
+        </motion.div>
+
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-60px" }}
+          className="grid gap-6 md:grid-cols-3"
+        >
+          {problems.map((p) => (
+            <motion.div
+              key={p.title}
+              variants={fadeUp}
+              className="rounded-2xl p-6 transition-all duration-200 hover:scale-[1.02]"
+              style={{
+                background: "#141C33",
+                border: "1px solid #1E2D4F",
+              }}
+            >
+              <div
+                className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl"
+                style={{ background: `${p.color}15` }}
+              >
+                <p.icon size={22} style={{ color: p.color }} />
+              </div>
+              <h3 className="mb-2 text-lg font-bold" style={{ color: "#F1F5F9" }}>
+                {p.title}
+              </h3>
+              <p className="text-sm leading-relaxed" style={{ color: "#94A3B8" }}>
+                {p.desc}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ─── SECTION 4: How It Works ──────────────────────────────────────────────────
 const steps = [
   {
-    n: "01",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="11" width="16" height="8" rx="2"/><path d="M7 11V7a4 4 0 018 0v4"/><circle cx="11" cy="15" r="1" fill="currentColor" stroke="none"/>
-      </svg>
-    ),
-    title: "Connect your cloud — free",
-    desc: "Create a scoped IAM role using our one-click CloudFormation template. No agents, no write access, no upfront cost — ever.",
+    num: "1",
+    title: "Connect",
+    desc: "One-click read-only IAM role. No agents. No write access. Takes 5 minutes.",
   },
   {
-    n: "02",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 17l4-8 4 5 3-3 4 6"/><circle cx="18" cy="5" r="2"/>
-      </svg>
-    ),
-    title: "We scan, detect, and fix waste",
-    desc: "Cloudlink finds idle resources, cost regressions, misconfigurations, and overspending — then remediates them automatically or with your approval.",
+    num: "2",
+    title: "Learn",
+    desc: "Cloudlink builds cost baselines per service, per deploy, per environment. No configuration required.",
   },
   {
-    n: "03",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
-      </svg>
-    ),
-    title: "You save money",
-    desc: "Savings are tracked and verified — idle resources stopped, regressions caught, waste eliminated. Every dollar saved is attributed and confirmed.",
-  },
-  {
-    n: "04",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="11" y1="1" x2="11" y2="21"/><path d="M17 5H8.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
-      </svg>
-    ),
-    title: "We take 15% — nothing before",
-    desc: "Once savings are confirmed, we invoice 15% of the amount saved. No savings, no invoice. You always keep 85% of everything we find.",
+    num: "3",
+    title: "Save",
+    desc: "Real-time alerts with deploy attribution. We fix it, you keep 85%. Pay nothing until we save you money.",
   },
 ];
 
-const features = [
-  {
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#16a34a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M10 2L2 6l8 4 8-4-8-4z"/><path d="M2 10l8 4 8-4"/><path d="M2 14l8 4 8-4"/>
-      </svg>
-    ),
-    title: "Deploy-linked regression detection",
-    desc: "Every cost spike is traced back to the exact deploy window that caused it — not just a noisy account-wide alert.",
-  },
-  {
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#16a34a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-      </svg>
-    ),
-    title: "Read-only by design",
-    desc: "We request only Cost Explorer and CloudTrail read permissions. Every call we make is visible in your CloudTrail logs. Zero write access.",
-  },
-  {
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#16a34a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
-      </svg>
-    ),
-    title: "Monthly impact estimates",
-    desc: "Each regression alert includes the projected monthly dollar impact so you can triage by cost, not just severity.",
-  },
-  {
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#16a34a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.92a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
-      </svg>
-    ),
-    title: "Slack, email, and webhook alerts",
-    desc: "Notifications reach your team instantly — inside your existing workflow. No new dashboard to check.",
-  },
-  {
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#16a34a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-      </svg>
-    ),
-    title: "Per-service baselines",
-    desc: "Cost patterns are tracked per service, not account-wide. You get signal, not noise — and no false positives from seasonal traffic.",
-  },
-  {
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#16a34a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-      </svg>
-    ),
-    title: "5-minute setup",
-    desc: "One CloudFormation stack, one IAM role, and you're live. No agents, no code changes, no infrastructure modifications.",
-  },
-];
-
-const integrations = [
-  { name: "AWS ECS",         color: "#FF9900" },
-  { name: "AWS Lambda",      color: "#FF9900" },
-  { name: "AWS RDS",         color: "#FF9900" },
-  { name: "CloudTrail",      color: "#FF9900" },
-  { name: "Cost Explorer",   color: "#FF9900" },
-  { name: "Slack",           color: "#4A154B" },
-  { name: "GitHub Actions",  color: "#24292F" },
-  { name: "PagerDuty",       color: "#06AC38" },
-  { name: "Webhook",         color: "#6B7280" },
-  { name: "Email / SMTP",    color: "#6B7280" },
-];
-
-const security = [
-  { title: "Read-only IAM role", desc: "Scoped to Cost Explorer and CloudTrail read permissions only. No S3, no EC2, no write access of any kind." },
-  { title: "No application logs", desc: "We never access your application logs, database contents, or any customer data. Only aggregated AWS cost signals." },
-  { title: "Auditable via CloudTrail", desc: "Every API call Cloudlink makes is logged in your own AWS CloudTrail. Nothing is hidden from your security team." },
-  { title: "Revocable in one step", desc: "Delete the IAM role at any time to immediately and permanently cut off all Cloudlink access to your account." },
-  { title: "Encrypted data at rest", desc: "Cost baseline data is stored encrypted. We follow AES-256 encryption standards for all stored customer data." },
-  { title: "SOC 2 (in progress)", desc: "We are actively pursuing SOC 2 Type II certification. Enterprise customers get access to our security documentation." },
-];
-
-const navItems = [
-  { id: "how",      label: "How it works" },
-  { id: "features", label: "Features" },
-  { id: "demo",     label: "Demo" },
-  { id: "pricing",  label: "Pricing" },
-  { id: "security", label: "Security" },
-  { id: "waitlist", label: "Get access" },
-];
-
-// ── PAGE ──────────────────────────────────────────────────────────────────────
-
-export default function Home() {
+function HowItWorksSection() {
   return (
-    <main className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
-      <StickyNav items={navItems} />
+    <section id="how-it-works" className="py-24" style={{ background: "#0F1629" }}>
+      <div className="mx-auto max-w-7xl px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-16 text-center"
+        >
+          <h2 className="mb-3 text-4xl font-extrabold md:text-5xl" style={{ color: "#F1F5F9" }}>
+            Three steps.{" "}
+            <span
+              style={{
+                background: "linear-gradient(135deg, #4F6EF7, #7C3AED)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              Zero risk.
+            </span>
+          </h2>
+        </motion.div>
 
-      {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section id="top" className="relative overflow-hidden bg-[#08111f] pt-16 pb-12 text-white">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(34,197,94,0.14),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(56,189,248,0.12),_transparent_28%),linear-gradient(180deg,_rgba(8,17,31,1)_0%,_rgba(12,22,38,1)_100%)]" />
-        <div className="dot-grid pointer-events-none absolute inset-0 opacity-[0.14]" />
-        <div className="pointer-events-none absolute top-24 left-1/2 h-[540px] w-[980px] -translate-x-1/2 rounded-full bg-green-500/10 blur-3xl" />
+        <div className="relative mx-auto max-w-2xl">
+          {/* Vertical line */}
+          <div
+            className="absolute left-7 top-12 bottom-12 w-px"
+            style={{ background: "linear-gradient(180deg, #4F6EF7 0%, #7C3AED 100%)" }}
+          />
 
-        <div className="relative z-10 mx-auto max-w-6xl px-6">
-          {/* Badge */}
-          <motion.div initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.1, ease: E }}
-            className="flex justify-center mb-8">
-            <a href="#waitlist" className="group inline-flex items-center gap-2.5 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200 transition-all duration-200 shadow-sm">
-              <span className="inline-flex h-2 w-2 rounded-full bg-green-500" />
-              We only get paid when you save money
-            </a>
-          </motion.div>
+          <div className="flex flex-col gap-12">
+            {steps.map((step, i) => (
+              <motion.div
+                key={step.num}
+                initial={{ opacity: 0, x: -24 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.55, delay: i * 0.15, ease: [0.22, 1, 0.36, 1] }}
+                className="relative flex gap-8"
+              >
+                {/* Number badge */}
+                <div
+                  className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-xl font-extrabold text-white shadow-lg"
+                  style={{
+                    background: "linear-gradient(135deg, #4F6EF7, #7C3AED)",
+                    boxShadow: "0 4px 20px rgba(79,110,247,0.4)",
+                  }}
+                >
+                  {step.num}
+                </div>
+                <div className="pt-2">
+                  <h3 className="mb-2 text-2xl font-bold" style={{ color: "#F1F5F9" }}>
+                    {step.title}
+                  </h3>
+                  <p className="text-base leading-relaxed" style={{ color: "#94A3B8" }}>
+                    {step.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 
-          {/* Headline */}
-          <motion.h1 initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: E }}
-            className="mx-auto max-w-5xl text-center text-5xl font-bold tracking-tight leading-[1.04] text-white md:text-6xl lg:text-7xl">
-            Stop paying for cloud waste.{" "}
-            <span className="text-gradient">We&apos;ll fix it — and only charge you after we do.</span>
-          </motion.h1>
+// ─── SECTION 5: Features Bento Grid ──────────────────────────────────────────
+function FeaturesBentoSection() {
+  return (
+    <section className="py-24" style={{ background: "#0A0E1A" }}>
+      <div className="mx-auto max-w-7xl px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-14 text-center"
+        >
+          <h2 className="mb-3 text-4xl font-extrabold md:text-5xl" style={{ color: "#F1F5F9" }}>
+            Everything your team needs
+            <br />
+            <span style={{ color: "#94A3B8" }}>to stop cloud waste</span>
+          </h2>
+        </motion.div>
 
-          {/* Sub */}
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.35, ease: E }}
-            className="mx-auto mt-6 max-w-3xl text-center text-lg leading-relaxed text-slate-300">
-            Cloudlink scans your AWS, Azure, and GCP accounts, finds waste, and fixes it automatically. We take 15% of what we save you. If we save you nothing, you pay nothing. Zero risk.
-          </motion.p>
-
-          {/* CTAs */}
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5, ease: E }}
-            className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <a href="#waitlist" className={primaryBtn}>
-              Start Saving — It&apos;s Free Until We Do
-            </a>
-            <a href="#how" className={secondaryBtn}>
-              See how it works
-            </a>
-          </motion.div>
-
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {/* Large card 1: Deploy-Linked Regression */}
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.65, ease: E }}
-            className="mx-auto mt-10 grid max-w-5xl gap-4 md:grid-cols-3"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+            className="col-span-1 rounded-2xl p-6 md:col-span-2 lg:col-span-2"
+            style={{
+              background: "#141C33",
+              border: "1px solid #1E2D4F",
+              transition: "border-color 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.borderColor = "rgba(79,110,247,0.5)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.borderColor = "#1E2D4F";
+            }}
           >
-            {[
-              { label: "Our fee", value: "15% of savings", detail: "Only charged on verified, confirmed savings" },
-              { label: "If we save you nothing", value: "$0", detail: "No savings, no charge. Zero risk to you." },
-              { label: "How we work", value: "Connect → Fix → Save", detail: "We act, you approve, we invoice after" },
-            ].map((item) => (
-              <div key={item.label} className="rounded-2xl border border-slate-800 bg-slate-950/55 px-5 py-4 text-left shadow-lg shadow-slate-950/20">
-                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">{item.label}</div>
-                <div className="mt-2 text-2xl font-semibold text-white">{item.value}</div>
-                <div className="mt-1 text-sm text-slate-400">{item.detail}</div>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Hero dashboard */}
-          <HeroDashboard />
-        </div>
-      </section>
-
-      {/* ── STATS BAR ────────────────────────────────────────────────────── */}
-      <section className="border-y border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-6 py-10">
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-            {stats.map((s, i) => (
-              <motion.div key={s.label} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08, ease: E }}
-                className="text-center">
-                <div className="text-3xl font-bold text-slate-950 tracking-tight">
-                  <AnimatedCounter end={s.value} prefix={s.prefix} suffix={s.suffix} />
-                </div>
-                <div className="mt-1 text-xs text-slate-500">{s.label}</div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── INTEGRATIONS STRIP ───────────────────────────────────────────── */}
-      <section className="border-b border-gray-100 bg-white py-10">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="mb-5 text-center text-[11px] font-semibold uppercase tracking-widest text-gray-400">
-            Built for teams running on
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            {integrations.map((s, i) => (
-              <motion.span key={s.name} initial={{ opacity: 0, scale: 0.88 }} whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }} transition={{ duration: 0.35, delay: i * 0.04, ease: E }}
-                className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-4 py-1.5 text-xs font-medium text-gray-600 shadow-sm hover:border-green-200 hover:text-green-700 transition-all duration-150 cursor-default">
-                <span className="h-1.5 w-1.5 rounded-full" style={{ background: s.color }} />
-                {s.name}
-              </motion.span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── THE PROBLEM ──────────────────────────────────────────────────── */}
-      <section className="py-20 bg-white">
-        <div className="mx-auto max-w-6xl px-6">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: E }} className="text-center mb-14">
-            <SectionLabel>The problem</SectionLabel>
-            <h2 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
-              Your AWS bill grew 40% last quarter.<br />Which deploy caused it?
-            </h2>
-            <p className="mt-4 mx-auto max-w-2xl text-gray-500 text-lg">
-              Cost Explorer shows you the spike. CloudWatch shows you the metrics. But nothing connects the two
-              to the specific deploy that changed everything — until Cloudlink.
+            <div
+              className="mb-2 inline-flex items-center gap-2 rounded-lg px-2.5 py-1 text-xs font-semibold"
+              style={{ background: "rgba(79,110,247,0.15)", color: "#818CF8" }}
+            >
+              <TrendingUp size={12} />
+              Core Feature
+            </div>
+            <h3 className="mb-1 text-xl font-bold" style={{ color: "#F1F5F9" }}>
+              Deploy-Linked Regression Detection
+            </h3>
+            <p className="mb-4 text-sm" style={{ color: "#94A3B8" }}>
+              Every cost spike is linked to the exact deploy that caused it. Git SHA, timestamp, and cost delta.
             </p>
+            <div style={{ height: 110 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="bento1Grad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#4F6EF7" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#4F6EF7" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="time" tick={{ fill: "#475569", fontSize: 9 }} axisLine={false} tickLine={false} />
+                  <YAxis hide />
+                  <Area type="monotone" dataKey="cost" stroke="#4F6EF7" strokeWidth={2} fill="url(#bento1Grad)" dot={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
           </motion.div>
 
-          {/* Problem / Solution side by side */}
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Without */}
-            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: E }}
-              className="rounded-2xl border border-red-200 bg-red-50/50 p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-red-100 border border-red-200">
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="#ef4444" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                </span>
-                <span className="text-sm font-bold text-red-700">Without Cloudlink</span>
+          {/* Large card 2: AI Auto-Remediation */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55, delay: 0.08 }}
+            className="col-span-1 rounded-2xl p-6"
+            style={{
+              background: "#141C33",
+              border: "1px solid #1E2D4F",
+              transition: "border-color 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.borderColor = "rgba(79,110,247,0.5)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.borderColor = "#1E2D4F";
+            }}
+          >
+            <div
+              className="mb-2 inline-flex items-center gap-2 rounded-lg px-2.5 py-1 text-xs font-semibold"
+              style={{ background: "rgba(124,58,237,0.15)", color: "#A78BFA" }}
+            >
+              <Zap size={12} />
+              AI-Powered
+            </div>
+            <h3 className="mb-2 text-xl font-bold" style={{ color: "#F1F5F9" }}>
+              AI Auto-Remediation
+            </h3>
+            <p className="mb-4 text-sm" style={{ color: "#94A3B8" }}>
+              Claude-powered analysis suggests and applies fixes automatically with your approval.
+            </p>
+            {/* Fake AI card */}
+            <div
+              className="rounded-xl p-3"
+              style={{ background: "rgba(79,110,247,0.07)", border: "1px solid rgba(79,110,247,0.2)" }}
+            >
+              <div className="mb-1 text-xs font-semibold" style={{ color: "#818CF8" }}>
+                AI Suggestion · payments-service
               </div>
-              <ul className="space-y-3">
-                {[
-                  "AWS bill spikes — you open Cost Explorer",
-                  "You see the cost went up. You don't know why.",
-                  "You spend hours cross-referencing deploy logs",
-                  "By the time you find the culprit, you've paid for 2 weeks",
-                  "Next month — same problem, different service",
-                ].map((t) => (
-                  <li key={t} className="flex items-start gap-2.5 text-sm text-red-800">
-                    <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-red-200 bg-red-100">
-                      <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-                        <path d="M2 2l4 4M6 2L2 6" stroke="#ef4444" strokeWidth="1.3" strokeLinecap="round" />
-                      </svg>
-                    </span>{t}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            {/* With */}
-            <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: E }}
-              className="rounded-2xl border border-green-200 bg-green-50/50 p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-green-100 border border-green-200">
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </span>
-                <span className="text-sm font-bold text-green-700">With Cloudlink</span>
+              <p className="mb-2 text-xs" style={{ color: "#94A3B8" }}>
+                Reduce Lambda memory from 2048MB → 512MB. Cost savings: ~$640/mo. Confidence: 94%.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  className="rounded-lg px-3 py-1 text-xs font-semibold text-white"
+                  style={{ background: "linear-gradient(135deg,#4F6EF7,#7C3AED)" }}
+                >
+                  Apply fix
+                </button>
+                <button
+                  className="rounded-lg border px-3 py-1 text-xs font-semibold"
+                  style={{ borderColor: "#1E2D4F", color: "#94A3B8" }}
+                >
+                  Dismiss
+                </button>
               </div>
-              <ul className="space-y-3">
-                {[
-                  "Deploy #247 hits production at 3:42pm",
-                  "2 hours later — Cloudlink detects a cost regression",
-                  "Slack alert: api-service is up +18%, est. $4,200/mo",
-                  "Your team investigates the exact deploy, not everything",
-                  "Fixed the same day. Bill impact: minimal.",
-                ].map((t) => (
-                  <li key={t} className="flex items-start gap-2.5 text-sm text-green-800">
-                    <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-green-200 bg-green-100">
-                      <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-                        <path d="M1.5 4l2 2 3-3" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </span>{t}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+            </div>
+          </motion.div>
 
-      {/* ── HOW IT WORKS ─────────────────────────────────────────────────── */}
-      <section id="how" className="py-20 bg-gray-50">
-        <div className="mx-auto max-w-6xl px-6">
-          <motion.div variants={container} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-80px" }}>
-            <motion.div variants={item} className="mb-14 text-center">
-              <SectionLabel>How it works</SectionLabel>
-              <h2 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
-                Connect. We fix it. You win. We split it.
-              </h2>
-              <p className="mt-3 mx-auto max-w-xl text-gray-500">
-                Four steps — zero risk to you. We only make money when you do.
+          {/* Small cards */}
+          {[
+            { icon: CloudOff, title: "AutoStopping", desc: "Kill idle dev/staging resources automatically on a schedule.", color: "#10B981" },
+            { icon: Shield, title: "Budget Guardrails", desc: "Hard limits per team, service, or environment. Alerts before overage.", color: "#F59E0B" },
+            { icon: BarChart2, title: "Unit Cost Economics", desc: "Cost per API call, per user, per transaction — normalized metrics.", color: "#4F6EF7" },
+            { icon: Cpu, title: "MCP Server Integration", desc: "Ask your AI assistant about cloud costs directly in Cursor or Claude.", color: "#A78BFA" },
+          ].map((feat, i) => (
+            <motion.div
+              key={feat.title}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 + i * 0.07 }}
+              className="rounded-2xl p-5"
+              style={{
+                background: "#141C33",
+                border: "1px solid #1E2D4F",
+                transition: "border-color 0.2s, transform 0.2s",
+                cursor: "default",
+              }}
+              onMouseEnter={(e) => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.borderColor = "rgba(79,110,247,0.5)";
+                el.style.transform = "translateY(-2px)";
+              }}
+              onMouseLeave={(e) => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.borderColor = "#1E2D4F";
+                el.style.transform = "translateY(0)";
+              }}
+            >
+              <div
+                className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl"
+                style={{ background: `${feat.color}15` }}
+              >
+                <feat.icon size={20} style={{ color: feat.color }} />
+              </div>
+              <h3 className="mb-1 text-base font-bold" style={{ color: "#F1F5F9" }}>
+                {feat.title}
+              </h3>
+              <p className="text-sm leading-relaxed" style={{ color: "#94A3B8" }}>
+                {feat.desc}
               </p>
             </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {steps.map((s) => (
-                <motion.div key={s.n} variants={item}>
-            <div className={card + " h-full relative overflow-hidden bg-white"}>
-                    <div className="flex items-start justify-between mb-5">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-green-200 bg-green-50 text-green-600">
-                        {s.icon}
-                      </div>
-                      <span className="font-mono text-3xl font-bold text-gray-100 select-none">{s.n}</span>
-                    </div>
-                    <div className="text-base font-semibold text-gray-900">{s.title}</div>
-                    <p className="mt-2 text-sm leading-relaxed text-gray-500">{s.desc}</p>
-                    <div className="mt-5 h-px bg-gray-100">
-                      <motion.div className="h-px bg-gradient-to-r from-green-500 to-green-300"
-                        initial={{ width: "0%" }} whileInView={{ width: "100%" }} viewport={{ once: true }}
-                        transition={{ duration: 1.2, delay: 0.3, ease: E }} />
-                    </div>
+// ─── SECTION 6: Savings Calculator ───────────────────────────────────────────
+function CalculatorSection() {
+  const [spend, setSpend] = useState(50000);
+
+  const waste = spend * 0.2;
+  const savings = waste * 0.85;
+  const fee = savings * 0.15;
+  const netSavings = savings * 0.85;
+
+  return (
+    <section className="py-24" style={{ background: "#0F1629" }}>
+      <div className="mx-auto max-w-3xl px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center"
+        >
+          <h2 className="mb-3 text-4xl font-extrabold md:text-5xl" style={{ color: "#F1F5F9" }}>
+            See how much you could save
+          </h2>
+          <p className="mb-10 text-lg" style={{ color: "#94A3B8" }}>
+            Adjust your monthly cloud spend and see your savings instantly.
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="rounded-2xl p-8"
+          style={{ background: "#141C33", border: "1px solid #1E2D4F" }}
+        >
+          {/* Slider */}
+          <div className="mb-8">
+            <div className="mb-3 flex items-baseline justify-between">
+              <label className="text-sm font-semibold" style={{ color: "#94A3B8" }}>
+                Monthly AWS Spend
+              </label>
+              <span className="text-2xl font-extrabold" style={{ color: "#F1F5F9" }}>
+                {fmt(spend)}
+              </span>
+            </div>
+            <input
+              type="range"
+              min={1000}
+              max={500000}
+              step={1000}
+              value={spend}
+              onChange={(e) => setSpend(Number(e.target.value))}
+              className="w-full accent-indigo-500"
+              style={{ accentColor: "#4F6EF7" }}
+            />
+            <div className="mt-1 flex justify-between text-xs" style={{ color: "#475569" }}>
+              <span>$1,000</span>
+              <span>$500,000</span>
+            </div>
+          </div>
+
+          {/* Results grid */}
+          <div className="mb-6 grid gap-4 sm:grid-cols-2">
+            {[
+              { label: "Estimated waste (20%)", value: waste },
+              { label: "Recoverable savings (85% of waste)", value: savings },
+              { label: "Cloudlink fee (15%)", value: fee },
+            ].map((row) => (
+              <div
+                key={row.label}
+                className="rounded-xl p-4"
+                style={{ background: "rgba(255,255,255,0.03)", border: "1px solid #1E2D4F" }}
+              >
+                <div className="mb-1 text-xs font-medium" style={{ color: "#475569" }}>
+                  {row.label}
+                </div>
+                <div className="text-xl font-bold" style={{ color: "#94A3B8" }}>
+                  {fmt(row.value)}
+                </div>
+              </div>
+            ))}
+
+            {/* Net savings — highlighted */}
+            <div
+              className="rounded-xl p-4 sm:col-span-1"
+              style={{
+                background: "rgba(16,185,129,0.1)",
+                border: "1px solid rgba(16,185,129,0.3)",
+              }}
+            >
+              <div className="mb-1 text-xs font-medium" style={{ color: "#6EE7B7" }}>
+                Your net savings / month
+              </div>
+              <div className="text-2xl font-extrabold" style={{ color: "#10B981" }}>
+                {fmt(netSavings)}
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <Link
+              href="/signup"
+              className="inline-flex items-center gap-2 text-base font-bold transition-all duration-200 hover:gap-3"
+              style={{ color: "#4F6EF7" }}
+            >
+              Start saving this month
+              <ArrowRight size={17} />
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ─── SECTION 7: Integrations ──────────────────────────────────────────────────
+const integrations = [
+  { name: "AWS", dot: "#FF9900" },
+  { name: "Azure", dot: "#0078D4" },
+  { name: "GCP", dot: "#4285F4" },
+  { name: "Slack", dot: "#4A154B" },
+  { name: "GitHub", dot: "#F1F5F9" },
+  { name: "Terraform", dot: "#7B42BC" },
+  { name: "Datadog", dot: "#632CA6" },
+  { name: "PagerDuty", dot: "#06AC38" },
+  { name: "Claude", dot: "#CC785C" },
+  { name: "Cursor", dot: "#F1F5F9" },
+  { name: "Linear", dot: "#5E6AD2" },
+  { name: "Vercel", dot: "#F1F5F9" },
+];
+
+function IntegrationsSection() {
+  return (
+    <section className="py-24" style={{ background: "#0A0E1A" }}>
+      <div className="mx-auto max-w-7xl px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-12 text-center"
+        >
+          <h2 className="text-4xl font-extrabold md:text-5xl" style={{ color: "#F1F5F9" }}>
+            Works with your entire stack
+          </h2>
+        </motion.div>
+
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6"
+        >
+          {integrations.map((int) => (
+            <motion.div
+              key={int.name}
+              variants={fadeUp}
+              className="flex items-center justify-center gap-2 rounded-xl px-3 py-4 text-sm font-semibold transition-all duration-200 hover:-translate-y-1"
+              style={{
+                background: "#141C33",
+                border: "1px solid #1E2D4F",
+                color: "#F1F5F9",
+              }}
+            >
+              <span
+                className="h-2 w-2 shrink-0 rounded-full"
+                style={{ background: int.dot }}
+              />
+              {int.name}
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ─── SECTION 8: Testimonials ──────────────────────────────────────────────────
+const testimonials = [
+  {
+    quote:
+      "Cloudlink caught a Lambda regression within 45 minutes of deploy. Saved us $12K that month alone.",
+    name: "Sarah Chen",
+    role: "Platform Engineer",
+    company: "Fintech startup",
+    initials: "SC",
+    color: "#4F6EF7",
+  },
+  {
+    quote:
+      "We had no idea our dev environments were burning $8K/month overnight. AutoStopping fixed it in a day.",
+    name: "Marcus Rodriguez",
+    role: "VP Engineering",
+    company: "SaaS Co",
+    initials: "MR",
+    color: "#7C3AED",
+  },
+  {
+    quote:
+      "The deploy attribution is insane. We can see exactly which PR caused the cost spike.",
+    name: "Priya Patel",
+    role: "CTO",
+    company: "E-commerce platform",
+    initials: "PP",
+    color: "#10B981",
+  },
+];
+
+function TestimonialsSection() {
+  return (
+    <section className="py-24" style={{ background: "#0F1629" }}>
+      <div className="mx-auto max-w-7xl px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-14 text-center"
+        >
+          <h2 className="text-4xl font-extrabold md:text-5xl" style={{ color: "#F1F5F9" }}>
+            Teams that stopped the leak
+          </h2>
+        </motion.div>
+
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid gap-6 md:grid-cols-3"
+        >
+          {testimonials.map((t) => (
+            <motion.div
+              key={t.name}
+              variants={fadeUp}
+              className="rounded-2xl p-6"
+              style={{ background: "#141C33", border: "1px solid #1E2D4F" }}
+            >
+              {/* Stars */}
+              <div className="mb-4 flex gap-1">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} size={15} fill="#F59E0B" style={{ color: "#F59E0B" }} />
+                ))}
+              </div>
+              <p className="mb-5 text-sm leading-relaxed" style={{ color: "#CBD5E1" }}>
+                &ldquo;{t.quote}&rdquo;
+              </p>
+              <div className="flex items-center gap-3">
+                <div
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                  style={{ background: t.color }}
+                >
+                  {t.initials}
+                </div>
+                <div>
+                  <div className="text-sm font-semibold" style={{ color: "#F1F5F9" }}>
+                    {t.name}
                   </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── FEATURES GRID ────────────────────────────────────────────────── */}
-      <section id="features" className="py-20 bg-white">
-        <div className="mx-auto max-w-6xl px-6">
-          <motion.div variants={container} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-80px" }}>
-            <motion.div variants={item} className="mb-14 text-center">
-              <SectionLabel>Features</SectionLabel>
-              <h2 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
-                Everything your team needs to own cloud costs
-              </h2>
-              <p className="mt-3 mx-auto max-w-xl text-gray-500">
-                Purpose-built for engineering teams — not finance dashboards.
-              </p>
-            </motion.div>
-
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {features.map((f) => (
-                <motion.div key={f.title} variants={item}>
-                  <TiltCard className={card + " h-full"}>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-green-200 bg-green-50">
-                      {f.icon}
-                    </div>
-                    <div className="mt-4 text-sm font-semibold text-gray-900">{f.title}</div>
-                    <p className="mt-1.5 text-sm leading-relaxed text-gray-500">{f.desc}</p>
-                  </TiltCard>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── ALTERNATING FEATURE DEEP-DIVES ───────────────────────────────── */}
-      <section className="py-20 bg-gray-50">
-        <div className="mx-auto max-w-6xl px-6 space-y-24">
-
-          {/* Deep dive 1 */}
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.7, ease: E }}>
-              <SectionLabel>Deploy correlation</SectionLabel>
-              <h3 className="mt-4 text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">
-                Not just &ldquo;costs went up&rdquo; — but <em>which deploy</em>
-              </h3>
-              <p className="mt-4 text-gray-500 leading-relaxed">
-                AWS Cost Explorer will tell you spending spiked on Tuesday. Cloudlink tells you it was
-                deploy <code className="bg-gray-100 rounded px-1.5 py-0.5 text-xs font-mono text-gray-700">api@1.14.2</code> at 3:42pm on Tuesday, specifically in your ECS api-service,
-                and it will cost you an estimated <strong className="text-gray-900">$4,200/month</strong> if not addressed.
-              </p>
-              <ul className="mt-6 space-y-2.5">
-                {["Correlates cost signals to deploy timestamps", "Per-service isolation eliminates cross-service noise", "Estimated monthly impact in plain dollars", "Links directly to the deploy in your CI/CD system"].map((t) => (
-                  <li key={t} className="flex items-center gap-2.5 text-sm text-gray-600">
-                    <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-600">
-                      <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    </span>
-                    {t}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-            <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.1, ease: E }}
-              className="rounded-[26px] border border-slate-200 bg-white p-6 shadow-sm">
-              <InteractiveAlert cardClass="" />
-            </motion.div>
-          </div>
-
-          {/* Deep dive 2 */}
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.7, ease: E }}
-              className="order-2 md:order-1 rounded-[26px] border border-slate-200 bg-white p-6 shadow-sm">
-              <DemoPanel cardClass="" />
-            </motion.div>
-            <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.1, ease: E }} className="order-1 md:order-2">
-              <SectionLabel>Before vs after</SectionLabel>
-              <h3 className="mt-4 text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">
-                See the exact moment costs diverged
-              </h3>
-              <p className="mt-4 text-gray-500 leading-relaxed">
-                The interactive chart shows your cost signal before and after a deploy. The shift is clear.
-                Cloudlink surfaces this automatically — you don&apos;t need to build dashboards or write queries.
-              </p>
-              <ul className="mt-6 space-y-2.5">
-                {["Hourly cost signal per service", "Deploy window highlighted automatically", "Regression % and monthly dollar estimate", "Works with ECS, Lambda, RDS, ALB, and more"].map((t) => (
-                  <li key={t} className="flex items-center gap-2.5 text-sm text-gray-600">
-                    <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-600">
-                      <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    </span>
-                    {t}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* ── DEMO ─────────────────────────────────────────────────────────── */}
-      <section id="demo" className="py-20 bg-white">
-        <div className="mx-auto max-w-6xl px-6">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: E }} className="text-center mb-12">
-            <SectionLabel>Live demo</SectionLabel>
-            <h2 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
-              Watch a regression get caught
-            </h2>
-            <p className="mt-3 mx-auto max-w-xl text-gray-500">
-              A deploy hits production. Cloudlink detects the cost shift and estimates monthly impact automatically.
-            </p>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: E }}>
-            <DemoPanel cardClass={card + " max-w-2xl mx-auto"} />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── TESTIMONIALS ─────────────────────────────────────────────────── */}
-      <Testimonials />
-
-      {/* ── COMPARISON ───────────────────────────────────────────────────── */}
-      <ComparisonTable />
-
-      {/* ── INTEGRATIONS DEEP DIVE ───────────────────────────────────────── */}
-      <section className="py-20 bg-gray-50">
-        <div className="mx-auto max-w-6xl px-6">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: E }} className="text-center mb-12">
-            <SectionLabel>Integrations</SectionLabel>
-            <h2 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
-              Works with your stack, out of the box
-            </h2>
-            <p className="mt-3 mx-auto max-w-xl text-gray-500">No new tools to learn. Alerts flow directly into Slack, email, or any webhook.</p>
-          </motion.div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              { name: "AWS Cost Explorer", cat: "Data source",   desc: "We pull hourly cost data per service to build baselines and detect regressions.",         dot: "#FF9900" },
-              { name: "AWS CloudTrail",    cat: "Audit log",     desc: "Every Cloudlink API call is visible in your CloudTrail. Full auditability, always.",       dot: "#FF9900" },
-              { name: "AWS ECS / EKS",     cat: "Services",      desc: "Track cost regressions per ECS service or Kubernetes cluster deployment.",                  dot: "#FF9900" },
-              { name: "AWS Lambda",        cat: "Serverless",    desc: "Monitor Lambda invocation cost changes tied to function deploys or traffic shifts.",        dot: "#FF9900" },
-              { name: "AWS RDS",           cat: "Databases",     desc: "Detect cost increases from schema migrations, slow queries, or provisioning changes.",      dot: "#FF9900" },
-              { name: "Slack",             cat: "Alerts",        desc: "Regression alerts delivered to any Slack channel, with full context and deploy link.",      dot: "#4A154B" },
-              { name: "GitHub Actions",    cat: "CI/CD",         desc: "Optional webhook lets Cloudlink correlate cost data to GitHub Actions deploy events.",      dot: "#24292F" },
-              { name: "PagerDuty",         cat: "Incidents",     desc: "Escalate critical cost regressions directly into your existing on-call workflow.",           dot: "#06AC38" },
-              { name: "Custom Webhooks",   cat: "Any system",    desc: "Send regression alerts to any URL — JIRA, Linear, internal tools, or custom dashboards.",   dot: "#6B7280" },
-            ].map((int, i) => (
-              <motion.div key={int.name} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.05, ease: E }}
-                className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md hover:border-green-200 transition-all duration-200">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="h-2 w-2 rounded-full shrink-0" style={{ background: int.dot }} />
-                  <span className="text-sm font-semibold text-gray-900">{int.name}</span>
-                  <span className="ml-auto rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-[10px] font-medium text-gray-500">{int.cat}</span>
+                  <div className="text-xs" style={{ color: "#475569" }}>
+                    {t.role}, {t.company}
+                  </div>
                 </div>
-                <p className="text-xs leading-relaxed text-gray-500">{int.desc}</p>
-              </motion.div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ─── SECTION 9: Final CTA ─────────────────────────────────────────────────────
+function FinalCTASection() {
+  return (
+    <section
+      className="py-28 text-center"
+      style={{
+        background: "linear-gradient(135deg, #4F6EF7 0%, #7C3AED 100%)",
+      }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="mx-auto max-w-3xl px-6"
+      >
+        <h2 className="mb-4 text-4xl font-extrabold text-white md:text-5xl">
+          Stop paying for waste
+          <br />
+          you haven&apos;t found yet.
+        </h2>
+        <p className="mb-8 text-lg text-indigo-100">
+          Connect in 5 minutes. First savings report in 24 hours.
+          <br />
+          Pay nothing until we save you money.
+        </p>
+        <Link
+          href="/signup"
+          className="inline-flex items-center gap-3 rounded-xl bg-white px-9 py-4 text-lg font-bold shadow-2xl transition-all duration-200 hover:scale-105 hover:shadow-3xl"
+          style={{ color: "#4F6EF7" }}
+        >
+          <Zap size={20} />
+          Connect Your Cloud — It&apos;s Free
+        </Link>
+      </motion.div>
+    </section>
+  );
+}
+
+// ─── SECTION 10: Footer ───────────────────────────────────────────────────────
+const footerCols = [
+  {
+    heading: "Product",
+    links: ["Features", "Pricing", "Changelog", "Roadmap", "Status"],
+  },
+  {
+    heading: "Company",
+    links: ["About", "Blog", "Careers", "Press", "Contact"],
+  },
+  {
+    heading: "Resources",
+    links: ["Docs", "API Reference", "Guides", "Community", "Support"],
+  },
+  {
+    heading: "Legal",
+    links: ["Privacy", "Terms", "Security", "Cookies", "GDPR"],
+  },
+];
+
+function Footer() {
+  return (
+    <footer style={{ background: "#080C17", borderTop: "1px solid #141C33" }}>
+      <div className="mx-auto max-w-7xl px-6 py-16">
+        <div className="mb-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {footerCols.map((col) => (
+            <div key={col.heading}>
+              <h4 className="mb-4 text-sm font-semibold" style={{ color: "#F1F5F9" }}>
+                {col.heading}
+              </h4>
+              <ul className="flex flex-col gap-2.5">
+                {col.links.map((link) => (
+                  <li key={link}>
+                    <Link
+                      href="#"
+                      className="text-sm transition-colors duration-150 hover:text-white"
+                      style={{ color: "#475569" }}
+                    >
+                      {link}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div
+          className="flex flex-col items-center justify-between gap-4 border-t pt-8 sm:flex-row"
+          style={{ borderColor: "#141C33" }}
+        >
+          {/* Left: copyright + badge */}
+          <div className="flex items-center gap-4">
+            <span className="text-sm" style={{ color: "#334155" }}>
+              © 2025 Cloudlink Global
+            </span>
+            <span
+              className="rounded-full px-2.5 py-0.5 text-xs font-semibold"
+              style={{
+                background: "rgba(16,185,129,0.1)",
+                border: "1px solid rgba(16,185,129,0.25)",
+                color: "#10B981",
+              }}
+            >
+              SOC 2 in progress
+            </span>
+          </div>
+
+          {/* Right: social icons */}
+          <div className="flex items-center gap-4">
+            {[
+              { Icon: X, href: "#" },
+              { Icon: Globe, href: "#" },
+              { Icon: GitBranch, href: "#" },
+            ].map(({ Icon, href }, i) => (
+              <Link
+                key={i}
+                href={href}
+                className="transition-colors duration-150 hover:text-white"
+                style={{ color: "#334155" }}
+              >
+                <Icon size={18} />
+              </Link>
             ))}
           </div>
         </div>
-      </section>
+      </div>
+    </footer>
+  );
+}
 
-      {/* ── PRICING ──────────────────────────────────────────────────────── */}
-      <Pricing />
-
-      {/* ── SECURITY ─────────────────────────────────────────────────────── */}
-      <section id="security" className="py-20 bg-white">
-        <div className="mx-auto max-w-6xl px-6">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: E }} className="text-center mb-12">
-            <SectionLabel>Security</SectionLabel>
-            <h2 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
-              Security-first by design
-            </h2>
-            <p className="mt-3 mx-auto max-w-xl text-gray-500">
-              We built Cloudlink so you never have to compromise on access or trust.
-              Your security team will approve this in a day.
-            </p>
-          </motion.div>
-
-          {/* Big trust badge */}
-          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: E }}
-            className="mb-8 rounded-2xl border border-green-200 bg-green-50 p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-green-200 bg-white">
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#16a34a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M11 2L3 6v6c0 5.25 3.5 10.15 8 11.38C16.5 22.15 20 17.25 20 12V6l-9-4z"/>
-                <path d="M7 11l3 3 5-5"/>
-              </svg>
-            </div>
-            <div>
-              <div className="text-sm font-bold text-gray-900">Read-only access — always</div>
-              <p className="mt-0.5 text-sm text-gray-600">Cloudlink only reads from AWS Cost Explorer and CloudTrail APIs. We cannot create, modify, or delete any AWS resource. This is architectural, not just policy.</p>
-            </div>
-          </motion.div>
-
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {security.map((s, i) => (
-              <motion.div key={s.title} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.06, ease: E }}
-                className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm hover:border-green-200 hover:shadow-md transition-all duration-200">
-                <div className="text-sm font-semibold text-gray-900 mb-1.5">{s.title}</div>
-                <p className="text-xs leading-relaxed text-gray-500">{s.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── FAQ ──────────────────────────────────────────────────────────── */}
-      <FAQ />
-
-      {/* ── WAITLIST CTA ─────────────────────────────────────────────────── */}
-      <section id="waitlist" className="relative overflow-hidden bg-gray-900 py-24">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full bg-green-500/15 blur-3xl" />
-          <div className="dot-grid absolute inset-0 opacity-20" />
-        </div>
-        <div className="relative mx-auto max-w-2xl px-6 text-center">
-          <motion.div variants={container} initial="hidden" whileInView="show" viewport={{ once: true }}>
-            <motion.div variants={item}>
-              <span className="inline-flex items-center gap-2 rounded-full border border-green-500/40 bg-green-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-green-400">
-                Free to start — 15% of savings only
-              </span>
-            </motion.div>
-            <motion.h2 variants={item} className="mt-5 text-4xl font-bold tracking-tight text-white md:text-5xl">
-              Connect your cloud. Pay nothing until we save you money.
-            </motion.h2>
-            <motion.p variants={item} className="mt-4 text-gray-400 text-lg">
-              No subscriptions. No monthly fees. No upfront cost. We win when you win — and not a second before.
-            </motion.p>
-            <motion.div variants={item}>
-              <WaitlistForm />
-            </motion.div>
-            <motion.p variants={item} className="mt-4 text-xs text-gray-600">
-              Free to connect. 15% of verified savings only. Zero if we save you zero.
-            </motion.p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── FOOTER ───────────────────────────────────────────────────────── */}
-      <footer className="border-t border-gray-100 bg-white py-12">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4 mb-10">
-            <div>
-              <LogoWordmark size={26} />
-              <p className="mt-3 text-xs leading-relaxed text-gray-400">
-                Deploy-aware AWS cost regression detection for engineering teams.
-              </p>
-            </div>
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Product</div>
-              <ul className="space-y-2">
-                {[["#how","How it works"],["#features","Features"],["#demo","Demo"],["#pricing","Pricing"]].map(([h,l]) => (
-                  <li key={h}><a href={h} className="text-xs text-gray-500 hover:text-green-600 transition-colors">{l}</a></li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Company</div>
-              <ul className="space-y-2">
-                {[["/login","Sign in"],["mailto:satvikranga60@gmail.com","Contact"]].map(([h,l]) => (
-                  <li key={l}><a href={h} className="text-xs text-gray-500 hover:text-green-600 transition-colors">{l}</a></li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Legal</div>
-              <ul className="space-y-2">
-                {[["/privacy","Privacy Policy"],["/terms","Terms of Service"]].map(([h,l]) => (
-                  <li key={l}><a href={h} className="text-xs text-gray-500 hover:text-green-600 transition-colors">{l}</a></li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-100 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="text-xs text-gray-400">© {new Date().getFullYear()} Cloudlink Global Inc. All rights reserved.</div>
-            <div className="flex items-center gap-4 text-xs text-gray-400">
-              <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                All systems operational
-              </span>
-              <a href="/login" className="hover:text-green-600 transition-colors">Sign in</a>
-            </div>
-          </div>
-        </div>
-      </footer>
+// ─── Page ─────────────────────────────────────────────────────────────────────
+export default function HomePage() {
+  return (
+    <main style={{ background: "#0A0E1A", color: "#F1F5F9" }}>
+      <HeroSection />
+      <SocialProofBar />
+      <ProblemSection />
+      <HowItWorksSection />
+      <FeaturesBentoSection />
+      <CalculatorSection />
+      <IntegrationsSection />
+      <TestimonialsSection />
+      <FinalCTASection />
+      <Footer />
     </main>
   );
 }

@@ -1,426 +1,442 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { getDemoSummary, getCostSummary, getCredentials, getDeploys, getTrackedServices, getCostSnapshots, getAnomalies, getMultiCloudSummary } from '../../lib/api'
-import dynamic from 'next/dynamic'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import {
+  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  ReferenceLine, Legend,
+} from 'recharts'
+import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, AlertCircle, ExternalLink } from 'lucide-react'
 
-const CostTrendChart = dynamic(() => import('./CostTrendChart'), { ssr: false })
-const SavingsWidget = dynamic(() => import('./SavingsWidget'), { ssr: false })
+// ─── Mock data ────────────────────────────────────────────────────────────────
 
-// ─── Onboarding checklist ────────────────────────────────────────────────────
-
-const STEPS = [
-  {
-    id: 'credential',
-    title: 'Add a cloud credential',
-    desc: 'Connect AWS, GCP, or Azure so Cloudlink can scan your infrastructure.',
-    href: '/dashboard/credentials',
-    cta: 'Go to Credentials →',
-  },
-  {
-    id: 'scan',
-    title: 'Run your first scan',
-    desc: 'Discover cloud resources and start collecting hourly cost snapshots.',
-    href: null, // triggered via the Run scan button
-    cta: 'Click ▶ Run scan above',
-  },
-  {
-    id: 'deploy',
-    title: 'Connect your CI pipeline',
-    desc: 'Send deploy events so Cloudlink can link cost spikes to specific releases.',
-    href: '/dashboard/deploys',
-    cta: 'Go to Deploys →',
-  },
-  {
-    id: 'baseline',
-    title: 'Build your cost baseline',
-    desc: 'Cloudlink needs 7 days of hourly data to detect regressions reliably. Hang tight — this happens automatically.',
-    href: null,
-    cta: 'Auto-completes in ~7 days',
-  },
+const SPEND_DATA = [
+  { day: 'Mar 1',  current: 4200, last: 3800 },
+  { day: 'Mar 2',  current: 4350, last: 3900 },
+  { day: 'Mar 3',  current: 4180, last: 3750 },
+  { day: 'Mar 4',  current: 4520, last: 3820 },
+  { day: 'Mar 5',  current: 4680, last: 3910 },
+  { day: 'Mar 6',  current: 4410, last: 3780 },
+  { day: 'Mar 7',  current: 4290, last: 3860 },
+  { day: 'Mar 8',  current: 4750, last: 3920 },
+  { day: 'Mar 9',  current: 4890, last: 4010 },
+  { day: 'Mar 10', current: 4630, last: 3950 },
+  { day: 'Mar 11', current: 4420, last: 3870 },
+  { day: 'Mar 12', current: 4580, last: 3990 },
+  { day: 'Mar 13', current: 5120, last: 4050 },
+  { day: 'Mar 14', current: 5340, last: 4120 },
+  { day: 'Mar 15', current: 5180, last: 4080 },
+  { day: 'Mar 16', current: 4920, last: 4000 },
+  { day: 'Mar 17', current: 4760, last: 3970 },
+  { day: 'Mar 18', current: 5050, last: 4140 },
+  { day: 'Mar 19', current: 5280, last: 4200 },
+  { day: 'Mar 20', current: 5410, last: 4280 },
+  { day: 'Mar 21', current: 5190, last: 4160 },
+  { day: 'Mar 22', current: 4980, last: 4090 },
+  { day: 'Mar 23', current: 5320, last: 4220 },
+  { day: 'Mar 24', current: 5480, last: 4310 },
+  { day: 'Mar 25', current: 5250, last: 4180 },
+  { day: 'Mar 26', current: 5090, last: 4100 },
 ]
 
-function CheckIcon({ done }: { done: boolean }) {
-  if (done) return (
-    <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-      <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-      </svg>
-    </div>
-  )
+const SAVINGS_PIE = [
+  { name: 'AutoStopping',          value: 6200 },
+  { name: 'Idle Resources',        value: 4800 },
+  { name: 'Regression Prevention', value: 4400 },
+  { name: 'Misc Fixes',            value: 2800 },
+]
+const PIE_COLORS = ['#4F6EF7', '#10B981', '#F59E0B', '#7C3AED']
+
+const REGRESSIONS = [
+  { service: 'payments-service', deploy: 'a3f9b2', detected: '2h ago',  impact: '+$847/mo',   status: 'DETECTED' },
+  { service: 'auth-service',     deploy: 'b7c1d3', detected: '1d ago',  impact: '+$234/mo',   status: 'FIXING' },
+  { service: 'api-gateway',      deploy: 'c9e2f4', detected: '2d ago',  impact: '+$1,203/mo', status: 'RESOLVED' },
+  { service: 'data-pipeline',    deploy: 'd4a5b6', detected: '3d ago',  impact: '+$456/mo',   status: 'RESOLVED' },
+  { service: 'ml-training',      deploy: 'e8f9a0', detected: '5d ago',  impact: '+$2,891/mo', status: 'RESOLVED' },
+]
+
+const TOP_SERVICES = [
+  { name: 'EC2',          cost: 62400 },
+  { name: 'RDS',          cost: 28100 },
+  { name: 'Lambda',       cost: 18900 },
+  { name: 'S3',           cost: 12300 },
+  { name: 'CloudFront',   cost: 8400 },
+  { name: 'EKS',          cost: 6200 },
+  { name: 'ElastiCache',  cost: 3800 },
+  { name: 'SNS',          cost: 2740 },
+]
+
+const AUTOSTOP_EVENTS = [
+  { time: '09:14', description: 'dev-env-payments stopped',    saving: '$0.82/hr', type: 'stop' },
+  { time: '10:31', description: 'staging-api stopped',         saving: '$1.24/hr', type: 'stop' },
+  { time: '11:45', description: 'ml-training-dev stopped',     saving: '$3.40/hr', type: 'stop' },
+  { time: '14:22', description: 'dev-env-payments started',    saving: 'traffic detected', type: 'start' },
+  { time: '16:08', description: 'staging-frontend stopped',    saving: '$0.67/hr', type: 'stop' },
+]
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+const CARD = 'bg-[#141C33] border border-[#1E2D4F] rounded-xl'
+const SECTION_LABEL = 'text-[10px] font-semibold uppercase tracking-widest text-[#3D5070]'
+
+function StatusBadge({ status }: { status: string }) {
+  const styles: Record<string, string> = {
+    DETECTED: 'bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20',
+    FIXING:   'bg-[#4F6EF7]/10 text-[#4F6EF7] border border-[#4F6EF7]/20',
+    RESOLVED: 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20',
+  }
   return (
-    <div className="w-6 h-6 rounded-full border-2 border-slate-300 flex-shrink-0" />
+    <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${styles[status] || 'bg-[#1E2D4F] text-[#64748B]'}`}>
+      {status === 'FIXING' ? (
+        <span className="inline-flex items-center gap-1">
+          <span className="w-1.5 h-1.5 bg-[#4F6EF7] rounded-full animate-pulse" />
+          {status}
+        </span>
+      ) : status}
+    </span>
   )
 }
 
-function OnboardingChecklist({
-  hasCredential, hasScanned, hasDeploy, hasBaseline, stepsLoaded,
-}: {
-  hasCredential: boolean; hasScanned: boolean; hasDeploy: boolean; hasBaseline: boolean; stepsLoaded: boolean
-}) {
-  const [dismissed, setDismissed] = useState(() => {
-    if (typeof window === 'undefined') return false
-    return localStorage.getItem('cl_onboarding_dismissed') === '1'
-  })
-
-  const allDone = hasCredential && hasScanned && hasDeploy && hasBaseline
-  const doneCount = [hasCredential, hasScanned, hasDeploy, hasBaseline].filter(Boolean).length
-
-  if (dismissed || !stepsLoaded) return null
-  if (allDone) {
-    // Auto-dismiss after all done
-    if (typeof window !== 'undefined') localStorage.setItem('cl_onboarding_dismissed', '1')
-    return null
-  }
-
-  const states = { credential: hasCredential, scan: hasScanned, deploy: hasDeploy, baseline: hasBaseline }
-
-  // Find first incomplete step index for progress highlight
-  const firstIncomplete = STEPS.findIndex(s => !states[s.id as keyof typeof states])
-
+function CustomTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5 mb-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h2 className="text-sm font-semibold text-slate-800">Getting started</h2>
-          <p className="text-xs text-slate-400 mt-0.5">{doneCount} of {STEPS.length} steps complete</p>
+    <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-lg p-3 text-xs shadow-xl">
+      <p className="text-[#94A3B8] mb-2">{label}</p>
+      {payload.map((p: any) => (
+        <div key={p.name} className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+          <span className="text-[#94A3B8]">{p.name === 'current' ? 'This Month' : 'Last Month'}:</span>
+          <span className="text-[#F1F5F9] font-medium">${p.value.toLocaleString()}</span>
         </div>
-        <button onClick={() => { setDismissed(true); localStorage.setItem('cl_onboarding_dismissed', '1') }}
-          className="text-xs text-slate-400 hover:text-slate-600 transition">Dismiss</button>
-      </div>
-
-      {/* Progress bar */}
-      <div className="w-full h-1.5 bg-slate-100 rounded-full mb-5 overflow-hidden">
-        <div className="h-full bg-green-500 rounded-full transition-all duration-500"
-          style={{ width: `${(doneCount / STEPS.length) * 100}%` }} />
-      </div>
-
-      {/* Steps */}
-      <div className="space-y-3">
-        {STEPS.map((step, i) => {
-          const done = states[step.id as keyof typeof states]
-          const active = !done && i === firstIncomplete
-          return (
-            <div key={step.id}
-              className={`flex items-start gap-3 p-3 rounded-lg transition ${
-                active ? 'bg-green-50 border border-green-100' : done ? 'opacity-50' : 'opacity-70'
-              }`}>
-              <CheckIcon done={done} />
-              <div className="flex-1 min-w-0">
-                <p className={`text-sm font-medium ${done ? 'line-through text-slate-400' : 'text-slate-700'}`}>
-                  {step.title}
-                </p>
-                {!done && <p className="text-xs text-slate-400 mt-0.5">{step.desc}</p>}
-              </div>
-              {!done && step.href && (
-                <a href={step.href}
-                  className="flex-shrink-0 text-xs font-medium text-green-600 hover:text-green-700 whitespace-nowrap">
-                  {step.cta}
-                </a>
-              )}
-              {!done && !step.href && (
-                <span className="flex-shrink-0 text-xs text-slate-400 whitespace-nowrap">{step.cta}</span>
-              )}
-            </div>
-          )
-        })}
-      </div>
+      ))}
     </div>
   )
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  SUCCESS:           'bg-green-100 text-green-800',
-  PENDING:           'bg-blue-100 text-blue-700',
-  AWAITING_APPROVAL: 'bg-yellow-100 text-yellow-800',
-  FAILED:            'bg-red-100 text-red-700',
-  RETRY:             'bg-orange-100 text-orange-700',
-  IN_PROGRESS:       'bg-purple-100 text-purple-700',
-}
-
-function StatCard({ label, value, sub, color = 'indigo' }: { label: string; value: any; sub?: string; color?: string }) {
-  const colors: Record<string, string> = {
-    indigo: 'text-green-700', green: 'text-green-700',
-    yellow: 'text-yellow-700', red: 'text-red-700', orange: 'text-orange-600',
-  }
+function BarTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null
   return (
-    <div className="rounded-[22px] border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">{label}</p>
-      <p className={`mt-2 text-3xl font-semibold tracking-tight ${colors[color] || colors.indigo}`}>{value ?? '—'}</p>
-      {sub && <p className="text-xs text-slate-400 mt-1">{sub}</p>}
+    <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-lg p-3 text-xs shadow-xl">
+      <p className="text-[#F1F5F9] font-medium">{label}</p>
+      <p className="text-[#4F6EF7] mt-1">${payload[0]?.value?.toLocaleString()}</p>
     </div>
   )
 }
 
-function timeAgo(iso: string | null) {
-  if (!iso) return null
-  const diff = Date.now() - new Date(iso).getTime()
-  const mins = Math.floor(diff / 60000)
-  if (mins < 1) return 'just now'
-  if (mins < 60) return `${mins}m ago`
-  const hrs = Math.floor(mins / 60)
-  if (hrs < 24) return `${hrs}h ago`
-  return `${Math.floor(hrs / 24)}d ago`
-}
-
-function CostBar({ services }: { services: Record<string, number> }) {
-  if (!services || Object.keys(services).length === 0) return null
-  const entries = Object.entries(services).sort((a, b) => b[1] - a[1]).slice(0, 6)
-  const total = entries.reduce((s, [, v]) => s + v, 0)
-  const COLORS = ['bg-green-500','bg-blue-400','bg-cyan-400','bg-teal-400','bg-emerald-400','bg-amber-400']
+function PieTooltip({ active, payload }: any) {
+  if (!active || !payload?.length) return null
   return (
-    <div className="mt-4">
-      <div className="flex rounded-full overflow-hidden h-3 gap-px mb-3">
-        {entries.map(([svc, cost], i) => (
-          <div key={svc} className={`${COLORS[i % COLORS.length]} transition-all`}
-            style={{ width: `${(cost / total) * 100}%` }} title={`${svc}: $${cost.toFixed(2)}`} />
-        ))}
-      </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-        {entries.map(([svc, cost], i) => (
-          <div key={svc} className="flex items-center gap-2 text-xs text-slate-600">
-            <span className={`w-2 h-2 rounded-full flex-shrink-0 ${COLORS[i % COLORS.length]}`} />
-            <span className="truncate">{svc.replace('Amazon ', '').replace('AWS ', '')}</span>
-            <span className="ml-auto font-medium text-slate-700">${cost.toFixed(2)}</span>
-          </div>
-        ))}
-      </div>
+    <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-lg p-3 text-xs shadow-xl">
+      <p className="text-[#F1F5F9] font-medium">{payload[0].name}</p>
+      <p className="text-[#10B981] mt-1">${payload[0].value.toLocaleString()}</p>
     </div>
   )
 }
+
+// ─── KPI Card ─────────────────────────────────────────────────────────────────
+
+function KpiCard({
+  title, value, trend, trendLabel, sub, valueColor, delay,
+}: {
+  title: string; value: string; trend?: string; trendLabel?: string
+  sub?: string; valueColor?: string; delay: number
+}) {
+  const isUp = trend?.startsWith('+')
+  const isDown = trend?.startsWith('-')
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay }}
+      className={`${CARD} p-5`}
+    >
+      <p className={SECTION_LABEL}>{title}</p>
+      <p className={`mt-3 text-2xl font-bold tracking-tight ${valueColor || 'text-[#F1F5F9]'}`}>
+        {value}
+      </p>
+      {trend && (
+        <div className={`mt-2 flex items-center gap-1 text-xs font-medium ${
+          isUp && !valueColor ? 'text-[#F59E0B]' : isDown ? 'text-[#10B981]' : 'text-[#10B981]'
+        }`}>
+          {isUp ? <ArrowUpRight size={12} /> : isDown ? <ArrowDownRight size={12} /> : null}
+          <span>{trend} {trendLabel}</span>
+        </div>
+      )}
+      {sub && <p className="mt-1 text-xs text-[#64748B]">{sub}</p>}
+    </motion.div>
+  )
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
 
 export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: () => void }) {
-  const [summary, setSummary]           = useState<any>(null)
-  const [cost, setCost]                 = useState<any>(null)
-  const [multiCloud, setMultiCloud]     = useState<any>(null)
-  const [error, setError]               = useState('')
-  const [hasCredential, setHasCredential] = useState(false)
-  const [hasDeploy, setHasDeploy]       = useState(false)
-  const [hasBaseline, setHasBaseline]   = useState(false)
-  const [stepsLoaded, setStepsLoaded]   = useState(false)
-  const [snapshots, setSnapshots]       = useState<any[]>([])
-  const [anomalies, setAnomalies]       = useState<any[]>([])
-
-  useEffect(() => {
-    setError('')
-    getDemoSummary().then(setSummary).catch((e: any) => { setError(e?.message || 'Something went wrong') })
-    getCostSummary().then(setCost).catch((e: any) => { setError(e?.message || 'Something went wrong') })
-    getMultiCloudSummary().then(setMultiCloud).catch(() => {})
-    getCostSnapshots().then(setSnapshots).catch(() => {})
-    getAnomalies().then(r => setAnomalies(r.anomalies || [])).catch(() => {})
-  }, [stats])
-
-  // Load onboarding step states once
-  useEffect(() => {
-    Promise.allSettled([
-      getCredentials(),
-      getDeploys(),
-      getTrackedServices(),
-    ]).then(([creds, deploys, services]) => {
-      // API may return plain array OR { credentials: [...] } — handle both
-      const credList = creds.status === 'fulfilled'
-        ? (Array.isArray(creds.value) ? creds.value : (creds.value?.credentials ?? creds.value?.items ?? []))
-        : []
-      setHasCredential(credList.length > 0)
-
-      const deployList = deploys.status === 'fulfilled'
-        ? (Array.isArray(deploys.value) ? deploys.value : (deploys.value?.deploys ?? deploys.value?.items ?? []))
-        : []
-      setHasDeploy(deployList.length > 0)
-
-      // Baseline: tracked services exist = cost snapshots are being collected
-      setHasBaseline(services.status === 'fulfilled' && Array.isArray(services.value?.services) && services.value.services.length > 0)
-      setStepsLoaded(true)
-    })
-  }, [])
-
-  const byStatus = stats?.actions_by_status || {}
-  const total    = Object.values(byStatus).reduce((a: number, b: any) => a + b, 0) as number
-  const success  = byStatus.SUCCESS || 0
-  const pending  = byStatus.PENDING || 0
-  const awaiting = byStatus.AWAITING_APPROVAL || 0
-  const failed   = (byStatus.FAILED || 0) + (byStatus.RETRY || 0)
-  const lastScan = summary?.last_scan || stats?.last_scan
-  const lastRun  = summary?.last_run
-
-  const hasScanned = !!(summary?.last_scan || stats?.last_scan)
-  // If resources exist, a credential must have been added — use as reliable fallback
-  const credentialConfirmed = hasCredential || (stats?.resources_count > 0)
+  const [hoveredPie, setHoveredPie] = useState<number | null>(null)
 
   return (
-    <div>
-      <div className="mb-6 flex items-center justify-between gap-4">
+    <div className="space-y-6">
+
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-slate-950">Overview</h1>
-          <p className="mt-1 text-sm text-slate-500">Live operational summary across cloud spend, deploy risk, and platform activity.</p>
+          <h1 className="text-xl font-bold text-[#F1F5F9]">Overview</h1>
+          <p className="text-xs text-[#64748B] mt-0.5">March 2026 · AWS · All services</p>
         </div>
-        <button onClick={onRefresh} className="rounded-xl border border-slate-200 px-3.5 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Refresh</button>
+        <button
+          onClick={onRefresh}
+          className="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#141C33] border border-[#1E2D4F] text-[#94A3B8] hover:text-[#F1F5F9] hover:border-[#2E3D5F] transition"
+        >
+          Refresh
+        </button>
       </div>
 
-      {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
-
-      <OnboardingChecklist
-        hasCredential={credentialConfirmed}
-        hasScanned={hasScanned}
-        hasDeploy={hasDeploy}
-        hasBaseline={hasBaseline}
-        stepsLoaded={stepsLoaded}
-      />
-
-      {(lastScan || lastRun) && (
-        <div className="mb-6 flex flex-wrap gap-6 rounded-[22px] border border-slate-200 bg-white px-5 py-4 text-sm text-slate-500 shadow-sm">
-          {lastScan && (
-            <div className="flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full ${lastScan.status === 'finished' ? 'bg-green-400' : lastScan.status === 'error' ? 'bg-red-400' : 'bg-blue-400'}`} />
-              <span>Last scan: <span className="text-slate-700 font-medium">{timeAgo(lastScan.started_at)}</span></span>
-              {lastScan.events_found != null && <span className="text-slate-400">({lastScan.events_found} events)</span>}
-            </div>
-          )}
-          {lastRun && (
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-purple-400" />
-              <span>Last run: <span className="text-slate-700 font-medium">{timeAgo(lastRun.started_at)}</span></span>
-              {lastRun.success_count != null && <span className="text-slate-400">({lastRun.success_count} succeeded)</span>}
-            </div>
-          )}
-        </div>
-      )}
-
-      <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <StatCard label="Resources tracked" value={stats?.resources_count} color="indigo" />
-        <StatCard label="Actions completed" value={success}               color="green" />
-        <StatCard label="Awaiting approval" value={awaiting}              color="yellow" />
-        <StatCard label="Failed / Retry"    value={failed}                color="red" />
+      {/* ROW 1 — KPI Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <KpiCard title="Total Cloud Spend"  value="$142,840" trend="+3.2%"  trendLabel="vs last month" delay={0}    />
+        <KpiCard title="Verified Savings"   value="$18,200"  trend="+12%"   trendLabel="vs last month" valueColor="text-[#10B981]" delay={0.05} />
+        <KpiCard title="Cloudlink Fee"      value="$2,730"   sub="15% of savings"                      delay={0.1}  />
+        <KpiCard title="Net Savings"        value="$15,470"  valueColor="text-[#10B981] text-3xl font-bold" delay={0.15} />
+        <KpiCard title="Open Issues"        value="14"       trend="-3"     trendLabel="vs last week"  valueColor="text-[#F59E0B]" delay={0.2}  />
       </div>
 
-      {multiCloud?.providers?.length > 0 && (
-        <div className="mb-6 rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between gap-4 mb-4">
+      {/* ROW 2 — Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+
+        {/* Spend Over Time */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.25 }}
+          className={`${CARD} p-5 lg:col-span-3`}
+        >
+          <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-sm font-semibold text-slate-900">Connected clouds</h2>
-              <p className="text-xs text-slate-400 mt-1">
-                {multiCloud.connected_clouds.length} provider{multiCloud.connected_clouds.length === 1 ? '' : 's'} active across {multiCloud.total_credentials} credential{multiCloud.total_credentials === 1 ? '' : 's'}
-              </p>
+              <p className={SECTION_LABEL}>Cloud Spend Over Time</p>
+              <p className="text-xs text-[#64748B] mt-0.5">Daily spend, current vs prior month</p>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {multiCloud.connected_clouds.map((provider: string) => (
-                <span key={provider} className="text-xs font-medium px-2.5 py-1 rounded-full border border-slate-200 bg-slate-50 text-slate-700 uppercase">
-                  {provider}
-                </span>
-              ))}
+            <div className="flex items-center gap-3 text-xs text-[#64748B]">
+              <span className="flex items-center gap-1.5">
+                <span className="w-3 h-0.5 bg-[#4F6EF7] rounded" />
+                This month
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-3 h-0.5 bg-[#1E2D4F] rounded" />
+                Last month
+              </span>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {multiCloud.providers.map((provider: any) => (
-              <div key={provider.provider} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-semibold text-slate-800 uppercase">{provider.provider}</p>
-                  <span className="text-xs text-slate-500">{provider.resource_count} resources</span>
+          <ResponsiveContainer width="100%" height={200}>
+            <AreaChart data={SPEND_DATA} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+              <defs>
+                <linearGradient id="gradCurrent" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%"  stopColor="#4F6EF7" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#4F6EF7" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="gradLast" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%"  stopColor="#3D5070" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#3D5070" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#1E2D4F" vertical={false} />
+              <XAxis dataKey="day" tick={{ fill: '#3D5070', fontSize: 10 }} tickLine={false} axisLine={false} interval={4} />
+              <YAxis tick={{ fill: '#3D5070', fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v) => `$${(v/1000).toFixed(0)}k`} />
+              <Tooltip content={<CustomTooltip />} />
+              <ReferenceLine x="Mar 13" stroke="#EF4444" strokeDasharray="4 3" strokeWidth={1.5} label={{ value: '⚠', fill: '#EF4444', fontSize: 10, position: 'top' }} />
+              <ReferenceLine x="Mar 19" stroke="#EF4444" strokeDasharray="4 3" strokeWidth={1.5} />
+              <Area type="monotone" dataKey="last"    stroke="#3D5070" strokeWidth={1.5} fill="url(#gradLast)"    dot={false} />
+              <Area type="monotone" dataKey="current" stroke="#4F6EF7" strokeWidth={2}   fill="url(#gradCurrent)" dot={false} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </motion.div>
+
+        {/* Savings Breakdown */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+          className={`${CARD} p-5 lg:col-span-2`}
+        >
+          <p className={SECTION_LABEL + ' mb-4'}>Savings Breakdown</p>
+          <ResponsiveContainer width="100%" height={140}>
+            <PieChart>
+              <Pie
+                data={SAVINGS_PIE}
+                cx="50%"
+                cy="50%"
+                innerRadius={42}
+                outerRadius={65}
+                paddingAngle={3}
+                dataKey="value"
+                onMouseEnter={(_, i) => setHoveredPie(i)}
+                onMouseLeave={() => setHoveredPie(null)}
+              >
+                {SAVINGS_PIE.map((_, i) => (
+                  <Cell
+                    key={i}
+                    fill={PIE_COLORS[i]}
+                    opacity={hoveredPie === null || hoveredPie === i ? 1 : 0.5}
+                  />
+                ))}
+              </Pie>
+              <Tooltip content={<PieTooltip />} />
+            </PieChart>
+          </ResponsiveContainer>
+          <div className="mt-3 space-y-1.5">
+            {SAVINGS_PIE.map((item, i) => (
+              <div key={item.name} className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: PIE_COLORS[i] }} />
+                  <span className="text-[#94A3B8]">{item.name}</span>
                 </div>
-                <p className="text-xl font-bold text-slate-800">${Number(provider.monthly_cost_usd || 0).toLocaleString()}</p>
-                <p className="text-xs text-slate-400 mt-1">{provider.credential_count} credential{provider.credential_count === 1 ? '' : 's'}</p>
+                <span className="text-[#F1F5F9] font-medium">${item.value.toLocaleString()}</span>
               </div>
             ))}
           </div>
-        </div>
-      )}
+        </motion.div>
+      </div>
 
-      {cost && cost.total_mtd_usd > 0 && (
-        <div className={`mb-6 rounded-[24px] border p-5 shadow-sm ${cost.above_threshold ? 'bg-red-50 border-red-200' : 'bg-white border-slate-200'}`}>
-          <div className="flex items-center justify-between mb-1">
-            <h2 className="text-sm font-semibold text-slate-900">Cloud Spend — Month to Date</h2>
-            {cost.above_threshold && <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">Above threshold</span>}
+      {/* ROW 3 — Regressions Table */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.35 }}
+        className={`${CARD} p-5`}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <p className={SECTION_LABEL}>Recent Regressions</p>
+          <a href="/dashboard/regressions" className="text-xs text-[#4F6EF7] hover:text-[#6B84F8] flex items-center gap-1 transition">
+            View All <ExternalLink size={10} />
+          </a>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-[#1E2D4F]">
+                {['Service', 'Deploy', 'Detected', 'Cost Impact', 'Status', 'Action'].map((h) => (
+                  <th key={h} className="pb-2 text-left text-[#3D5070] font-semibold tracking-wider uppercase pr-4 whitespace-nowrap">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {REGRESSIONS.map((row, i) => (
+                <tr key={i} className="border-b border-[#1E2D4F]/50 last:border-0 hover:bg-[#1E2D4F]/20 transition">
+                  <td className="py-3 pr-4 font-medium text-[#F1F5F9] whitespace-nowrap">{row.service}</td>
+                  <td className="py-3 pr-4">
+                    <code className="text-[#4F6EF7] bg-[#4F6EF7]/10 px-1.5 py-0.5 rounded text-[10px]">{row.deploy}</code>
+                  </td>
+                  <td className="py-3 pr-4 text-[#64748B] whitespace-nowrap">{row.detected}</td>
+                  <td className="py-3 pr-4 text-[#F59E0B] font-medium whitespace-nowrap">{row.impact}</td>
+                  <td className="py-3 pr-4"><StatusBadge status={row.status} /></td>
+                  <td className="py-3">
+                    <button className={`px-2.5 py-1 rounded-md text-[10px] font-semibold transition ${
+                      row.status === 'DETECTED'
+                        ? 'bg-[#4F6EF7] text-white hover:bg-[#6B84F8]'
+                        : 'bg-[#1E2D4F] text-[#94A3B8] hover:bg-[#2E3D5F]'
+                    }`}>
+                      {row.status === 'DETECTED' ? 'Fix' : 'View'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </motion.div>
+
+      {/* ROW 4 — Cost Drivers + AutoStopping Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+        {/* Top Cost Drivers */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
+          className={`${CARD} p-5`}
+        >
+          <p className={SECTION_LABEL + ' mb-4'}>Top Cost Drivers</p>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart
+              data={TOP_SERVICES}
+              layout="vertical"
+              margin={{ top: 0, right: 8, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#1E2D4F" horizontal={false} />
+              <XAxis
+                type="number"
+                tick={{ fill: '#3D5070', fontSize: 10 }}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+              />
+              <YAxis
+                type="category"
+                dataKey="name"
+                tick={{ fill: '#94A3B8', fontSize: 11 }}
+                tickLine={false}
+                axisLine={false}
+                width={72}
+              />
+              <Tooltip content={<BarTooltip />} cursor={{ fill: '#1E2D4F', opacity: 0.5 }} />
+              <Bar dataKey="cost" radius={[0, 4, 4, 0]}>
+                {TOP_SERVICES.map((_, i) => (
+                  <Cell
+                    key={i}
+                    fill={i === 0 ? '#4F6EF7' : i === 1 ? '#6B84F8' : '#2E3D5F'}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </motion.div>
+
+        {/* AutoStopping Activity */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.45 }}
+          className={`${CARD} p-5`}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <p className={SECTION_LABEL}>AutoStopping Activity</p>
+            <span className="text-xs font-semibold text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/20 px-2 py-0.5 rounded-full">
+              Saved $4.73 today
+            </span>
           </div>
-          <p className={`text-3xl font-bold mb-1 ${cost.above_threshold ? 'text-red-600' : 'text-slate-800'}`}>
-            ${cost.total_mtd_usd.toLocaleString()}
-          </p>
-          <p className="text-xs text-slate-400 mb-2">
-            across {cost.credential_count} credential{cost.credential_count === 1 ? '' : 's'}
-            {cost.connected_clouds?.length ? ` in ${cost.connected_clouds.map((p: string) => p.toUpperCase()).join(', ')}` : ''}
-          </p>
-          <CostBar services={cost.top_services} />
-        </div>
-      )}
-
-      {/* Savings performance widget */}
-      <SavingsWidget />
-
-      {/* Cost trend chart */}
-      {snapshots.length > 0 && <CostTrendChart snapshots={snapshots} />}
-
-      {/* Anomalies */}
-      {anomalies.length > 0 && (
-        <div className="mb-6 rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-3 text-sm font-semibold text-slate-900">Cost Anomalies Detected</h2>
-          <div className="space-y-2">
-            {anomalies.map((a: any, i: number) => (
-              <div key={i} className={`flex items-center justify-between p-3 rounded-lg ${
-                a.severity === 'critical' ? 'bg-red-50' : a.severity === 'high' ? 'bg-amber-50' : 'bg-yellow-50'
-              }`}>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">{a.service}</p>
-                  <p className="text-xs text-slate-500">
-                    {a.direction === 'spike' ? 'Cost spike' : 'Cost drop'}: {a.change_pct > 0 ? '+' : ''}{a.change_pct}% · z-score: {a.composite_z_score}
+          <div className="space-y-1">
+            {AUTOSTOP_EVENTS.map((event, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.5 + i * 0.05 }}
+                className="flex items-start gap-3 py-2.5 border-b border-[#1E2D4F]/50 last:border-0"
+              >
+                <span className="text-[10px] text-[#3D5070] font-mono pt-0.5 w-10 flex-shrink-0">{event.time}</span>
+                <div className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${event.type === 'stop' ? 'bg-[#F59E0B]' : 'bg-[#10B981]'}`} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-[#94A3B8]">{event.description}</p>
+                  <p className={`text-[10px] mt-0.5 font-medium ${event.type === 'stop' ? 'text-[#10B981]' : 'text-[#64748B]'}`}>
+                    {event.type === 'stop' ? `saved ${event.saving}` : event.saving}
                   </p>
                 </div>
-                <div className="text-right">
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                    a.severity === 'critical' ? 'bg-red-100 text-red-700' : a.severity === 'high' ? 'bg-amber-100 text-amber-700' : 'bg-yellow-100 text-yellow-700'
-                  }`}>{a.severity}</span>
-                  <p className="text-xs text-slate-500 mt-1">${a.monthly_impact_usd.toLocaleString()}/mo impact</p>
-                </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
-      )}
 
-      {total > 0 && (
-        <div className="mb-6 rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-4 text-sm font-semibold text-slate-900">Action status breakdown</h2>
-          <div className="flex flex-wrap gap-2 mb-4">
-            {Object.entries(byStatus).map(([status, count]) => (
-              <span key={status} className={`px-3 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[status] || 'bg-slate-100 text-slate-600'}`}>
-                {status.replace(/_/g, ' ')}: {count as number}
-              </span>
-            ))}
+          <div className="mt-4 pt-4 border-t border-[#1E2D4F]">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-[#64748B]">Resources currently stopped</span>
+              <span className="text-[#F1F5F9] font-semibold">3 instances</span>
+            </div>
+            <div className="flex items-center justify-between text-xs mt-1">
+              <span className="text-[#64748B]">Projected monthly savings</span>
+              <span className="text-[#10B981] font-semibold">~$142/mo</span>
+            </div>
           </div>
-          <div className="flex rounded-full overflow-hidden h-3 gap-px">
-            {success  > 0 && <div className="bg-green-400 transition-all"  style={{ width: `${(success /total)*100}%` }} />}
-            {pending  > 0 && <div className="bg-blue-400 transition-all"   style={{ width: `${(pending /total)*100}%` }} />}
-            {awaiting > 0 && <div className="bg-yellow-400 transition-all" style={{ width: `${(awaiting/total)*100}%` }} />}
-            {failed   > 0 && <div className="bg-red-400 transition-all"    style={{ width: `${(failed  /total)*100}%` }} />}
-          </div>
-          <div className="mt-3 grid gap-2 text-xs text-slate-500 md:grid-cols-4">
-            <span className="rounded-lg bg-slate-50 px-3 py-2">Success: {success}</span>
-            <span className="rounded-lg bg-slate-50 px-3 py-2">Pending: {pending}</span>
-            <span className="rounded-lg bg-slate-50 px-3 py-2">Awaiting: {awaiting}</span>
-            <span className="rounded-lg bg-slate-50 px-3 py-2">Failed + Retry: {failed}</span>
-          </div>
-        </div>
-      )}
-
-      {summary?.recent_actions?.length > 0 && (
-        <div className="mb-6 rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-4 text-sm font-semibold text-slate-900">Recent actions</h2>
-          <div className="space-y-1">
-            {summary.recent_actions.slice(0, 8).map((a: any) => (
-              <div key={a.action_id} className="flex items-center justify-between text-sm py-2 border-b border-slate-100 last:border-0">
-                <div className="min-w-0 flex-1">
-                  <span className="font-medium text-slate-700">{a.action_type}</span>
-                  <span className="text-slate-400 ml-2 text-xs truncate">{a.resource_id}</span>
-                  {a.reason && <p className="text-xs text-slate-400 mt-0.5 truncate">{a.reason}</p>}
-                </div>
-                <span className={`ml-3 flex-shrink-0 px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[a.status] || 'bg-slate-100 text-slate-600'}`}>
-                  {a.status}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
+        </motion.div>
+      </div>
     </div>
   )
 }
