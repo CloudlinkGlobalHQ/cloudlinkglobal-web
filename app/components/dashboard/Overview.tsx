@@ -1,99 +1,141 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  ReferenceLine, Legend,
 } from 'recharts'
-import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, AlertCircle, ExternalLink } from 'lucide-react'
+import { ArrowUpRight, ArrowDownRight, ExternalLink, PlugZap } from 'lucide-react'
+import {
+  getStats,
+  getCostSummary,
+  getSavingsReport,
+  getRegressions,
+  getAutostopEvents,
+  getAutostopSavings,
+} from '@/app/lib/api'
 
-// ─── Mock data ────────────────────────────────────────────────────────────────
-
-const SPEND_DATA = [
-  { day: 'Mar 1',  current: 4200, last: 3800 },
-  { day: 'Mar 2',  current: 4350, last: 3900 },
-  { day: 'Mar 3',  current: 4180, last: 3750 },
-  { day: 'Mar 4',  current: 4520, last: 3820 },
-  { day: 'Mar 5',  current: 4680, last: 3910 },
-  { day: 'Mar 6',  current: 4410, last: 3780 },
-  { day: 'Mar 7',  current: 4290, last: 3860 },
-  { day: 'Mar 8',  current: 4750, last: 3920 },
-  { day: 'Mar 9',  current: 4890, last: 4010 },
-  { day: 'Mar 10', current: 4630, last: 3950 },
-  { day: 'Mar 11', current: 4420, last: 3870 },
-  { day: 'Mar 12', current: 4580, last: 3990 },
-  { day: 'Mar 13', current: 5120, last: 4050 },
-  { day: 'Mar 14', current: 5340, last: 4120 },
-  { day: 'Mar 15', current: 5180, last: 4080 },
-  { day: 'Mar 16', current: 4920, last: 4000 },
-  { day: 'Mar 17', current: 4760, last: 3970 },
-  { day: 'Mar 18', current: 5050, last: 4140 },
-  { day: 'Mar 19', current: 5280, last: 4200 },
-  { day: 'Mar 20', current: 5410, last: 4280 },
-  { day: 'Mar 21', current: 5190, last: 4160 },
-  { day: 'Mar 22', current: 4980, last: 4090 },
-  { day: 'Mar 23', current: 5320, last: 4220 },
-  { day: 'Mar 24', current: 5480, last: 4310 },
-  { day: 'Mar 25', current: 5250, last: 4180 },
-  { day: 'Mar 26', current: 5090, last: 4100 },
-]
-
-const SAVINGS_PIE = [
-  { name: 'AutoStopping',          value: 6200 },
-  { name: 'Idle Resources',        value: 4800 },
-  { name: 'Regression Prevention', value: 4400 },
-  { name: 'Misc Fixes',            value: 2800 },
-]
-const PIE_COLORS = ['#10B981', '#10B981', '#F59E0B', '#059669']
-
-const REGRESSIONS = [
-  { service: 'payments-service', deploy: 'a3f9b2', detected: '2h ago',  impact: '+$847/mo',   status: 'DETECTED' },
-  { service: 'auth-service',     deploy: 'b7c1d3', detected: '1d ago',  impact: '+$234/mo',   status: 'FIXING' },
-  { service: 'api-gateway',      deploy: 'c9e2f4', detected: '2d ago',  impact: '+$1,203/mo', status: 'RESOLVED' },
-  { service: 'data-pipeline',    deploy: 'd4a5b6', detected: '3d ago',  impact: '+$456/mo',   status: 'RESOLVED' },
-  { service: 'ml-training',      deploy: 'e8f9a0', detected: '5d ago',  impact: '+$2,891/mo', status: 'RESOLVED' },
-]
-
-const TOP_SERVICES = [
-  { name: 'EC2',          cost: 62400 },
-  { name: 'RDS',          cost: 28100 },
-  { name: 'Lambda',       cost: 18900 },
-  { name: 'S3',           cost: 12300 },
-  { name: 'CloudFront',   cost: 8400 },
-  { name: 'EKS',          cost: 6200 },
-  { name: 'ElastiCache',  cost: 3800 },
-  { name: 'SNS',          cost: 2740 },
-]
-
-const AUTOSTOP_EVENTS = [
-  { time: '09:14', description: 'dev-env-payments stopped',    saving: '$0.82/hr', type: 'stop' },
-  { time: '10:31', description: 'staging-api stopped',         saving: '$1.24/hr', type: 'stop' },
-  { time: '11:45', description: 'ml-training-dev stopped',     saving: '$3.40/hr', type: 'stop' },
-  { time: '14:22', description: 'dev-env-payments started',    saving: 'traffic detected', type: 'start' },
-  { time: '16:08', description: 'staging-frontend stopped',    saving: '$0.67/hr', type: 'stop' },
-]
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 const CARD = 'bg-[#141C33] border border-[#1E2D4F] rounded-xl'
 const SECTION_LABEL = 'text-[10px] font-semibold uppercase tracking-widest text-[#3D5070]'
+const PIE_COLORS = ['#10B981', '#34D399', '#F59E0B', '#059669']
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function fmt(n: number) {
+  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`
+  if (n >= 1_000) return `$${(n / 1_000).toFixed(1)}k`
+  return `$${n.toFixed(2)}`
+}
+
+// ─── Skeleton ────────────────────────────────────────────────────────────────
+
+function Skeleton({ className = '' }: { className?: string }) {
+  return <div className={`animate-pulse bg-[#1E2D4F] rounded ${className}`} />
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <Skeleton className="h-5 w-24" />
+          <Skeleton className="h-3 w-40" />
+        </div>
+        <Skeleton className="h-7 w-16 rounded-lg" />
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        {[0, 1, 2, 3, 4].map((i) => (
+          <div key={i} className={`${CARD} p-5 space-y-3`}>
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-7 w-24" />
+            <Skeleton className="h-3 w-16" />
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        <div className={`${CARD} p-5 lg:col-span-3 space-y-3`}>
+          <Skeleton className="h-3 w-32" />
+          <Skeleton className="h-48 w-full" />
+        </div>
+        <div className={`${CARD} p-5 lg:col-span-2 space-y-3`}>
+          <Skeleton className="h-3 w-28" />
+          <Skeleton className="h-36 w-full rounded-full" />
+        </div>
+      </div>
+      <div className={`${CARD} p-5 space-y-3`}>
+        <Skeleton className="h-3 w-32" />
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="flex gap-4">
+            <Skeleton className="h-3 w-32" />
+            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-3 w-24" />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── Empty / Onboarding State ─────────────────────────────────────────────────
+
+function OnboardingState() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[70vh] p-8 text-center">
+      <div className="w-20 h-20 rounded-full bg-[#10B981]/10 border border-[#10B981]/20 flex items-center justify-center mb-8">
+        <PlugZap size={40} className="text-[#10B981]" />
+      </div>
+      <h2 className="text-2xl font-bold text-[#F1F5F9] mb-3">Welcome to Cloudlink</h2>
+      <p className="text-[#94A3B8] mb-8 max-w-md">
+        Connect your AWS account to unlock your dashboard. Here's what Cloudlink will do for you:
+      </p>
+      <ul className="text-left mb-10 space-y-3 max-w-sm w-full">
+        {[
+          'Scan your AWS resources for waste',
+          'Detect deploy-linked cost regressions',
+          'AutoStop idle environments',
+          'Track savings in real time',
+        ].map((item) => (
+          <li key={item} className="flex items-start gap-3 text-sm text-[#94A3B8]">
+            <span className="text-[#10B981] font-bold mt-0.5">✓</span>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+      <Link
+        href="/dashboard/credentials"
+        className="inline-flex items-center gap-2 px-8 py-3 rounded-lg bg-[#10B981] text-white font-semibold hover:bg-[#34D399] transition text-sm"
+      >
+        Connect Your AWS Account →
+      </Link>
+      <p className="mt-4 text-xs text-[#64748B]">
+        Takes 5 minutes. Read-only IAM role. No write access needed.
+      </p>
+    </div>
+  )
+}
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
 function StatusBadge({ status }: { status: string }) {
+  const upper = status?.toUpperCase() ?? ''
   const styles: Record<string, string> = {
     DETECTED: 'bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20',
     FIXING:   'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20',
     RESOLVED: 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20',
   }
   return (
-    <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${styles[status] || 'bg-[#1E2D4F] text-[#64748B]'}`}>
-      {status === 'FIXING' ? (
+    <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${styles[upper] || 'bg-[#1E2D4F] text-[#64748B]'}`}>
+      {upper === 'FIXING' ? (
         <span className="inline-flex items-center gap-1">
           <span className="w-1.5 h-1.5 bg-[#10B981] rounded-full animate-pulse" />
-          {status}
+          {upper}
         </span>
-      ) : status}
+      ) : upper}
     </span>
   )
 }
@@ -107,34 +149,32 @@ function CustomTooltip({ active, payload, label }: any) {
         <div key={p.name} className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
           <span className="text-[#94A3B8]">{p.name === 'current' ? 'This Month' : 'Last Month'}:</span>
-          <span className="text-[#F1F5F9] font-medium">${p.value.toLocaleString()}</span>
+          <span className="text-[#F1F5F9] font-medium">${(p.value ?? 0).toLocaleString()}</span>
         </div>
       ))}
     </div>
   )
 }
 
-function BarTooltip({ active, payload, label }: any) {
+function BarTooltipComp({ active, payload, label }: any) {
   if (!active || !payload?.length) return null
   return (
     <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-lg p-3 text-xs shadow-xl">
       <p className="text-[#F1F5F9] font-medium">{label}</p>
-      <p className="text-[#10B981] mt-1">${payload[0]?.value?.toLocaleString()}</p>
+      <p className="text-[#10B981] mt-1">${(payload[0]?.value ?? 0).toLocaleString()}</p>
     </div>
   )
 }
 
-function PieTooltip({ active, payload }: any) {
+function PieTooltipComp({ active, payload }: any) {
   if (!active || !payload?.length) return null
   return (
     <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-lg p-3 text-xs shadow-xl">
       <p className="text-[#F1F5F9] font-medium">{payload[0].name}</p>
-      <p className="text-[#10B981] mt-1">${payload[0].value.toLocaleString()}</p>
+      <p className="text-[#10B981] mt-1">${(payload[0].value ?? 0).toLocaleString()}</p>
     </div>
   )
 }
-
-// ─── KPI Card ─────────────────────────────────────────────────────────────────
 
 function KpiCard({
   title, value, trend, trendLabel, sub, valueColor, delay,
@@ -142,7 +182,7 @@ function KpiCard({
   title: string; value: string; trend?: string; trendLabel?: string
   sub?: string; valueColor?: string; delay: number
 }) {
-  const isUp = trend?.startsWith('+')
+  const isUp   = trend?.startsWith('+')
   const isDown = trend?.startsWith('-')
   return (
     <motion.div
@@ -168,10 +208,136 @@ function KpiCard({
   )
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: () => void }) {
-  const [hoveredPie, setHoveredPie] = useState<number | null>(null)
+export default function Overview({ stats: _stats, onRefresh }: { stats: any; onRefresh: () => void }) {
+  const [loading, setLoading]           = useState(true)
+  const [isNewUser, setIsNewUser]       = useState(false)
+  const [hoveredPie, setHoveredPie]     = useState<number | null>(null)
+
+  // Data state
+  const [statsData, setStatsData]         = useState<any>(null)
+  const [costSummary, setCostSummary]     = useState<any>(null)
+  const [savingsData, setSavingsData]     = useState<any>(null)
+  const [regressions, setRegressions]     = useState<any[]>([])
+  const [autostopEvents, setAutostopEvents] = useState<any[]>([])
+  const [autostopSavings, setAutostopSavings] = useState<any>(null)
+
+  const fetchAll = () => {
+    setLoading(true)
+    Promise.allSettled([
+      getStats(),
+      getCostSummary(),
+      getSavingsReport(),
+      getRegressions(),
+      getAutostopEvents(20),
+      getAutostopSavings(),
+    ]).then(([s, cs, sr, reg, ae, as_]) => {
+      const stats_   = s.status   === 'fulfilled' ? s.value   : null
+      const summary  = cs.status  === 'fulfilled' ? cs.value  : null
+      const savings  = sr.status  === 'fulfilled' ? sr.value  : null
+      const regs     = reg.status === 'fulfilled' ? reg.value : null
+      const events   = ae.status  === 'fulfilled' ? ae.value  : null
+      const asSav    = as_.status === 'fulfilled' ? as_.value : null
+
+      setStatsData(stats_)
+      setCostSummary(summary)
+      setSavingsData(savings)
+      setRegressions(
+        Array.isArray(regs) ? regs : Array.isArray(regs?.regressions) ? regs.regressions : []
+      )
+      setAutostopEvents(
+        Array.isArray(events) ? events : Array.isArray(events?.events) ? events.events : []
+      )
+      setAutostopSavings(asSav)
+
+      // New user check: no stats, no cost, no credentials connected
+      const totalCost = stats_?.total_cost ?? summary?.total_cost ?? summary?.total ?? 0
+      const openIssues = stats_?.open_issues ?? 0
+      const hasAnyData = totalCost > 0 || openIssues > 0 ||
+        (Array.isArray(summary?.by_service) && summary.by_service.length > 0) ||
+        (Array.isArray(regs) ? regs : []).length > 0
+
+      setIsNewUser(!hasAnyData)
+      setLoading(false)
+    })
+  }
+
+  useEffect(() => {
+    fetchAll()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleRefresh = () => {
+    onRefresh()
+    fetchAll()
+  }
+
+  if (loading) return <LoadingSkeleton />
+  if (isNewUser) return <OnboardingState />
+
+  // ─── Derived KPI values ────────────────────────────────────────────────────
+
+  const totalCost: number =
+    statsData?.total_cost ?? costSummary?.total_cost ?? costSummary?.total ?? 0
+
+  const totalSavings: number =
+    savingsData?.total_savings ??
+    savingsData?.total ??
+    autostopSavings?.total_saved ??
+    autostopSavings?.total_savings ??
+    0
+
+  const fee       = totalSavings * 0.15
+  const netSavings = totalSavings * 0.85
+
+  const openIssues: number =
+    statsData?.open_issues ??
+    regressions.filter((r) => r?.status !== 'resolved' && r?.status !== 'RESOLVED').length
+
+  // ─── Spend chart data ──────────────────────────────────────────────────────
+
+  const dailyCosts = Array.isArray(costSummary?.daily_costs) ? costSummary.daily_costs : []
+  const spendData: { day: string; current: number }[] = dailyCosts.map((d: any) => ({
+    day:     d.date ?? d.day ?? '',
+    current: d.cost ?? d.amount ?? d.value ?? 0,
+  }))
+
+  // ─── Savings pie ───────────────────────────────────────────────────────────
+
+  const rawPie = autostopSavings?.by_category ?? autostopSavings?.breakdown ?? []
+  const savingsPie: { name: string; value: number }[] = Array.isArray(rawPie)
+    ? rawPie.map((item: any) => ({
+        name: item.category ?? item.name ?? 'Other',
+        value: item.saved ?? item.amount ?? item.value ?? 0,
+      }))
+    : []
+
+  // ─── Top cost drivers ──────────────────────────────────────────────────────
+
+  const topServices: { name: string; cost: number }[] = (
+    Array.isArray(costSummary?.by_service) ? costSummary.by_service : []
+  ).map((s: any) => ({
+    name: s.service ?? s.name ?? 'Unknown',
+    cost: s.cost ?? s.amount ?? 0,
+  }))
+
+  // ─── AutoStop events ───────────────────────────────────────────────────────
+
+  const todaySaved: number =
+    autostopSavings?.today_saved ??
+    autostopSavings?.saved_today ??
+    0
+
+  const stoppedCount: number =
+    autostopSavings?.currently_stopped ??
+    autostopSavings?.stopped_count ??
+    autostopEvents.filter((e: any) => e?.action === 'stop' || e?.type === 'stop').length
+
+  const projectedMonthly: number =
+    autostopSavings?.projected_monthly ??
+    autostopSavings?.monthly_projected ??
+    0
 
   return (
     <div className="space-y-6">
@@ -180,10 +346,10 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-[#F1F5F9]">Overview</h1>
-          <p className="text-xs text-[#64748B] mt-0.5">March 2026 · AWS · All services</p>
+          <p className="text-xs text-[#64748B] mt-0.5">AWS · All services</p>
         </div>
         <button
-          onClick={onRefresh}
+          onClick={handleRefresh}
           className="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#141C33] border border-[#1E2D4F] text-[#94A3B8] hover:text-[#F1F5F9] hover:border-[#2E3D5F] transition"
         >
           Refresh
@@ -192,11 +358,35 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
 
       {/* ROW 1 — KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <KpiCard title="Total Cloud Spend"  value="$142,840" trend="+3.2%"  trendLabel="vs last month" delay={0}    />
-        <KpiCard title="Verified Savings"   value="$18,200"  trend="+12%"   trendLabel="vs last month" valueColor="text-[#10B981]" delay={0.05} />
-        <KpiCard title="Cloudlink Fee"      value="$2,730"   sub="15% of savings"                      delay={0.1}  />
-        <KpiCard title="Net Savings"        value="$15,470"  valueColor="text-[#10B981] text-3xl font-bold" delay={0.15} />
-        <KpiCard title="Open Issues"        value="14"       trend="-3"     trendLabel="vs last week"  valueColor="text-[#F59E0B]" delay={0.2}  />
+        <KpiCard
+          title="Total Cloud Spend"
+          value={fmt(totalCost)}
+          delay={0}
+        />
+        <KpiCard
+          title="Verified Savings"
+          value={fmt(totalSavings)}
+          valueColor="text-[#10B981]"
+          delay={0.05}
+        />
+        <KpiCard
+          title="Cloudlink Fee"
+          value={fmt(fee)}
+          sub="15% of savings"
+          delay={0.1}
+        />
+        <KpiCard
+          title="Net Savings"
+          value={fmt(netSavings)}
+          valueColor="text-[#10B981] text-3xl font-bold"
+          delay={0.15}
+        />
+        <KpiCard
+          title="Open Issues"
+          value={String(openIssues)}
+          valueColor="text-[#F59E0B]"
+          delay={0.2}
+        />
       </div>
 
       {/* ROW 2 — Charts */}
@@ -212,41 +402,48 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className={SECTION_LABEL}>Cloud Spend Over Time</p>
-              <p className="text-xs text-[#64748B] mt-0.5">Daily spend, current vs prior month</p>
-            </div>
-            <div className="flex items-center gap-3 text-xs text-[#64748B]">
-              <span className="flex items-center gap-1.5">
-                <span className="w-3 h-0.5 bg-[#10B981] rounded" />
-                This month
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-3 h-0.5 bg-[#1E2D4F] rounded" />
-                Last month
-              </span>
+              <p className="text-xs text-[#64748B] mt-0.5">Daily spend</p>
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={SPEND_DATA} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-              <defs>
-                <linearGradient id="gradCurrent" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#10B981" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="gradLast" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#3D5070" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#3D5070" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1E2D4F" vertical={false} />
-              <XAxis dataKey="day" tick={{ fill: '#3D5070', fontSize: 10 }} tickLine={false} axisLine={false} interval={4} />
-              <YAxis tick={{ fill: '#3D5070', fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v) => `$${(v/1000).toFixed(0)}k`} />
-              <Tooltip content={<CustomTooltip />} />
-              <ReferenceLine x="Mar 13" stroke="#EF4444" strokeDasharray="4 3" strokeWidth={1.5} label={{ value: '⚠', fill: '#EF4444', fontSize: 10, position: 'top' }} />
-              <ReferenceLine x="Mar 19" stroke="#EF4444" strokeDasharray="4 3" strokeWidth={1.5} />
-              <Area type="monotone" dataKey="last"    stroke="#3D5070" strokeWidth={1.5} fill="url(#gradLast)"    dot={false} />
-              <Area type="monotone" dataKey="current" stroke="#10B981" strokeWidth={2}   fill="url(#gradCurrent)" dot={false} />
-            </AreaChart>
-          </ResponsiveContainer>
+          {spendData.length === 0 ? (
+            <div className="h-[200px] flex items-center justify-center text-[#64748B] text-sm">
+              Collecting baseline data…
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={200}>
+              <AreaChart data={spendData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="gradCurrent" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%"  stopColor="#10B981" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1E2D4F" vertical={false} />
+                <XAxis
+                  dataKey="day"
+                  tick={{ fill: '#3D5070', fontSize: 10 }}
+                  tickLine={false}
+                  axisLine={false}
+                  interval={4}
+                />
+                <YAxis
+                  tick={{ fill: '#3D5070', fontSize: 10 }}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Area
+                  type="monotone"
+                  dataKey="current"
+                  stroke="#10B981"
+                  strokeWidth={2}
+                  fill="url(#gradCurrent)"
+                  dot={false}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
         </motion.div>
 
         {/* Savings Breakdown */}
@@ -257,41 +454,57 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
           className={`${CARD} p-5 lg:col-span-2`}
         >
           <p className={SECTION_LABEL + ' mb-4'}>Savings Breakdown</p>
-          <ResponsiveContainer width="100%" height={140}>
-            <PieChart>
-              <Pie
-                data={SAVINGS_PIE}
-                cx="50%"
-                cy="50%"
-                innerRadius={42}
-                outerRadius={65}
-                paddingAngle={3}
-                dataKey="value"
-                onMouseEnter={(_, i) => setHoveredPie(i)}
-                onMouseLeave={() => setHoveredPie(null)}
-              >
-                {SAVINGS_PIE.map((_, i) => (
-                  <Cell
-                    key={i}
-                    fill={PIE_COLORS[i]}
-                    opacity={hoveredPie === null || hoveredPie === i ? 1 : 0.5}
-                  />
-                ))}
-              </Pie>
-              <Tooltip content={<PieTooltip />} />
-            </PieChart>
-          </ResponsiveContainer>
-          <div className="mt-3 space-y-1.5">
-            {SAVINGS_PIE.map((item, i) => (
-              <div key={item.name} className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: PIE_COLORS[i] }} />
-                  <span className="text-[#94A3B8]">{item.name}</span>
+          {savingsPie.length === 0 ? (
+            <div className="h-[140px] flex items-center justify-center">
+              <div className="text-center">
+                {/* empty donut ring */}
+                <div className="w-28 h-28 rounded-full border-4 border-[#1E2D4F] mx-auto flex items-center justify-center">
+                  <span className="text-xs text-[#64748B]">No savings yet</span>
                 </div>
-                <span className="text-[#F1F5F9] font-medium">${item.value.toLocaleString()}</span>
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <>
+              <ResponsiveContainer width="100%" height={140}>
+                <PieChart>
+                  <Pie
+                    data={savingsPie}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={42}
+                    outerRadius={65}
+                    paddingAngle={3}
+                    dataKey="value"
+                    onMouseEnter={(_, i) => setHoveredPie(i)}
+                    onMouseLeave={() => setHoveredPie(null)}
+                  >
+                    {savingsPie.map((_, i) => (
+                      <Cell
+                        key={i}
+                        fill={PIE_COLORS[i % PIE_COLORS.length]}
+                        opacity={hoveredPie === null || hoveredPie === i ? 1 : 0.5}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<PieTooltipComp />} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="mt-3 space-y-1.5">
+                {savingsPie.map((item, i) => (
+                  <div key={item.name} className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="w-2 h-2 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }}
+                      />
+                      <span className="text-[#94A3B8]">{item.name}</span>
+                    </div>
+                    <span className="text-[#F1F5F9] font-medium">${item.value.toLocaleString()}</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </motion.div>
       </div>
 
@@ -304,45 +517,74 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
       >
         <div className="flex items-center justify-between mb-4">
           <p className={SECTION_LABEL}>Recent Regressions</p>
-          <a href="/dashboard/regressions" className="text-xs text-[#10B981] hover:text-[#34D399] flex items-center gap-1 transition">
+          <a
+            href="/dashboard/regressions"
+            className="text-xs text-[#10B981] hover:text-[#34D399] flex items-center gap-1 transition"
+          >
             View All <ExternalLink size={10} />
           </a>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b border-[#1E2D4F]">
-                {['Service', 'Deploy', 'Detected', 'Cost Impact', 'Status', 'Action'].map((h) => (
-                  <th key={h} className="pb-2 text-left text-[#3D5070] font-semibold tracking-wider uppercase pr-4 whitespace-nowrap">
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {REGRESSIONS.map((row, i) => (
-                <tr key={i} className="border-b border-[#1E2D4F]/50 last:border-0 hover:bg-[#1E2D4F]/20 transition">
-                  <td className="py-3 pr-4 font-medium text-[#F1F5F9] whitespace-nowrap">{row.service}</td>
-                  <td className="py-3 pr-4">
-                    <code className="text-[#10B981] bg-[#10B981]/10 px-1.5 py-0.5 rounded text-[10px]">{row.deploy}</code>
-                  </td>
-                  <td className="py-3 pr-4 text-[#64748B] whitespace-nowrap">{row.detected}</td>
-                  <td className="py-3 pr-4 text-[#F59E0B] font-medium whitespace-nowrap">{row.impact}</td>
-                  <td className="py-3 pr-4"><StatusBadge status={row.status} /></td>
-                  <td className="py-3">
-                    <button className={`px-2.5 py-1 rounded-md text-[10px] font-semibold transition ${
-                      row.status === 'DETECTED'
-                        ? 'bg-[#10B981] text-white hover:bg-[#34D399]'
-                        : 'bg-[#1E2D4F] text-[#94A3B8] hover:bg-[#2E3D5F]'
-                    }`}>
-                      {row.status === 'DETECTED' ? 'Fix' : 'View'}
-                    </button>
-                  </td>
+
+        {regressions.length === 0 ? (
+          <p className="text-sm text-[#10B981] py-4">
+            No regressions detected — your deploys are clean ✓
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-[#1E2D4F]">
+                  {['Service', 'Deploy', 'Detected', 'Cost Impact', 'Status', 'Action'].map((h) => (
+                    <th
+                      key={h}
+                      className="pb-2 text-left text-[#3D5070] font-semibold tracking-wider uppercase pr-4 whitespace-nowrap"
+                    >
+                      {h}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {regressions.slice(0, 10).map((row: any, i: number) => {
+                  const service = row?.service ?? row?.service_name ?? '—'
+                  const deploy  = row?.deploy_id ?? row?.deploy ?? row?.commit ?? '—'
+                  const detected = row?.detected_at ?? row?.created_at ?? row?.detected ?? '—'
+                  const impact   = row?.cost_impact ?? row?.impact ?? '—'
+                  const status   = (row?.status ?? 'DETECTED').toUpperCase()
+                  return (
+                    <tr
+                      key={i}
+                      className="border-b border-[#1E2D4F]/50 last:border-0 hover:bg-[#1E2D4F]/20 transition"
+                    >
+                      <td className="py-3 pr-4 font-medium text-[#F1F5F9] whitespace-nowrap">{service}</td>
+                      <td className="py-3 pr-4">
+                        <code className="text-[#10B981] bg-[#10B981]/10 px-1.5 py-0.5 rounded text-[10px]">
+                          {String(deploy).slice(0, 7)}
+                        </code>
+                      </td>
+                      <td className="py-3 pr-4 text-[#64748B] whitespace-nowrap">{String(detected)}</td>
+                      <td className="py-3 pr-4 text-[#F59E0B] font-medium whitespace-nowrap">
+                        {typeof impact === 'number' ? `+$${impact.toLocaleString()}/mo` : String(impact)}
+                      </td>
+                      <td className="py-3 pr-4"><StatusBadge status={status} /></td>
+                      <td className="py-3">
+                        <button
+                          className={`px-2.5 py-1 rounded-md text-[10px] font-semibold transition ${
+                            status === 'DETECTED'
+                              ? 'bg-[#10B981] text-white hover:bg-[#34D399]'
+                              : 'bg-[#1E2D4F] text-[#94A3B8] hover:bg-[#2E3D5F]'
+                          }`}
+                        >
+                          {status === 'DETECTED' ? 'Fix' : 'View'}
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </motion.div>
 
       {/* ROW 4 — Cost Drivers + AutoStopping Activity */}
@@ -356,39 +598,45 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
           className={`${CARD} p-5`}
         >
           <p className={SECTION_LABEL + ' mb-4'}>Top Cost Drivers</p>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart
-              data={TOP_SERVICES}
-              layout="vertical"
-              margin={{ top: 0, right: 8, left: 0, bottom: 0 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#1E2D4F" horizontal={false} />
-              <XAxis
-                type="number"
-                tick={{ fill: '#3D5070', fontSize: 10 }}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
-              />
-              <YAxis
-                type="category"
-                dataKey="name"
-                tick={{ fill: '#94A3B8', fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
-                width={72}
-              />
-              <Tooltip content={<BarTooltip />} cursor={{ fill: '#1E2D4F', opacity: 0.5 }} />
-              <Bar dataKey="cost" radius={[0, 4, 4, 0]}>
-                {TOP_SERVICES.map((_, i) => (
-                  <Cell
-                    key={i}
-                    fill={i === 0 ? '#10B981' : i === 1 ? '#34D399' : '#2E3D5F'}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          {topServices.length === 0 ? (
+            <div className="h-[220px] flex items-center justify-center text-sm text-[#64748B]">
+              No service cost data yet
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart
+                data={topServices}
+                layout="vertical"
+                margin={{ top: 0, right: 8, left: 0, bottom: 0 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#1E2D4F" horizontal={false} />
+                <XAxis
+                  type="number"
+                  tick={{ fill: '#3D5070', fontSize: 10 }}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+                />
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  tick={{ fill: '#94A3B8', fontSize: 11 }}
+                  tickLine={false}
+                  axisLine={false}
+                  width={72}
+                />
+                <Tooltip content={<BarTooltipComp />} cursor={{ fill: '#1E2D4F', opacity: 0.5 }} />
+                <Bar dataKey="cost" radius={[0, 4, 4, 0]}>
+                  {topServices.map((_: any, i: number) => (
+                    <Cell
+                      key={i}
+                      fill={i === 0 ? '#10B981' : i === 1 ? '#34D399' : '#2E3D5F'}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </motion.div>
 
         {/* AutoStopping Activity */}
@@ -400,40 +648,68 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
         >
           <div className="flex items-center justify-between mb-4">
             <p className={SECTION_LABEL}>AutoStopping Activity</p>
-            <span className="text-xs font-semibold text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/20 px-2 py-0.5 rounded-full">
-              Saved $4.73 today
-            </span>
+            {todaySaved > 0 && (
+              <span className="text-xs font-semibold text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/20 px-2 py-0.5 rounded-full">
+                Saved {fmt(todaySaved)} today
+              </span>
+            )}
           </div>
-          <div className="space-y-1">
-            {AUTOSTOP_EVENTS.map((event, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: 0.5 + i * 0.05 }}
-                className="flex items-start gap-3 py-2.5 border-b border-[#1E2D4F]/50 last:border-0"
-              >
-                <span className="text-[10px] text-[#3D5070] font-mono pt-0.5 w-10 flex-shrink-0">{event.time}</span>
-                <div className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${event.type === 'stop' ? 'bg-[#F59E0B]' : 'bg-[#10B981]'}`} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-[#94A3B8]">{event.description}</p>
-                  <p className={`text-[10px] mt-0.5 font-medium ${event.type === 'stop' ? 'text-[#10B981]' : 'text-[#64748B]'}`}>
-                    {event.type === 'stop' ? `saved ${event.saving}` : event.saving}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+
+          {autostopEvents.length === 0 ? (
+            <div className="py-8 flex items-center justify-center text-sm text-[#64748B]">
+              No AutoStopping activity yet
+            </div>
+          ) : (
+            <div className="space-y-1">
+              {autostopEvents.slice(0, 8).map((event: any, i: number) => {
+                const evtType = event?.action ?? event?.type ?? 'stop'
+                const isStop  = evtType === 'stop' || evtType === 'stopped'
+                const time    = event?.timestamp ?? event?.time ?? event?.created_at ?? ''
+                const desc    = event?.description ?? event?.resource_id ?? event?.resource ?? '—'
+                const saving  = event?.saving ?? event?.cost_per_hour ?? event?.rate ?? ''
+                return (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 0.5 + i * 0.05 }}
+                    className="flex items-start gap-3 py-2.5 border-b border-[#1E2D4F]/50 last:border-0"
+                  >
+                    <span className="text-[10px] text-[#3D5070] font-mono pt-0.5 w-10 flex-shrink-0 truncate">
+                      {String(time).slice(-8, -3) || String(time).slice(0, 5)}
+                    </span>
+                    <div
+                      className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${
+                        isStop ? 'bg-[#F59E0B]' : 'bg-[#10B981]'
+                      }`}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-[#94A3B8] truncate">{String(desc)}</p>
+                      {saving ? (
+                        <p className={`text-[10px] mt-0.5 font-medium ${isStop ? 'text-[#10B981]' : 'text-[#64748B]'}`}>
+                          {isStop
+                            ? `saved ${typeof saving === 'number' ? `$${saving}/hr` : saving}`
+                            : String(saving)}
+                        </p>
+                      ) : null}
+                    </div>
+                  </motion.div>
+                )
+              })}
+            </div>
+          )}
 
           <div className="mt-4 pt-4 border-t border-[#1E2D4F]">
             <div className="flex items-center justify-between text-xs">
               <span className="text-[#64748B]">Resources currently stopped</span>
-              <span className="text-[#F1F5F9] font-semibold">3 instances</span>
+              <span className="text-[#F1F5F9] font-semibold">{stoppedCount} instances</span>
             </div>
-            <div className="flex items-center justify-between text-xs mt-1">
-              <span className="text-[#64748B]">Projected monthly savings</span>
-              <span className="text-[#10B981] font-semibold">~$142/mo</span>
-            </div>
+            {projectedMonthly > 0 && (
+              <div className="flex items-center justify-between text-xs mt-1">
+                <span className="text-[#64748B]">Projected monthly savings</span>
+                <span className="text-[#10B981] font-semibold">~{fmt(projectedMonthly)}/mo</span>
+              </div>
+            )}
           </div>
         </motion.div>
       </div>
