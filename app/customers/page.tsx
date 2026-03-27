@@ -16,8 +16,8 @@ const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.12 } } };
 // ── hero stats ────────────────────────────────────────────────────────────────
 const stats = [
   { icon: <DollarSign size={18} className="text-[#10B981]" />, value: "$2.3M", label: "tracked savings" },
-  { icon: <Users size={18} className="text-[#4F6EF7]" />, value: "47", label: "engineering teams" },
-  { icon: <Clock size={18} className="text-[#7C3AED]" />, value: "<2hr", label: "avg detection time" },
+  { icon: <Users size={18} className="text-[#10B981]" />, value: "47", label: "engineering teams" },
+  { icon: <Clock size={18} className="text-[#059669]" />, value: "<2hr", label: "avg detection time" },
   { icon: <TrendingDown size={18} className="text-[#10B981]" />, value: "23%", label: "avg cloud savings" },
 ];
 
@@ -26,9 +26,9 @@ const caseStudies = [
   {
     company: "PayFlow",
     industry: "Fintech",
-    color: "#4F6EF7",
-    gradient: "from-[#4F6EF7]/20 to-[#7C3AED]/10",
-    border: "border-[#4F6EF7]/30",
+    color: "#10B981",
+    gradient: "from-[#10B981]/20 to-[#059669]/10",
+    border: "border-[#10B981]/30",
     challenge: "Lambda costs spiking unpredictably after every deploy — no visibility into which deploy caused what.",
     solution: "Deploy-linked regression detection connected to their GitHub Actions pipeline. Every deploy got a cost fingerprint within minutes.",
     result: "Caught the culprit in 45 minutes. Reduced EC2 waste by 67%.",
@@ -40,14 +40,14 @@ const caseStudies = [
     quote: "We had 3 engineers spending 2 days/month digging through Cost Explorer. Now it's automated.",
     author: "CTO, PayFlow",
     avatar: "AT",
-    avatarColor: "#4F6EF7",
+    avatarColor: "#10B981",
   },
   {
     company: "BuildKit",
     industry: "SaaS Scaleup",
-    color: "#7C3AED",
-    gradient: "from-[#7C3AED]/20 to-[#4F6EF7]/10",
-    border: "border-[#7C3AED]/30",
+    color: "#059669",
+    gradient: "from-[#059669]/20 to-[#10B981]/10",
+    border: "border-[#059669]/30",
     challenge: "Midnight deploys causing cost regressions that engineers only discovered weeks later — long after the damage was done.",
     solution: "Cloudlink integrated with their deployment pipeline and caught a regression within 90 minutes, automatically surfacing the root cause and suggesting a fix.",
     result: "Saved $34K in one month. Zero manual cost reviews since integration.",
@@ -59,13 +59,13 @@ const caseStudies = [
     quote: "The first regression it caught paid for the next 2 years of the service — except it's free until it saves you money anyway.",
     author: "VP Engineering, BuildKit",
     avatar: "MK",
-    avatarColor: "#7C3AED",
+    avatarColor: "#059669",
   },
   {
     company: "Shoprise",
     industry: "E-commerce",
     color: "#10B981",
-    gradient: "from-[#10B981]/20 to-[#4F6EF7]/10",
+    gradient: "from-[#10B981]/20 to-[#10B981]/10",
     border: "border-[#10B981]/30",
     challenge: "Dev and staging environments running 24/7. $12K/month burned overnight and on weekends with no one even using them.",
     solution: "AutoStopping detected inactivity patterns across 24 dev environments and implemented schedule-based shutdowns with instant restart on incoming traffic.",
@@ -90,7 +90,7 @@ const testimonials = [
     role: "Senior DevOps Engineer",
     company: "Series B fintech",
     avatar: "DK",
-    color: "#4F6EF7",
+    color: "#10B981",
   },
   {
     quote: "Finally something that doesn't just tell you you're wasting money — it actually fixes it.",
@@ -98,7 +98,7 @@ const testimonials = [
     role: "VP Engineering",
     company: "SaaS platform",
     avatar: "RM",
-    color: "#7C3AED",
+    color: "#059669",
   },
   {
     quote: "AutoStopping alone saves us more than our entire engineering tooling budget combined.",
@@ -114,7 +114,7 @@ const testimonials = [
     role: "Staff Engineer",
     company: "Developer tools startup",
     avatar: "JT",
-    color: "#4F6EF7",
+    color: "#10B981",
   },
   {
     quote: "We approved the first batch of fixes in a Slack thread during standup. That was it.",
@@ -122,7 +122,7 @@ const testimonials = [
     role: "Engineering Manager",
     company: "Healthcare SaaS",
     avatar: "ML",
-    color: "#7C3AED",
+    color: "#059669",
   },
   {
     quote: "No other tool in our stack pays for itself. Cloudlink is the exception — and it literally doesn't charge unless it does.",
@@ -146,13 +146,13 @@ export default function CustomersPage() {
           className="max-w-3xl mx-auto"
         >
           <motion.div variants={fadeUp} className="mb-6">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#4F6EF7]/30 bg-[#4F6EF7]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#4F6EF7]">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#10B981]/30 bg-[#10B981]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#10B981]">
               Customers
             </span>
           </motion.div>
           <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6">
             Engineering teams saving{" "}
-            <span className="bg-gradient-to-r from-[#10B981] to-[#4F6EF7] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#10B981] to-[#10B981] bg-clip-text text-transparent">
               real money
             </span>
           </motion.h1>
@@ -237,7 +237,7 @@ export default function CustomersPage() {
                       {/* Challenge / Solution / Result */}
                       {[
                         { label: "Challenge", text: cs.challenge, color: "text-red-400" },
-                        { label: "Solution", text: cs.solution, color: "text-[#4F6EF7]" },
+                        { label: "Solution", text: cs.solution, color: "text-[#10B981]" },
                         { label: "Result", text: cs.result, color: "text-[#10B981]" },
                       ].map((block) => (
                         <div key={block.label}>
@@ -306,7 +306,7 @@ export default function CustomersPage() {
                 <motion.div
                   key={i}
                   variants={fadeUp}
-                  className="bg-[#141C33] border border-[#1E2D4F] rounded-2xl p-6 flex flex-col gap-4 hover:border-[#4F6EF7]/30 transition-colors duration-200"
+                  className="bg-[#141C33] border border-[#1E2D4F] rounded-2xl p-6 flex flex-col gap-4 hover:border-[#10B981]/30 transition-colors duration-200"
                 >
                   <Quote size={18} style={{ color: t.color }} className="flex-shrink-0" />
                   <p className="text-[#F1F5F9] text-sm leading-relaxed flex-1">"{t.quote}"</p>
@@ -342,7 +342,7 @@ export default function CustomersPage() {
             <motion.div variants={fadeUp}>
               <Link
                 href="/signup"
-                className="inline-flex items-center gap-2 rounded-full bg-[#4F6EF7] hover:bg-[#3d5ce6] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#4F6EF7]/25 transition-all duration-200"
+                className="inline-flex items-center gap-2 rounded-full bg-[#10B981] hover:bg-[#3d5ce6] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#10B981]/25 transition-all duration-200"
               >
                 Start saving today <ArrowRight size={16} />
               </Link>

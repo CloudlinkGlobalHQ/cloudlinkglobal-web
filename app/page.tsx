@@ -66,7 +66,7 @@ function HeroDashboardMockup() {
       className="relative rounded-2xl border p-5 shadow-2xl"
       style={{
         background: "#141C33",
-        borderColor: "rgba(79,110,247,0.25)",
+        borderColor: "rgba(16, 185, 129,0.25)",
         minWidth: 0,
       }}
     >
@@ -89,8 +89,8 @@ function HeroDashboardMockup() {
           <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
             <defs>
               <linearGradient id="costGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#4F6EF7" stopOpacity={0.35} />
-                <stop offset="95%" stopColor="#4F6EF7" stopOpacity={0} />
+                <stop offset="5%" stopColor="#10B981" stopOpacity={0.35} />
+                <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
               </linearGradient>
             </defs>
             <XAxis
@@ -103,7 +103,7 @@ function HeroDashboardMockup() {
             <Tooltip
               contentStyle={{
                 background: "#0A0E1A",
-                border: "1px solid rgba(79,110,247,0.3)",
+                border: "1px solid rgba(16, 185, 129,0.3)",
                 borderRadius: 8,
                 color: "#F1F5F9",
                 fontSize: 12,
@@ -113,11 +113,11 @@ function HeroDashboardMockup() {
             <Area
               type="monotone"
               dataKey="cost"
-              stroke="#4F6EF7"
+              stroke="#10B981"
               strokeWidth={2}
               fill="url(#costGrad)"
               dot={false}
-              activeDot={{ r: 4, fill: "#4F6EF7" }}
+              activeDot={{ r: 4, fill: "#10B981" }}
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -158,7 +158,7 @@ function HeroDashboardMockup() {
               payments-service deploy{" "}
               <span
                 className="rounded px-1 font-mono text-xs"
-                style={{ background: "rgba(79,110,247,0.15)", color: "#818CF8" }}
+                style={{ background: "rgba(16, 185, 129,0.15)", color: "#6EE7B7" }}
               >
                 #a3f9b2
               </span>
@@ -185,7 +185,7 @@ function HeroSection() {
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(79,110,247,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(79,110,247,0.06) 1px, transparent 1px)",
+            "linear-gradient(rgba(16, 185, 129,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(16, 185, 129,0.06) 1px, transparent 1px)",
           backgroundSize: "48px 48px",
         }}
       />
@@ -193,11 +193,11 @@ function HeroSection() {
       {/* Glow blobs */}
       <div
         className="pointer-events-none absolute left-1/4 top-1/3 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-20 blur-3xl"
-        style={{ background: "#4F6EF7" }}
+        style={{ background: "#10B981" }}
       />
       <div
         className="pointer-events-none absolute right-1/4 top-2/3 h-64 w-64 -translate-y-1/2 rounded-full opacity-10 blur-3xl"
-        style={{ background: "#7C3AED" }}
+        style={{ background: "#059669" }}
       />
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-6 py-20 lg:py-32">
@@ -214,9 +214,9 @@ function HeroSection() {
               <span
                 className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
                 style={{
-                  background: "rgba(79,110,247,0.12)",
-                  border: "1px solid rgba(79,110,247,0.3)",
-                  color: "#818CF8",
+                  background: "rgba(16, 185, 129,0.12)",
+                  border: "1px solid rgba(16, 185, 129,0.3)",
+                  color: "#6EE7B7",
                 }}
               >
                 <span
@@ -245,7 +245,7 @@ function HeroSection() {
               <br />
               <span
                 style={{
-                  background: "linear-gradient(135deg, #4F6EF7 0%, #7C3AED 100%)",
+                  background: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -272,8 +272,8 @@ function HeroSection() {
                 href="/signup"
                 className="inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-base font-bold text-white shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-xl"
                 style={{
-                  background: "linear-gradient(135deg, #4F6EF7, #7C3AED)",
-                  boxShadow: "0 8px 32px rgba(79,110,247,0.35)",
+                  background: "linear-gradient(135deg, #10B981, #059669)",
+                  boxShadow: "0 8px 32px rgba(16, 185, 129,0.35)",
                 }}
               >
                 <Zap size={18} />
@@ -283,9 +283,9 @@ function HeroSection() {
                 href="#how-it-works"
                 className="inline-flex items-center gap-2 rounded-xl border px-7 py-3.5 text-base font-semibold transition-all duration-200 hover:scale-105"
                 style={{
-                  borderColor: "rgba(79,110,247,0.35)",
+                  borderColor: "rgba(16, 185, 129,0.35)",
                   color: "#F1F5F9",
-                  background: "rgba(79,110,247,0.05)",
+                  background: "rgba(16, 185, 129,0.05)",
                 }}
               >
                 See How It Works
@@ -305,7 +305,7 @@ function HeroSection() {
                   className="rounded-full px-3.5 py-1.5 text-xs font-semibold"
                   style={{
                     background: "rgba(20,28,51,0.8)",
-                    border: "1px solid rgba(79,110,247,0.3)",
+                    border: "1px solid rgba(16, 185, 129,0.3)",
                     color: "#F1F5F9",
                     backdropFilter: "blur(8px)",
                   }}
@@ -337,7 +337,7 @@ function SocialProofBar() {
   return (
     <section
       className="overflow-hidden py-10"
-      style={{ background: "#0F1629", borderTop: "1px solid rgba(79,110,247,0.1)", borderBottom: "1px solid rgba(79,110,247,0.1)" }}
+      style={{ background: "#0F1629", borderTop: "1px solid rgba(16, 185, 129,0.1)", borderBottom: "1px solid rgba(16, 185, 129,0.1)" }}
     >
       <p className="mb-6 text-center text-sm font-medium" style={{ color: "#475569" }}>
         Trusted by engineering teams at...
@@ -486,7 +486,7 @@ function HowItWorksSection() {
             Three steps.{" "}
             <span
               style={{
-                background: "linear-gradient(135deg, #4F6EF7, #7C3AED)",
+                background: "linear-gradient(135deg, #10B981, #059669)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -501,7 +501,7 @@ function HowItWorksSection() {
           {/* Vertical line */}
           <div
             className="absolute left-7 top-12 bottom-12 w-px"
-            style={{ background: "linear-gradient(180deg, #4F6EF7 0%, #7C3AED 100%)" }}
+            style={{ background: "linear-gradient(180deg, #10B981 0%, #059669 100%)" }}
           />
 
           <div className="flex flex-col gap-12">
@@ -518,8 +518,8 @@ function HowItWorksSection() {
                 <div
                   className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-xl font-extrabold text-white shadow-lg"
                   style={{
-                    background: "linear-gradient(135deg, #4F6EF7, #7C3AED)",
-                    boxShadow: "0 4px 20px rgba(79,110,247,0.4)",
+                    background: "linear-gradient(135deg, #10B981, #059669)",
+                    boxShadow: "0 4px 20px rgba(16, 185, 129,0.4)",
                   }}
                 >
                   {step.num}
@@ -574,7 +574,7 @@ function FeaturesBentoSection() {
               transition: "border-color 0.2s",
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = "rgba(79,110,247,0.5)";
+              (e.currentTarget as HTMLElement).style.borderColor = "rgba(16, 185, 129,0.5)";
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLElement).style.borderColor = "#1E2D4F";
@@ -582,7 +582,7 @@ function FeaturesBentoSection() {
           >
             <div
               className="mb-2 inline-flex items-center gap-2 rounded-lg px-2.5 py-1 text-xs font-semibold"
-              style={{ background: "rgba(79,110,247,0.15)", color: "#818CF8" }}
+              style={{ background: "rgba(16, 185, 129,0.15)", color: "#6EE7B7" }}
             >
               <TrendingUp size={12} />
               Core Feature
@@ -598,13 +598,13 @@ function FeaturesBentoSection() {
                 <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
                   <defs>
                     <linearGradient id="bento1Grad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#4F6EF7" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#4F6EF7" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#10B981" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <XAxis dataKey="time" tick={{ fill: "#475569", fontSize: 9 }} axisLine={false} tickLine={false} />
                   <YAxis hide />
-                  <Area type="monotone" dataKey="cost" stroke="#4F6EF7" strokeWidth={2} fill="url(#bento1Grad)" dot={false} />
+                  <Area type="monotone" dataKey="cost" stroke="#10B981" strokeWidth={2} fill="url(#bento1Grad)" dot={false} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -623,7 +623,7 @@ function FeaturesBentoSection() {
               transition: "border-color 0.2s",
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = "rgba(79,110,247,0.5)";
+              (e.currentTarget as HTMLElement).style.borderColor = "rgba(16, 185, 129,0.5)";
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLElement).style.borderColor = "#1E2D4F";
@@ -631,7 +631,7 @@ function FeaturesBentoSection() {
           >
             <div
               className="mb-2 inline-flex items-center gap-2 rounded-lg px-2.5 py-1 text-xs font-semibold"
-              style={{ background: "rgba(124,58,237,0.15)", color: "#A78BFA" }}
+              style={{ background: "rgba(5, 150, 105,0.15)", color: "#34D399" }}
             >
               <Zap size={12} />
               AI-Powered
@@ -645,9 +645,9 @@ function FeaturesBentoSection() {
             {/* Fake AI card */}
             <div
               className="rounded-xl p-3"
-              style={{ background: "rgba(79,110,247,0.07)", border: "1px solid rgba(79,110,247,0.2)" }}
+              style={{ background: "rgba(16, 185, 129,0.07)", border: "1px solid rgba(16, 185, 129,0.2)" }}
             >
-              <div className="mb-1 text-xs font-semibold" style={{ color: "#818CF8" }}>
+              <div className="mb-1 text-xs font-semibold" style={{ color: "#6EE7B7" }}>
                 AI Suggestion · payments-service
               </div>
               <p className="mb-2 text-xs" style={{ color: "#94A3B8" }}>
@@ -656,7 +656,7 @@ function FeaturesBentoSection() {
               <div className="flex gap-2">
                 <button
                   className="rounded-lg px-3 py-1 text-xs font-semibold text-white"
-                  style={{ background: "linear-gradient(135deg,#4F6EF7,#7C3AED)" }}
+                  style={{ background: "linear-gradient(135deg,#10B981,#059669)" }}
                 >
                   Apply fix
                 </button>
@@ -674,8 +674,8 @@ function FeaturesBentoSection() {
           {[
             { icon: CloudOff, title: "AutoStopping", desc: "Kill idle dev/staging resources automatically on a schedule.", color: "#10B981" },
             { icon: Shield, title: "Budget Guardrails", desc: "Hard limits per team, service, or environment. Alerts before overage.", color: "#F59E0B" },
-            { icon: BarChart2, title: "Unit Cost Economics", desc: "Cost per API call, per user, per transaction — normalized metrics.", color: "#4F6EF7" },
-            { icon: Cpu, title: "MCP Server Integration", desc: "Ask your AI assistant about cloud costs directly in Cursor or Claude.", color: "#A78BFA" },
+            { icon: BarChart2, title: "Unit Cost Economics", desc: "Cost per API call, per user, per transaction — normalized metrics.", color: "#10B981" },
+            { icon: Cpu, title: "MCP Server Integration", desc: "Ask your AI assistant about cloud costs directly in Cursor or Claude.", color: "#34D399" },
           ].map((feat, i) => (
             <motion.div
               key={feat.title}
@@ -692,7 +692,7 @@ function FeaturesBentoSection() {
               }}
               onMouseEnter={(e) => {
                 const el = e.currentTarget as HTMLElement;
-                el.style.borderColor = "rgba(79,110,247,0.5)";
+                el.style.borderColor = "rgba(16, 185, 129,0.5)";
                 el.style.transform = "translateY(-2px)";
               }}
               onMouseLeave={(e) => {
@@ -773,8 +773,8 @@ function CalculatorSection() {
               step={1000}
               value={spend}
               onChange={(e) => setSpend(Number(e.target.value))}
-              className="w-full accent-indigo-500"
-              style={{ accentColor: "#4F6EF7" }}
+              className="w-full accent-emerald-500"
+              style={{ accentColor: "#10B981" }}
             />
             <div className="mt-1 flex justify-between text-xs" style={{ color: "#475569" }}>
               <span>$1,000</span>
@@ -824,7 +824,7 @@ function CalculatorSection() {
             <Link
               href="/signup"
               className="inline-flex items-center gap-2 text-base font-bold transition-all duration-200 hover:gap-3"
-              style={{ color: "#4F6EF7" }}
+              style={{ color: "#10B981" }}
             >
               Start saving this month
               <ArrowRight size={17} />
@@ -908,7 +908,7 @@ const testimonials = [
     role: "Platform Engineer",
     company: "Fintech startup",
     initials: "SC",
-    color: "#4F6EF7",
+    color: "#10B981",
   },
   {
     quote:
@@ -917,7 +917,7 @@ const testimonials = [
     role: "VP Engineering",
     company: "SaaS Co",
     initials: "MR",
-    color: "#7C3AED",
+    color: "#059669",
   },
   {
     quote:
@@ -999,7 +999,7 @@ function FinalCTASection() {
     <section
       className="py-28 text-center"
       style={{
-        background: "linear-gradient(135deg, #4F6EF7 0%, #7C3AED 100%)",
+        background: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
       }}
     >
       <motion.div
@@ -1014,7 +1014,7 @@ function FinalCTASection() {
           <br />
           you haven&apos;t found yet.
         </h2>
-        <p className="mb-8 text-lg text-indigo-100">
+        <p className="mb-8 text-lg text-emerald-100">
           Connect in 5 minutes. First savings report in 24 hours.
           <br />
           Pay nothing until we save you money.
@@ -1022,7 +1022,7 @@ function FinalCTASection() {
         <Link
           href="/signup"
           className="inline-flex items-center gap-3 rounded-xl bg-white px-9 py-4 text-lg font-bold shadow-2xl transition-all duration-200 hover:scale-105 hover:shadow-3xl"
-          style={{ color: "#4F6EF7" }}
+          style={{ color: "#10B981" }}
         >
           <Zap size={20} />
           Connect Your Cloud — It&apos;s Free

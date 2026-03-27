@@ -26,13 +26,13 @@ function DeployCard() {
         <div className="w-3 h-3 rounded-full bg-green-500/70" />
         <span className="ml-2 text-[#94A3B8] text-xs">cloudlink-detector</span>
       </div>
-      <div className="text-[#94A3B8]">$ deploy <span className="text-[#4F6EF7]">main</span> → prod</div>
+      <div className="text-[#94A3B8]">$ deploy <span className="text-[#10B981]">main</span> → prod</div>
       <div className="text-[#10B981]">✓ Build passed · Hash: <span className="text-[#F1F5F9]">a3f9c12</span></div>
       <div className="text-[#94A3B8]">→ Fingerprinting cost baseline…</div>
       <div className="text-yellow-400">⚠ Cost regression detected: <span className="text-[#F1F5F9]">+$847/day</span></div>
       <div className="text-[#94A3B8]">  Service: <span className="text-[#F1F5F9]">api-gateway</span></div>
       <div className="text-[#94A3B8]">  Cause: Lambda concurrency spike</div>
-      <div className="text-[#4F6EF7]">→ Alert sent to #eng-alerts</div>
+      <div className="text-[#10B981]">→ Alert sent to #eng-alerts</div>
       <div className="mt-2 pt-2 border-t border-[#1E2D4F] text-xs text-[#94A3B8]">
         Detected in <span className="text-[#10B981] font-semibold">47 minutes</span> · 3 fixes suggested
       </div>
@@ -86,7 +86,7 @@ function RemediationCard() {
             <span className="text-[#F1F5F9] text-sm">→ {item.fix}</span>
             <div className="flex items-center gap-2">
               <span className="text-[#10B981] text-xs font-semibold">{item.saving}</span>
-              <span className={`text-xs px-2 py-0.5 rounded-full ${item.status === "approved" ? "bg-[#10B981]/10 text-[#10B981]" : "bg-[#4F6EF7]/10 text-[#4F6EF7]"}`}>
+              <span className={`text-xs px-2 py-0.5 rounded-full ${item.status === "approved" ? "bg-[#10B981]/10 text-[#10B981]" : "bg-[#10B981]/10 text-[#10B981]"}`}>
                 {item.status}
               </span>
             </div>
@@ -167,14 +167,14 @@ function SDKCard() {
     <div className="bg-[#0A0E1A] border border-[#1E2D4F] rounded-2xl p-6 font-mono text-sm space-y-3">
       <div className="text-[#94A3B8] text-xs mb-3">cloudlink-sdk · unit-costs.ts</div>
       <div>
-        <span className="text-[#7C3AED]">import</span>
+        <span className="text-[#059669]">import</span>
         <span className="text-[#F1F5F9]"> {"{ track }"} </span>
-        <span className="text-[#7C3AED]">from</span>
+        <span className="text-[#059669]">from</span>
         <span className="text-yellow-300"> '@cloudlink/sdk'</span>
       </div>
       <div className="text-[#94A3B8]">// Track cost per API call</div>
       <div>
-        <span className="text-[#4F6EF7]">track</span>
+        <span className="text-[#10B981]">track</span>
         <span className="text-[#F1F5F9]">{"({"}</span>
       </div>
       <div className="pl-4 text-[#F1F5F9]">
@@ -207,7 +207,7 @@ function AdvisorCard() {
         <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
           <div className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm ${
             m.role === "user"
-              ? "bg-[#4F6EF7] text-white rounded-br-sm"
+              ? "bg-[#10B981] text-white rounded-br-sm"
               : "bg-[#141C33] border border-[#1E2D4F] text-[#F1F5F9] rounded-bl-sm"
           }`}>
             {m.msg}
@@ -225,7 +225,7 @@ function MCPCard() {
       <div className="text-[#94A3B8] text-xs mb-2">Cursor IDE · Cloudlink MCP</div>
       <div className="text-[#94A3B8]">&gt; <span className="text-[#F1F5F9]">What's the most expensive service this week?</span></div>
       <div className="bg-[#141C33] border border-[#1E2D4F] rounded-xl p-3 text-xs space-y-1">
-        <div className="text-[#4F6EF7] mb-1">Cloudlink MCP · live data</div>
+        <div className="text-[#10B981] mb-1">Cloudlink MCP · live data</div>
         <div className="flex justify-between"><span className="text-[#94A3B8]">api-gateway</span><span className="text-[#F1F5F9]">$4,821</span></div>
         <div className="flex justify-between"><span className="text-[#94A3B8]">ml-training</span><span className="text-[#F1F5F9]">$3,104</span></div>
         <div className="flex justify-between"><span className="text-[#94A3B8]">data-pipeline</span><span className="text-[#F1F5F9]">$1,892</span></div>
@@ -241,10 +241,10 @@ function NotificationsCard() {
     <div className="bg-[#0A0E1A] border border-[#1E2D4F] rounded-2xl p-6 space-y-3">
       <div className="text-xs text-[#94A3B8] font-mono mb-2">Integrations</div>
       {[
-        { channel: "Slack #eng-alerts", msg: "Cost regression: +$847/day on api-service", time: "2m ago", dot: "#4F6EF7" },
+        { channel: "Slack #eng-alerts", msg: "Cost regression: +$847/day on api-service", time: "2m ago", dot: "#10B981" },
         { channel: "PagerDuty", msg: "Budget threshold exceeded: data-pipeline 96%", time: "14m ago", dot: "#F59E0B" },
         { channel: "Email digest", msg: "Weekly savings report: $12,400 saved", time: "3h ago", dot: "#10B981" },
-        { channel: "Webhook → Datadog", msg: "AutoStopping: dev-backend stopped (idle 4h)", time: "4h ago", dot: "#7C3AED" },
+        { channel: "Webhook → Datadog", msg: "AutoStopping: dev-backend stopped (idle 4h)", time: "4h ago", dot: "#059669" },
       ].map((n, i) => (
         <div key={i} className="flex items-start gap-3 bg-[#141C33] border border-[#1E2D4F] rounded-xl px-3 py-2.5">
           <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ background: n.dot }} />
@@ -262,7 +262,7 @@ function NotificationsCard() {
 // ── feature data ──────────────────────────────────────────────────────────────
 const features = [
   {
-    icon: <GitBranch size={22} className="text-[#4F6EF7]" />,
+    icon: <GitBranch size={22} className="text-[#10B981]" />,
     title: "Deploy-Linked Regression Detection",
     desc: "Connect your CI/CD pipeline and every deploy gets a cost fingerprint. Regressions surface in minutes, not months.",
     bullets: [
@@ -274,7 +274,7 @@ const features = [
     visual: <DeployCard />,
   },
   {
-    icon: <Cloud size={22} className="text-[#7C3AED]" />,
+    icon: <Cloud size={22} className="text-[#059669]" />,
     title: "Automated Cloud Scanning",
     desc: "We scan AWS, Azure, and GCP continuously — not just when you think to check.",
     bullets: [
@@ -286,7 +286,7 @@ const features = [
     visual: <ScanCard />,
   },
   {
-    icon: <Cpu size={22} className="text-[#4F6EF7]" />,
+    icon: <Cpu size={22} className="text-[#10B981]" />,
     title: "AI-Powered Remediation",
     desc: "Our AI doesn't just detect — it fixes. With your approval.",
     bullets: [
@@ -310,7 +310,7 @@ const features = [
     visual: <AutoStoppingCard />,
   },
   {
-    icon: <Shield size={22} className="text-[#7C3AED]" />,
+    icon: <Shield size={22} className="text-[#059669]" />,
     title: "Budget Guardrails & Deploy Gates",
     desc: "Block deploys that would exceed budget. Set hard limits per service.",
     bullets: [
@@ -322,7 +322,7 @@ const features = [
     visual: <GuardrailsCard />,
   },
   {
-    icon: <BarChart2 size={22} className="text-[#4F6EF7]" />,
+    icon: <BarChart2 size={22} className="text-[#10B981]" />,
     title: "Unit Cost Economics SDK",
     desc: "Track cost per API call, per user, per transaction. Build it into your code.",
     bullets: [
@@ -334,7 +334,7 @@ const features = [
     visual: <SDKCard />,
   },
   {
-    icon: <MessageSquare size={22} className="text-[#7C3AED]" />,
+    icon: <MessageSquare size={22} className="text-[#059669]" />,
     title: "AI Cost Advisor",
     desc: "Ask natural language questions about your cloud spend. Get actionable answers.",
     bullets: [
@@ -346,7 +346,7 @@ const features = [
     visual: <AdvisorCard />,
   },
   {
-    icon: <Plug size={22} className="text-[#4F6EF7]" />,
+    icon: <Plug size={22} className="text-[#10B981]" />,
     title: "MCP Server Integration",
     desc: "Claude, Cursor, and other AI coding tools can now see your cloud costs in real time.",
     bullets: [
@@ -401,13 +401,13 @@ export default function ProductPage() {
           className="max-w-3xl mx-auto"
         >
           <motion.div variants={fadeUp} className="mb-6">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#4F6EF7]/30 bg-[#4F6EF7]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#4F6EF7]">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#10B981]/30 bg-[#10B981]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#10B981]">
               Product
             </span>
           </motion.div>
           <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6">
             The cloud cost platform that{" "}
-            <span className="bg-gradient-to-r from-[#4F6EF7] to-[#7C3AED] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#10B981] to-[#059669] bg-clip-text text-transparent">
               actually does something
             </span>
           </motion.h1>
@@ -417,13 +417,13 @@ export default function ProductPage() {
           <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4">
             <Link
               href="/signup"
-              className="inline-flex items-center gap-2 rounded-full bg-[#4F6EF7] hover:bg-[#3d5ce6] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#4F6EF7]/25 transition-all duration-200"
+              className="inline-flex items-center gap-2 rounded-full bg-[#10B981] hover:bg-[#3d5ce6] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#10B981]/25 transition-all duration-200"
             >
               Start for free <ArrowRight size={16} />
             </Link>
             <Link
               href="/pricing"
-              className="inline-flex items-center gap-2 rounded-full border border-[#1E2D4F] bg-[#0F1629] hover:border-[#4F6EF7]/40 px-8 py-3.5 text-sm font-semibold text-[#94A3B8] transition-all duration-200"
+              className="inline-flex items-center gap-2 rounded-full border border-[#1E2D4F] bg-[#0F1629] hover:border-[#10B981]/40 px-8 py-3.5 text-sm font-semibold text-[#94A3B8] transition-all duration-200"
             >
               See pricing
             </Link>
@@ -511,7 +511,7 @@ export default function ProductPage() {
                         key={col.name}
                         className={`text-center px-6 py-4 text-sm font-semibold border-b border-[#1E2D4F] ${
                           col.highlight
-                            ? "text-[#4F6EF7] bg-[#4F6EF7]/5"
+                            ? "text-[#10B981] bg-[#10B981]/5"
                             : "text-[#94A3B8]"
                         }`}
                       >
@@ -530,7 +530,7 @@ export default function ProductPage() {
                       className={`border-b border-[#1E2D4F] hover:bg-[#141C33]/50 transition-colors ${i % 2 === 0 ? "" : "bg-[#141C33]/20"}`}
                     >
                       <td className="px-6 py-4 text-[#F1F5F9] text-sm">{row.feature}</td>
-                      <td className="px-6 py-4 bg-[#4F6EF7]/5">
+                      <td className="px-6 py-4 bg-[#10B981]/5">
                         <Cell value={row.cloudlink} />
                       </td>
                       <td className="px-6 py-4"><Cell value={row.awsCE} /></td>
@@ -558,7 +558,7 @@ export default function ProductPage() {
             <motion.div variants={fadeUp}>
               <Link
                 href="/signup"
-                className="inline-flex items-center gap-2 rounded-full bg-[#4F6EF7] hover:bg-[#3d5ce6] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#4F6EF7]/25 transition-all duration-200"
+                className="inline-flex items-center gap-2 rounded-full bg-[#10B981] hover:bg-[#3d5ce6] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#10B981]/25 transition-all duration-200"
               >
                 Get started free <ArrowRight size={16} />
               </Link>

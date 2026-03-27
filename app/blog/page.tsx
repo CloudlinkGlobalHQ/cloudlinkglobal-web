@@ -99,11 +99,11 @@ const posts: Post[] = [
 
 // ── tag color map ─────────────────────────────────────────────────────────────
 const tagColors: Record<Tag, { bg: string; text: string; border: string }> = {
-  "Cloud Costs": { bg: "bg-[#4F6EF7]/10", text: "text-[#4F6EF7]", border: "border-[#4F6EF7]/20" },
-  DevOps: { bg: "bg-[#7C3AED]/10", text: "text-[#7C3AED]", border: "border-[#7C3AED]/20" },
+  "Cloud Costs": { bg: "bg-[#10B981]/10", text: "text-[#10B981]", border: "border-[#10B981]/20" },
+  DevOps: { bg: "bg-[#059669]/10", text: "text-[#059669]", border: "border-[#059669]/20" },
   FinOps: { bg: "bg-[#10B981]/10", text: "text-[#10B981]", border: "border-[#10B981]/20" },
   Engineering: { bg: "bg-[#F59E0B]/10", text: "text-[#F59E0B]", border: "border-[#F59E0B]/20" },
-  AI: { bg: "bg-[#7C3AED]/10", text: "text-[#7C3AED]", border: "border-[#7C3AED]/20" },
+  AI: { bg: "bg-[#059669]/10", text: "text-[#059669]", border: "border-[#059669]/20" },
   "Cost Optimization": { bg: "bg-[#10B981]/10", text: "text-[#10B981]", border: "border-[#10B981]/20" },
 };
 
@@ -130,13 +130,13 @@ export default function BlogPage() {
       <section className="pt-32 pb-16 px-4 text-center">
         <div className="max-w-3xl mx-auto">
           <div className="mb-6">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#4F6EF7]/30 bg-[#4F6EF7]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#4F6EF7]">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#10B981]/30 bg-[#10B981]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#10B981]">
               Blog
             </span>
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6">
             The{" "}
-            <span className="bg-gradient-to-r from-[#4F6EF7] to-[#7C3AED] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#10B981] to-[#059669] bg-clip-text text-transparent">
               Cloud Cost
             </span>{" "}
             Blog
@@ -156,8 +156,8 @@ export default function BlogPage() {
                 key={t}
                 className={`text-sm font-medium px-4 py-2 rounded-full border transition-colors duration-200 ${
                   t === "All"
-                    ? "bg-[#4F6EF7] border-[#4F6EF7] text-white"
-                    : "bg-transparent border-[#1E2D4F] text-[#94A3B8] hover:border-[#4F6EF7]/40 hover:text-[#F1F5F9]"
+                    ? "bg-[#10B981] border-[#10B981] text-white"
+                    : "bg-transparent border-[#1E2D4F] text-[#94A3B8] hover:border-[#10B981]/40 hover:text-[#F1F5F9]"
                 }`}
               >
                 {t}
@@ -172,19 +172,19 @@ export default function BlogPage() {
         <div className="max-w-5xl mx-auto">
           <Link
             href={`/blog/${featuredPost.slug}`}
-            className="group block bg-[#141C33] border border-[#1E2D4F] rounded-3xl overflow-hidden hover:border-[#4F6EF7]/40 transition-colors duration-200"
+            className="group block bg-[#141C33] border border-[#1E2D4F] rounded-3xl overflow-hidden hover:border-[#10B981]/40 transition-colors duration-200"
           >
             {/* Featured image placeholder */}
             <div className="h-64 bg-gradient-to-br from-[#0F1629] via-[#141C33] to-[#0A0E1A] relative overflow-hidden border-b border-[#1E2D4F] flex items-center justify-center">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#4F6EF7]/10 to-[#7C3AED]/10" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#10B981]/10 to-[#059669]/10" />
               <div className="relative z-10 font-mono text-sm space-y-2 text-center px-8">
                 <div className="text-[#94A3B8]">AWS Cost Explorer</div>
                 <div className="text-2xl font-black text-[#F1F5F9]">What happened ✓</div>
                 <div className="text-2xl font-black text-red-400">Why it happened ✗</div>
-                <div className="text-xs text-[#4F6EF7] mt-3">Deploy attribution → root cause in minutes</div>
+                <div className="text-xs text-[#10B981] mt-3">Deploy attribution → root cause in minutes</div>
               </div>
               <div className="absolute top-4 left-6">
-                <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-[#4F6EF7] text-white">
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-[#10B981] text-white">
                   Featured
                 </span>
               </div>
@@ -199,7 +199,7 @@ export default function BlogPage() {
                 </span>
                 <span className="text-xs text-[#94A3B8]">{featuredPost.date}</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#F1F5F9] mb-4 group-hover:text-[#4F6EF7] transition-colors duration-200 leading-snug">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#F1F5F9] mb-4 group-hover:text-[#10B981] transition-colors duration-200 leading-snug">
                 {featuredPost.title}
               </h2>
               <p className="text-[#94A3B8] text-lg leading-relaxed mb-6 max-w-2xl">
@@ -207,12 +207,12 @@ export default function BlogPage() {
               </p>
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#4F6EF7] flex items-center justify-center text-white text-xs font-bold">
+                  <div className="w-8 h-8 rounded-full bg-[#10B981] flex items-center justify-center text-white text-xs font-bold">
                     {featuredPost.author.split(" ").map((n) => n[0]).join("")}
                   </div>
                   <span className="text-sm text-[#94A3B8]">{featuredPost.author}</span>
                 </div>
-                <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#4F6EF7] group-hover:gap-2.5 transition-all duration-200">
+                <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#10B981] group-hover:gap-2.5 transition-all duration-200">
                   Read article <ArrowRight size={14} />
                 </span>
               </div>
@@ -227,12 +227,12 @@ export default function BlogPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {remainingPosts.map((post) => {
               const initials = post.author.split(" ").map((n) => n[0]).join("");
-              const authorColor = post.tag === "DevOps" || post.tag === "FinOps" ? "#7C3AED" : post.tag === "Engineering" ? "#F59E0B" : "#4F6EF7";
+              const authorColor = post.tag === "DevOps" || post.tag === "FinOps" ? "#059669" : post.tag === "Engineering" ? "#F59E0B" : "#10B981";
               return (
                 <Link
                   key={post.slug}
                   href={`/blog/${post.slug}`}
-                  className="group flex flex-col bg-[#141C33] border border-[#1E2D4F] rounded-2xl overflow-hidden hover:border-[#4F6EF7]/40 transition-colors duration-200"
+                  className="group flex flex-col bg-[#141C33] border border-[#1E2D4F] rounded-2xl overflow-hidden hover:border-[#10B981]/40 transition-colors duration-200"
                 >
                   {/* Mini illustration placeholder */}
                   <div className="h-32 bg-gradient-to-br from-[#0F1629] to-[#141C33] border-b border-[#1E2D4F] flex items-center justify-center relative overflow-hidden">
@@ -255,7 +255,7 @@ export default function BlogPage() {
                       </span>
                     </div>
 
-                    <h3 className="text-[#F1F5F9] font-semibold leading-snug group-hover:text-[#4F6EF7] transition-colors duration-200 flex-1">
+                    <h3 className="text-[#F1F5F9] font-semibold leading-snug group-hover:text-[#10B981] transition-colors duration-200 flex-1">
                       {post.title}
                     </h3>
 
@@ -276,7 +276,7 @@ export default function BlogPage() {
                           <div className="text-xs text-[#94A3B8]">{post.date}</div>
                         </div>
                       </div>
-                      <ArrowRight size={14} className="text-[#94A3B8] group-hover:text-[#4F6EF7] group-hover:translate-x-0.5 transition-all duration-200" />
+                      <ArrowRight size={14} className="text-[#94A3B8] group-hover:text-[#10B981] group-hover:translate-x-0.5 transition-all duration-200" />
                     </div>
                   </div>
                 </Link>
@@ -302,9 +302,9 @@ export default function BlogPage() {
             <input
               type="email"
               placeholder="you@yourcompany.com"
-              className="flex-1 bg-[#141C33] border border-[#1E2D4F] rounded-xl px-4 py-3 text-sm text-[#F1F5F9] placeholder-[#94A3B8]/50 focus:outline-none focus:border-[#4F6EF7]/60 transition-colors"
+              className="flex-1 bg-[#141C33] border border-[#1E2D4F] rounded-xl px-4 py-3 text-sm text-[#F1F5F9] placeholder-[#94A3B8]/50 focus:outline-none focus:border-[#10B981]/60 transition-colors"
             />
-            <button className="bg-[#4F6EF7] hover:bg-[#3d5ce6] text-white text-sm font-semibold px-5 py-3 rounded-xl transition-colors duration-200 whitespace-nowrap">
+            <button className="bg-[#10B981] hover:bg-[#3d5ce6] text-white text-sm font-semibold px-5 py-3 rounded-xl transition-colors duration-200 whitespace-nowrap">
               Subscribe
             </button>
           </div>

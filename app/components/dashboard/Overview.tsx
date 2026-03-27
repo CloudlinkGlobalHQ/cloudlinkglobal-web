@@ -46,7 +46,7 @@ const SAVINGS_PIE = [
   { name: 'Regression Prevention', value: 4400 },
   { name: 'Misc Fixes',            value: 2800 },
 ]
-const PIE_COLORS = ['#4F6EF7', '#10B981', '#F59E0B', '#7C3AED']
+const PIE_COLORS = ['#10B981', '#10B981', '#F59E0B', '#059669']
 
 const REGRESSIONS = [
   { service: 'payments-service', deploy: 'a3f9b2', detected: '2h ago',  impact: '+$847/mo',   status: 'DETECTED' },
@@ -83,14 +83,14 @@ const SECTION_LABEL = 'text-[10px] font-semibold uppercase tracking-widest text-
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
     DETECTED: 'bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20',
-    FIXING:   'bg-[#4F6EF7]/10 text-[#4F6EF7] border border-[#4F6EF7]/20',
+    FIXING:   'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20',
     RESOLVED: 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20',
   }
   return (
     <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${styles[status] || 'bg-[#1E2D4F] text-[#64748B]'}`}>
       {status === 'FIXING' ? (
         <span className="inline-flex items-center gap-1">
-          <span className="w-1.5 h-1.5 bg-[#4F6EF7] rounded-full animate-pulse" />
+          <span className="w-1.5 h-1.5 bg-[#10B981] rounded-full animate-pulse" />
           {status}
         </span>
       ) : status}
@@ -119,7 +119,7 @@ function BarTooltip({ active, payload, label }: any) {
   return (
     <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-lg p-3 text-xs shadow-xl">
       <p className="text-[#F1F5F9] font-medium">{label}</p>
-      <p className="text-[#4F6EF7] mt-1">${payload[0]?.value?.toLocaleString()}</p>
+      <p className="text-[#10B981] mt-1">${payload[0]?.value?.toLocaleString()}</p>
     </div>
   )
 }
@@ -216,7 +216,7 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
             </div>
             <div className="flex items-center gap-3 text-xs text-[#64748B]">
               <span className="flex items-center gap-1.5">
-                <span className="w-3 h-0.5 bg-[#4F6EF7] rounded" />
+                <span className="w-3 h-0.5 bg-[#10B981] rounded" />
                 This month
               </span>
               <span className="flex items-center gap-1.5">
@@ -229,8 +229,8 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
             <AreaChart data={SPEND_DATA} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="gradCurrent" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#4F6EF7" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#4F6EF7" stopOpacity={0} />
+                  <stop offset="5%"  stopColor="#10B981" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="gradLast" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%"  stopColor="#3D5070" stopOpacity={0.3} />
@@ -244,7 +244,7 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
               <ReferenceLine x="Mar 13" stroke="#EF4444" strokeDasharray="4 3" strokeWidth={1.5} label={{ value: '⚠', fill: '#EF4444', fontSize: 10, position: 'top' }} />
               <ReferenceLine x="Mar 19" stroke="#EF4444" strokeDasharray="4 3" strokeWidth={1.5} />
               <Area type="monotone" dataKey="last"    stroke="#3D5070" strokeWidth={1.5} fill="url(#gradLast)"    dot={false} />
-              <Area type="monotone" dataKey="current" stroke="#4F6EF7" strokeWidth={2}   fill="url(#gradCurrent)" dot={false} />
+              <Area type="monotone" dataKey="current" stroke="#10B981" strokeWidth={2}   fill="url(#gradCurrent)" dot={false} />
             </AreaChart>
           </ResponsiveContainer>
         </motion.div>
@@ -304,7 +304,7 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
       >
         <div className="flex items-center justify-between mb-4">
           <p className={SECTION_LABEL}>Recent Regressions</p>
-          <a href="/dashboard/regressions" className="text-xs text-[#4F6EF7] hover:text-[#6B84F8] flex items-center gap-1 transition">
+          <a href="/dashboard/regressions" className="text-xs text-[#10B981] hover:text-[#34D399] flex items-center gap-1 transition">
             View All <ExternalLink size={10} />
           </a>
         </div>
@@ -324,7 +324,7 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
                 <tr key={i} className="border-b border-[#1E2D4F]/50 last:border-0 hover:bg-[#1E2D4F]/20 transition">
                   <td className="py-3 pr-4 font-medium text-[#F1F5F9] whitespace-nowrap">{row.service}</td>
                   <td className="py-3 pr-4">
-                    <code className="text-[#4F6EF7] bg-[#4F6EF7]/10 px-1.5 py-0.5 rounded text-[10px]">{row.deploy}</code>
+                    <code className="text-[#10B981] bg-[#10B981]/10 px-1.5 py-0.5 rounded text-[10px]">{row.deploy}</code>
                   </td>
                   <td className="py-3 pr-4 text-[#64748B] whitespace-nowrap">{row.detected}</td>
                   <td className="py-3 pr-4 text-[#F59E0B] font-medium whitespace-nowrap">{row.impact}</td>
@@ -332,7 +332,7 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
                   <td className="py-3">
                     <button className={`px-2.5 py-1 rounded-md text-[10px] font-semibold transition ${
                       row.status === 'DETECTED'
-                        ? 'bg-[#4F6EF7] text-white hover:bg-[#6B84F8]'
+                        ? 'bg-[#10B981] text-white hover:bg-[#34D399]'
                         : 'bg-[#1E2D4F] text-[#94A3B8] hover:bg-[#2E3D5F]'
                     }`}>
                       {row.status === 'DETECTED' ? 'Fix' : 'View'}
@@ -383,7 +383,7 @@ export default function Overview({ stats, onRefresh }: { stats: any; onRefresh: 
                 {TOP_SERVICES.map((_, i) => (
                   <Cell
                     key={i}
-                    fill={i === 0 ? '#4F6EF7' : i === 1 ? '#6B84F8' : '#2E3D5F'}
+                    fill={i === 0 ? '#10B981' : i === 1 ? '#34D399' : '#2E3D5F'}
                   />
                 ))}
               </Bar>

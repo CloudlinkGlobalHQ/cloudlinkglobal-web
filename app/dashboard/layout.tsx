@@ -82,7 +82,7 @@ function NavItem({
         'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150 relative group',
         collapsed ? 'justify-center px-2' : '',
         active
-          ? 'bg-[#4F6EF7]/10 text-[#4F6EF7] border-l-2 border-[#4F6EF7]'
+          ? 'bg-[#10B981]/10 text-[#10B981] border-l-2 border-[#10B981]'
           : 'text-[#94A3B8] hover:bg-[#1E2D4F]/60 hover:text-[#CBD5E1] border-l-2 border-transparent',
       ].join(' ')}
     >
@@ -114,7 +114,7 @@ function Sidebar({
         'flex items-center gap-2.5 h-14 px-4 border-b border-[#1E2D4F] flex-shrink-0',
         collapsed ? 'justify-center px-2' : '',
       ].join(' ')}>
-        <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-[#4F6EF7] flex-shrink-0">
+        <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-[#10B981] flex-shrink-0">
           <Zap size={14} className="text-white" />
         </div>
         {!collapsed && (
@@ -270,7 +270,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   className={[
                     'px-3 py-1 text-xs font-semibold rounded-md transition',
                     activeCloud === cloud
-                      ? 'bg-[#4F6EF7] text-white shadow'
+                      ? 'bg-[#10B981] text-white shadow'
                       : 'text-[#64748B] hover:text-[#94A3B8]',
                   ].join(' ')}
                 >
@@ -287,7 +287,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <input
                 type="text"
                 placeholder="Search resources, services, deploys..."
-                className="w-full bg-[#0A0E1A] border border-[#1E2D4F] rounded-lg pl-8 pr-3 py-1.5 text-sm text-[#94A3B8] placeholder-[#3D5070] focus:outline-none focus:border-[#4F6EF7]/50 transition"
+                className="w-full bg-[#0A0E1A] border border-[#1E2D4F] rounded-lg pl-8 pr-3 py-1.5 text-sm text-[#94A3B8] placeholder-[#3D5070] focus:outline-none focus:border-[#10B981]/50 transition"
               />
             </div>
           </div>
@@ -331,7 +331,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 'text-xs font-semibold px-3 py-1.5 rounded-lg transition disabled:opacity-60',
                 scanState === 'done'  ? 'bg-green-600/20 text-green-400 border border-green-600/30'
                 : scanState === 'error' ? 'bg-red-600/20 text-red-400 border border-red-600/30'
-                : 'bg-[#4F6EF7]/10 text-[#4F6EF7] border border-[#4F6EF7]/30 hover:bg-[#4F6EF7]/20',
+                : 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/30 hover:bg-[#10B981]/20',
               ].join(' ')}
             >
               {scanState === 'scanning' ? 'Scanning...' : scanState === 'done' ? 'Done' : scanState === 'error' ? 'Retry' : 'Run Scan'}

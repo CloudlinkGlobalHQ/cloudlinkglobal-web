@@ -43,7 +43,7 @@ export default function Nav() {
         <div className="mx-auto max-w-[1280px] px-6 h-16 flex items-center justify-between gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#4F6EF7] to-[#7C3AED] flex items-center justify-center shadow-lg shadow-[#4F6EF7]/30 group-hover:shadow-[#4F6EF7]/50 transition-all duration-200">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center shadow-lg shadow-[#10B981]/30 group-hover:shadow-[#10B981]/50 transition-all duration-200">
               <Zap size={16} className="text-white fill-white" />
             </div>
             <span className="text-[#F1F5F9] font-bold text-lg tracking-tight">Cloudlink</span>
@@ -60,13 +60,13 @@ export default function Nav() {
                   className={[
                     "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150",
                     isActive
-                      ? "text-[#4F6EF7] bg-[#4F6EF7]/10"
+                      ? "text-[#10B981] bg-[#10B981]/10"
                       : "text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#141C33]",
                   ].join(" ")}
                 >
                   {link.label}
                   {isActive && (
-                    <span className="block h-0.5 bg-[#4F6EF7] rounded-full mt-0.5 mx-auto" style={{ width: "80%" }} />
+                    <span className="block h-0.5 bg-[#10B981] rounded-full mt-0.5 mx-auto" style={{ width: "80%" }} />
                   )}
                 </Link>
               );
@@ -109,7 +109,7 @@ export default function Nav() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-4 py-4 text-lg font-medium text-[#F1F5F9] border-b border-[#1E2D4F] hover:text-[#4F6EF7] transition-colors"
+                className="px-4 py-4 text-lg font-medium text-[#F1F5F9] border-b border-[#1E2D4F] hover:text-[#10B981] transition-colors"
               >
                 {link.label}
               </Link>

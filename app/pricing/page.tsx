@@ -23,25 +23,25 @@ function fmt(n: number) {
 // ── HOW BILLING WORKS steps ───────────────────────────────────────────────────
 const steps = [
   {
-    icon: <Zap size={24} className="text-[#4F6EF7]" />,
+    icon: <Zap size={24} className="text-[#10B981]" />,
     title: "Connect your cloud",
     desc: "Read-only IAM role. One-click CloudFormation template. No agents, no write access.",
     badge: "Free",
     badgeColor: "bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20",
   },
   {
-    icon: <Search size={24} className="text-[#7C3AED]" />,
+    icon: <Search size={24} className="text-[#059669]" />,
     title: "We scan and find savings",
     desc: "Continuous scanning of idle resources, regressions, and misconfigurations across your cloud.",
     badge: "Automated",
-    badgeColor: "bg-[#7C3AED]/10 text-[#7C3AED] border border-[#7C3AED]/20",
+    badgeColor: "bg-[#059669]/10 text-[#059669] border border-[#059669]/20",
   },
   {
-    icon: <ThumbsUp size={24} className="text-[#4F6EF7]" />,
+    icon: <ThumbsUp size={24} className="text-[#10B981]" />,
     title: "You approve what to fix",
     desc: "Every remediation requires your explicit approval. We never touch anything without your say-so.",
     badge: "Your control",
-    badgeColor: "bg-[#4F6EF7]/10 text-[#4F6EF7] border border-[#4F6EF7]/20",
+    badgeColor: "bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20",
   },
   {
     icon: <DollarSign size={24} className="text-[#10B981]" />,
@@ -137,14 +137,14 @@ export default function PricingPage() {
           className="max-w-3xl mx-auto"
         >
           <motion.div variants={fadeUp} className="mb-6">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#4F6EF7]/30 bg-[#4F6EF7]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#4F6EF7]">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#10B981]/30 bg-[#10B981]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#10B981]">
               Pricing
             </span>
           </motion.div>
 
           <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6 text-[#F1F5F9]">
             We only get paid{" "}
-            <span className="bg-gradient-to-r from-[#4F6EF7] to-[#7C3AED] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#10B981] to-[#059669] bg-clip-text text-transparent">
               when you save money.
             </span>
           </motion.h1>
@@ -155,7 +155,7 @@ export default function PricingPage() {
 
           {/* Giant 15% display */}
           <motion.div variants={fadeUp} className="flex flex-col items-center gap-3 mb-12">
-            <div className="text-8xl md:text-9xl font-black bg-gradient-to-br from-[#4F6EF7] via-[#7C3AED] to-[#4F6EF7] bg-clip-text text-transparent leading-none">
+            <div className="text-8xl md:text-9xl font-black bg-gradient-to-br from-[#10B981] via-[#059669] to-[#10B981] bg-clip-text text-transparent leading-none">
               15%
             </div>
             <p className="text-[#94A3B8] text-lg font-medium">of verified savings — nothing else, ever</p>
@@ -164,13 +164,13 @@ export default function PricingPage() {
           <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4">
             <Link
               href="/signup"
-              className="inline-flex items-center gap-2 rounded-full bg-[#4F6EF7] hover:bg-[#3d5ce6] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#4F6EF7]/25 transition-all duration-200"
+              className="inline-flex items-center gap-2 rounded-full bg-[#10B981] hover:bg-[#3d5ce6] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#10B981]/25 transition-all duration-200"
             >
               Connect your cloud free <ArrowRight size={16} />
             </Link>
             <Link
               href="/product"
-              className="inline-flex items-center gap-2 rounded-full border border-[#1E2D4F] bg-[#0F1629] hover:border-[#4F6EF7]/40 px-8 py-3.5 text-sm font-semibold text-[#94A3B8] transition-all duration-200"
+              className="inline-flex items-center gap-2 rounded-full border border-[#1E2D4F] bg-[#0F1629] hover:border-[#10B981]/40 px-8 py-3.5 text-sm font-semibold text-[#94A3B8] transition-all duration-200"
             >
               See how it works
             </Link>
@@ -201,7 +201,7 @@ export default function PricingPage() {
                   {i < steps.length - 1 && (
                     <div className="hidden lg:block absolute top-8 left-full w-full h-px bg-gradient-to-r from-[#1E2D4F] to-transparent z-0" />
                   )}
-                  <div className="relative z-10 bg-[#141C33] border border-[#1E2D4F] rounded-2xl p-6 h-full flex flex-col gap-4 hover:border-[#4F6EF7]/40 transition-colors duration-200">
+                  <div className="relative z-10 bg-[#141C33] border border-[#1E2D4F] rounded-2xl p-6 h-full flex flex-col gap-4 hover:border-[#10B981]/40 transition-colors duration-200">
                     <div className="flex items-center justify-between">
                       <div className="w-10 h-10 rounded-xl bg-[#0F1629] flex items-center justify-center">
                         {s.icon}
@@ -211,7 +211,7 @@ export default function PricingPage() {
                       </span>
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-[#4F6EF7] mb-1">Step {i + 1}</div>
+                      <div className="text-xs font-bold text-[#10B981] mb-1">Step {i + 1}</div>
                       <h3 className="text-[#F1F5F9] font-semibold mb-2">{s.title}</h3>
                       <p className="text-[#94A3B8] text-sm leading-relaxed">{s.desc}</p>
                     </div>
@@ -256,7 +256,7 @@ export default function PricingPage() {
                   onChange={(e) => setSpend(Number(e.target.value))}
                   className="w-full h-2 rounded-full appearance-none cursor-pointer"
                   style={{
-                    background: `linear-gradient(to right, #4F6EF7 0%, #4F6EF7 ${((spend - 1000) / (500_000 - 1000)) * 100}%, #1E2D4F ${((spend - 1000) / (500_000 - 1000)) * 100}%, #1E2D4F 100%)`,
+                    background: `linear-gradient(to right, #10B981 0%, #10B981 ${((spend - 1000) / (500_000 - 1000)) * 100}%, #1E2D4F ${((spend - 1000) / (500_000 - 1000)) * 100}%, #1E2D4F 100%)`,
                   }}
                 />
                 <div className="flex justify-between text-xs text-[#94A3B8] mt-1">
@@ -271,7 +271,7 @@ export default function PricingPage() {
                   { label: "Waste found", value: fmt(wasteFound), sub: "~30% of cloud spend", color: "text-[#F1F5F9]" },
                   { label: "Savings generated", value: fmt(savingsGenerated), sub: "after remediation", color: "text-[#10B981]" },
                   { label: "Cloudlink fee (15%)", value: fmt(cloudlinkFee), sub: "of verified savings", color: "text-[#94A3B8]" },
-                  { label: "Your net savings", value: fmt(netSavings), sub: "per month", color: "text-[#4F6EF7]" },
+                  { label: "Your net savings", value: fmt(netSavings), sub: "per month", color: "text-[#10B981]" },
                 ].map((r, i) => (
                   <div key={i} className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-4">
                     <div className="text-xs text-[#94A3B8] mb-1">{r.label}</div>
@@ -332,7 +332,7 @@ export default function PricingPage() {
             className="text-center"
           >
             <motion.div variants={fadeUp} className="mb-6">
-              <span className="inline-flex items-center gap-2 rounded-full border border-[#7C3AED]/30 bg-[#7C3AED]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#7C3AED]">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[#059669]/30 bg-[#059669]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#059669]">
                 Our philosophy
               </span>
             </motion.div>
@@ -393,7 +393,7 @@ export default function PricingPage() {
             <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4 mb-8">
               <Link
                 href="/signup"
-                className="inline-flex items-center gap-2 rounded-full bg-[#4F6EF7] hover:bg-[#3d5ce6] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#4F6EF7]/25 transition-all duration-200"
+                className="inline-flex items-center gap-2 rounded-full bg-[#10B981] hover:bg-[#3d5ce6] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#10B981]/25 transition-all duration-200"
               >
                 Start saving — it's free <ArrowRight size={16} />
               </Link>

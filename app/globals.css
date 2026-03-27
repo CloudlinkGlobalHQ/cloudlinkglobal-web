@@ -8,8 +8,8 @@
   --bg-card:       #141C33;
   --bg-elevated:   #1A2340;
   --border:        #1E2D4F;
-  --brand:         #4F6EF7;
-  --brand-purple:  #7C3AED;
+  --brand:         #10B981;
+  --brand-secondary: #059669;
   --success:       #10B981;
   --warning:       #F59E0B;
   --danger:        #EF4444;
@@ -35,14 +35,14 @@ body {
 }
 
 ::selection {
-  background: rgba(79, 110, 247, 0.25);
+  background: rgba(16, 185, 129, 0.25);
   color: #F1F5F9;
 }
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #0A0E1A; }
 ::-webkit-scrollbar-thumb { background: #1E2D4F; border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: #4F6EF7; }
+::-webkit-scrollbar-thumb:hover { background: #10B981; }
 
 /* ─── Typography ─────────────────────────────────────────────────────────── */
 h1, h2, h3, h4, h5, h6 {
@@ -65,7 +65,7 @@ code, pre, .mono {
 }
 
 .text-gradient-brand {
-  background: linear-gradient(135deg, #4F6EF7 0%, #7C3AED 100%);
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -85,41 +85,41 @@ code, pre, .mono {
   background: rgba(20, 28, 51, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(79, 110, 247, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.15);
   border-radius: 12px;
 }
 
 /* ─── Gradient border button ─────────────────────────────────────────────── */
 .btn-gradient {
   position: relative;
-  background: linear-gradient(135deg, #4F6EF7, #7C3AED);
+  background: linear-gradient(135deg, #10B981, #059669);
   border-radius: 8px;
   transition: all 0.2s ease;
-  box-shadow: 0 0 20px rgba(79, 110, 247, 0.3);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
 }
 .btn-gradient:hover {
-  box-shadow: 0 0 40px rgba(79, 110, 247, 0.5);
+  box-shadow: 0 0 40px rgba(16, 185, 129, 0.5);
   transform: translateY(-1px);
 }
 
 .btn-ghost {
   background: transparent;
-  border: 1px solid rgba(79, 110, 247, 0.4);
+  border: 1px solid rgba(16, 185, 129, 0.4);
   border-radius: 8px;
   color: #F1F5F9;
   transition: all 0.2s ease;
 }
 .btn-ghost:hover {
-  border-color: #4F6EF7;
-  background: rgba(79, 110, 247, 0.1);
+  border-color: #10B981;
+  background: rgba(16, 185, 129, 0.1);
 }
 
 /* ─── Glow effects ───────────────────────────────────────────────────────── */
 .glow-brand {
-  box-shadow: 0 0 40px rgba(79, 110, 247, 0.15);
+  box-shadow: 0 0 40px rgba(16, 185, 129, 0.15);
 }
 .glow-brand-strong {
-  box-shadow: 0 0 60px rgba(79, 110, 247, 0.3);
+  box-shadow: 0 0 60px rgba(16, 185, 129, 0.3);
 }
 .glow-green {
   box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
@@ -128,13 +128,13 @@ code, pre, .mono {
 /* ─── Hero grid background ───────────────────────────────────────────────── */
 .hero-grid {
   background-image:
-    linear-gradient(rgba(79, 110, 247, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(79, 110, 247, 0.06) 1px, transparent 1px);
+    linear-gradient(rgba(16, 185, 129, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 185, 129, 0.06) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
 .dot-grid {
-  background-image: radial-gradient(rgba(79, 110, 247, 0.15) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(16, 185, 129, 0.15) 1px, transparent 1px);
   background-size: 28px 28px;
 }
 
@@ -144,14 +144,14 @@ code, pre, .mono {
   border: 1px solid #1E2D4F;
 }
 .card-hover:hover {
-  border-color: rgba(79, 110, 247, 0.4);
-  box-shadow: 0 8px 32px rgba(79, 110, 247, 0.12);
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.12);
   transform: translateY(-2px);
 }
 
 /* ─── Gradient backgrounds ───────────────────────────────────────────────── */
 .bg-brand-gradient {
-  background: linear-gradient(135deg, #4F6EF7, #7C3AED);
+  background: linear-gradient(135deg, #10B981, #059669);
 }
 
 .bg-card-solid {
@@ -164,8 +164,8 @@ code, pre, .mono {
 
 /* ─── Animations ─────────────────────────────────────────────────────────── */
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(79, 110, 247, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(79, 110, 247, 0.6); }
+  0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.6); }
 }
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
@@ -198,4 +198,4 @@ code, pre, .mono {
 .badge-success { background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); }
 .badge-warning { background: rgba(245, 158, 11, 0.15); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.3); }
 .badge-danger  { background: rgba(239, 68, 68, 0.15);  color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.3); }
-.badge-brand   { background: rgba(79, 110, 247, 0.15); color: #4F6EF7; border: 1px solid rgba(79, 110, 247, 0.3); }
+.badge-brand   { background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); }
