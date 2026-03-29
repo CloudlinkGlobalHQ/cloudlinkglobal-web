@@ -31,6 +31,7 @@ export default function CostEstimatePage() {
   const [loading, setLoading] = useState(false)
   const [estimate, setEstimate] = useState<Estimate | null>(null)
 
+   
   useEffect(() => {
     getTrackedServices().then(s => setServices(s.services || [])).catch(() => {})
   }, [])

@@ -14,6 +14,7 @@ async function headers(): Promise<Record<string, string>> {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function request(path: string, opts: RequestInit = {}): Promise<any> {
   const h = await headers()
   const res = await fetch(`${BASE}${path}`, { headers: h, ...opts })
@@ -69,7 +70,7 @@ export const deleteWebhook = (id: string)   => request(`/webhooks/${id}`, { meth
 export const testWebhooks = ()              => request('/webhooks/test', { method: 'POST' })
 
 // Audit + Cost
-export const getAuditLog    = (params: Record<string, any> = {}) => {
+export const getAuditLog    = (params: Record<string, string> = {}) => {
   const q = new URLSearchParams(params).toString()
   return request(`/audit${q ? `?${q}` : ''}`)
 }
@@ -184,7 +185,7 @@ export const getDriftBaselines     = ()                          => request('/dr
 export const createDriftBaseline   = (data: object)              => request('/drift/baselines', { method: 'POST', body: JSON.stringify(data) })
 export const deleteDriftBaseline   = (id: string)                => request(`/drift/baselines/${id}`, { method: 'DELETE' })
 export const runDriftScan          = ()                          => request('/drift/scan', { method: 'POST' })
-export const getDriftEvents        = (params: Record<string, any> = {}) => {
+export const getDriftEvents        = (params: Record<string, string> = {}) => {
   const q = new URLSearchParams(params).toString()
   return request(`/drift/events${q ? `?${q}` : ''}`)
 }

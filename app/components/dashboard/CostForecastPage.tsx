@@ -99,10 +99,12 @@ export default function CostForecastPage() {
   const load = useCallback(async () => {
     setLoading(true); setError(null)
     try { setData(await getCostForecast(daysBack, daysAhead)) }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     catch (e: any) { setError(e.message) }
     finally { setLoading(false) }
   }, [daysBack, daysAhead])
 
+   
   useEffect(() => { load() }, [load])
 
   if (loading) return (

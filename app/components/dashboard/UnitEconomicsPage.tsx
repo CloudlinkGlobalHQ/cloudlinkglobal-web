@@ -147,6 +147,7 @@ export default function UnitEconomicsPage() {
     try {
       const res = await getUnitEconomics(days)
       setData(res)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       setError(e.message)
     } finally {
@@ -154,6 +155,7 @@ export default function UnitEconomicsPage() {
     }
   }, [days])
 
+   
   useEffect(() => { load() }, [load])
 
   if (loading) {

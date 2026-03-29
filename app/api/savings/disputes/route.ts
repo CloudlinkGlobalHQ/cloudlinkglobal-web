@@ -27,9 +27,9 @@ export async function GET() {
     }
 
     return NextResponse.json(await res.json())
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[savings/disputes GET]', err)
-    return NextResponse.json({ error: err.message }, { status: 500 })
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 })
   }
 }
 
@@ -66,8 +66,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(await res.json())
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[savings/disputes POST]', err)
-    return NextResponse.json({ error: err.message }, { status: 500 })
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 })
   }
 }

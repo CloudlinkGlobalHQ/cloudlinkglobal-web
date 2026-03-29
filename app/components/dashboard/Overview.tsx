@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react/no-unescaped-entities */
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -210,6 +213,7 @@ function KpiCard({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Overview({ stats: _stats, onRefresh }: { stats: any; onRefresh: () => void }) {
   const [loading, setLoading]           = useState(true)
   const [isNewUser, setIsNewUser]       = useState(false)
@@ -263,9 +267,10 @@ export default function Overview({ stats: _stats, onRefresh }: { stats: any; onR
     })
   }
 
+   
   useEffect(() => {
     fetchAll()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [])
 
   const handleRefresh = () => {

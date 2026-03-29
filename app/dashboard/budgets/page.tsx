@@ -33,6 +33,7 @@ export default function BudgetsPage() {
   const [loading, setLoading] = useState(true)
   const [showCreate, setShowCreate] = useState(false)
   const [checking, setChecking] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [checkResult, setCheckResult] = useState<any>(null)
 
   // Form state
@@ -52,6 +53,7 @@ export default function BudgetsPage() {
     setLoading(false)
   }, [])
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { refresh() }, [refresh])
 
   const handleCreate = async () => {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -27,10 +28,12 @@ export default function AuditLog() {
       if (filterResource) params.resource_id = filterResource
       const d = await getAuditLog(params)
       setEntries(d.items || [])
-    } catch (e: any) { setError(e?.message || 'Something went wrong') }
+    } catch (e: any) { setError((e as Error)?.message || 'Something went wrong') }
     setLoading(false)
   }
 
+   
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load() }, [filterType, filterResource])
 
   const types = [...new Set(entries.map((e: any) => e.action_type).filter(Boolean))]

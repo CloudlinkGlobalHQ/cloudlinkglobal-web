@@ -32,10 +32,12 @@ export default function SavingsReportPage() {
   const load = useCallback(async () => {
     setLoading(true); setError(null)
     try { setData(await getSavingsReport()) }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     catch (e: any) { setError(e.message) }
     finally { setLoading(false) }
   }, [])
 
+   
   useEffect(() => { load() }, [load])
 
   if (loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full" /></div>

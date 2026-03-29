@@ -35,8 +35,8 @@ export async function POST(req: Request) {
     })
 
     return NextResponse.json({ url: session.url })
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[stripe/setup-intent]', err)
-    return NextResponse.json({ error: err.message || 'Setup failed' }, { status: 500 })
+    return NextResponse.json({ error: (err as Error).message || 'Setup failed' }, { status: 500 })
   }
 }

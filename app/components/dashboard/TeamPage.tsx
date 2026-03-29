@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
@@ -110,6 +111,7 @@ export default function TeamPage() {
     finally { setLoading(false) }
   }, [])
 
+   
   useEffect(() => { load() }, [load])
 
   const handleRoleChange = async (memberId: string, role: string) => {

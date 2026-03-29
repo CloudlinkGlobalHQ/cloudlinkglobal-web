@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
@@ -37,10 +38,12 @@ export default function TagCostsPage() {
   const load = useCallback(async (key: string) => {
     setLoading(true); setError(null)
     try { setData(await getTagCosts(key)) }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     catch (e: any) { setError(e.message) }
     finally { setLoading(false) }
   }, [])
 
+   
   useEffect(() => { load(tagKey) }, [tagKey, load])
 
   const handleCustomKey = () => {

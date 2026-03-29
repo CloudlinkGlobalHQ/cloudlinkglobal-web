@@ -1,10 +1,26 @@
+import './lib/env'
 import type { Metadata } from "next";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
 import { Suspense } from "react";
 import PostHogProvider from "./components/PostHogProvider";
 import Nav from "./components/Nav";
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Cloudlink Global — Stop Paying for Cloud Waste",
@@ -36,15 +52,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="antialiased">
         <ClerkProvider>
           <Suspense fallback={null}>

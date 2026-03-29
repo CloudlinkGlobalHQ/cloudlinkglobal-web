@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -71,6 +72,7 @@ export default function DeploysPage() {
     setLoading(false)
   }
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { load() }, [])
 
   const handleRunDetection = async () => {

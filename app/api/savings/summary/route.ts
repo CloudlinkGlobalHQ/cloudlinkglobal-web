@@ -54,8 +54,8 @@ export async function GET() {
       billing_threshold_usd: 500,
       pending_billing: savingsMtd >= 500,
     })
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[savings/summary]', err)
-    return NextResponse.json({ error: err.message }, { status: 500 })
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 })
   }
 }

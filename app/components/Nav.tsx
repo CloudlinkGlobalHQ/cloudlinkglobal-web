@@ -25,6 +25,7 @@ export default function Nav() {
   }, []);
 
   // Close menu on route change
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMenuOpen(false); }, [pathname]);
 
   const isDashboard = pathname?.startsWith("/dashboard");

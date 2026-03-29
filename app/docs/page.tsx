@@ -2,17 +2,6 @@
 
 import Link from 'next/link'
 
-const metadata = {
-  title: 'Documentation — Cloudlink',
-  description:
-    'Everything you need to connect your cloud accounts, monitor costs, automate savings, and integrate with Cloudlink via SDK and REST API.',
-  openGraph: {
-    title: 'Cloudlink Documentation',
-    description: 'Connect, monitor, and save. Full docs for Cloudlink.',
-    type: 'website',
-  },
-}
-
 // ─── Design tokens ───────────────────────────────────────────────────────────
 
 const colors = {

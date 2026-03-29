@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/set-state-in-effect */
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -28,13 +30,15 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
   const load = async () => {
     setLoading(true)
     setError('')
-    try { const d = await getCredentials(); setCreds(d.items || []) } catch (e: any) { setError(e?.message || 'Something went wrong') }
+    try { const d = await getCredentials(); setCreds(d.items || []) } catch (e: any) { setError((e as Error)?.message || 'Something went wrong') }
     setLoading(false)
   }
 
+   
+   
   useEffect(() => { load() }, [])
 
-  const formatVerifySuccess = (res: any) => {
+  const formatVerifySuccess = (res: Record<string, any>) => {
     const identity = res?.identity || {}
     if (identity.provider === 'gcp' || identity.project_id || identity.accessible_projects) {
       const projects = identity.accessible_projects?.join(', ') || identity.project_id || 'verified'
@@ -82,6 +86,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
         setAzureForm({ label: '', tenant_id_az: '', client_id: '', client_secret: '', subscription_ids: '' })
       }
       setShowForm(false); setMsg('Credential added.'); load()
+     
     } catch (e: any) { setMsg(`Error: ${e.message}`) }
     setSaving(false)
   }
@@ -92,6 +97,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
       const res = await verifyCredential(id)
       alert(formatVerifySuccess(res))
       load()
+     
     } catch (e: any) { alert(`❌ Verification failed: ${e.message}`) }
     setBusy(b => ({ ...b, [id]: null }))
   }
@@ -102,6 +108,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
       const res = await scanNow()
       setMsg(`Scan complete — ${res.total_events_found ?? 0} events found`)
       onScanComplete?.()
+     
     } catch (e: any) { setMsg(`Scan error: ${e.message}`) }
     setBusy(b => ({ ...b, [id]: null }))
   }
@@ -109,6 +116,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this credential?')) return
     setBusy(b => ({ ...b, [id]: 'delete' }))
+     
     try { await deleteCredential(id); load() } catch (e: any) { alert(e.message) }
     setBusy(b => ({ ...b, [id]: null }))
   }

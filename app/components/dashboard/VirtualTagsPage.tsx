@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
@@ -6,6 +7,7 @@ const BASE = process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents-produc
 
 async function apiFetch(path: string, opts: RequestInit = {}) {
   const res = await fetch(`${BASE}${path}`, {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     headers: { 'Content-Type': 'application/json', ...((opts as any).headers || {}) },
     ...opts,
   })
@@ -75,6 +77,7 @@ export default function VirtualTagsPage() {
     finally { setLoading(false) }
   }, [days])
 
+   
   useEffect(() => { load() }, [load])
 
   const addRule = () => {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -30,28 +31,31 @@ export default function ActionsTable({ onRefresh }: { onRefresh?: () => void }) 
     setLoading(true)
     setError('')
     try {
-      const data = await getActions(filter === 'All' ? '' : filter)
+      const data = await getActions(filter === 'All' ? '' : filter) as { items?: Record<string, any>[] }
       setActions(data.items || [])
-    } catch (e: any) { setError(e?.message || 'Something went wrong') }
+    } catch (e: any) { setError(e instanceof Error ? e.message : 'Something went wrong') }
     setLoading(false)
   }
 
   const loadPolicies = async () => {
     setError('')
     try {
-      const d = await getApprovalPolicies()
-      const map: Record<string, any> = {}
+      const d = await getApprovalPolicies() as { items?: Array<Record<string, any> & { action_type: string }> }
+      const map: Record<string, Record<string, any>> = {}
       for (const p of d.items || []) map[p.action_type] = p
       setPolicies(map)
-    } catch (e: any) { setError(e?.message || 'Something went wrong') }
+    } catch (e: any) { setError(e instanceof Error ? e.message : 'Something went wrong') }
   }
 
+   
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load() }, [filter])
+   
   useEffect(() => { if (showPolicies) loadPolicies() }, [showPolicies])
 
-  const act = async (fn: (id: string) => Promise<any>, id: string) => {
+  const act = async (fn: (id: string) => Promise<unknown>, id: string) => {
     setBusy(b => ({ ...b, [id]: true }))
-    try { await fn(id); await load(); onRefresh?.() } catch (e: any) { alert(e.message) }
+    try { await fn(id); await load(); onRefresh?.() } catch (e: any) { alert(e instanceof Error ? e.message : String(e)) }
     setBusy(b => ({ ...b, [id]: false }))
   }
 
@@ -60,7 +64,7 @@ export default function ActionsTable({ onRefresh }: { onRefresh?: () => void }) 
     try {
       await setApprovalPolicy(actionType, { require_approval: !current })
       await loadPolicies()
-    } catch (e: any) { alert(e.message) }
+    } catch (e: any) { alert(e instanceof Error ? e.message : String(e)) }
     setSavingPolicy(s => ({ ...s, [actionType]: false }))
   }
 

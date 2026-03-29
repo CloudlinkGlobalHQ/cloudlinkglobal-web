@@ -99,7 +99,7 @@ export async function POST(req: Request) {
           // Report usage via Stripe Billing Meters API (SDK v14+ approach).
           // We send feeCents as the value; the meter aggregates by sum over the billing period.
           const stripe = getStripe()
-          await (stripe.billing as any).meterEvents.create({
+          await stripe.billing.meterEvents.create({
             event_name: process.env.STRIPE_METER_EVENT_NAME || 'cloudlink_savings_fee',
             payload: {
               value: String(feeCents),
@@ -127,13 +127,11 @@ export async function POST(req: Request) {
           results.push({ customer_id, action: 'billed', savings_usd: totalSavings, fee_usd: feeUsd })
           billedCount++
         }
-      } catch (customerErr: any) {
+      } catch (customerErr: unknown) {
         console.error(`[billing/month-end] Error for customer ${customer_id}:`, customerErr)
-        results.push({ customer_id, action: 'error', error: customerErr.message })
+        results.push({ customer_id, action: 'error', error: (customerErr as Error).message })
       }
     }
-
-    console.log(`[billing/month-end] Done. Billed: ${billedCount}, Rolled over: ${rolledOverCount}`)
 
     return NextResponse.json({
       ok: true,
@@ -141,8 +139,8 @@ export async function POST(req: Request) {
       rolledOver: rolledOverCount,
       results,
     })
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[billing/month-end]', err)
-    return NextResponse.json({ error: err.message }, { status: 500 })
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 })
   }
 }

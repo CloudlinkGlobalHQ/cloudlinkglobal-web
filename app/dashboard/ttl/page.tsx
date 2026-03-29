@@ -48,6 +48,7 @@ export default function TTLPage() {
     notes: "",
   });
 
+   
   useEffect(() => {
     fetchRules();
     const iv = setInterval(fetchRules, 30000);

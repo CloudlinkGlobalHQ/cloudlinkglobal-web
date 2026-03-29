@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/purity */
 'use client'
 
 import { useMemo, useState } from 'react'
@@ -97,6 +98,7 @@ export default function CostTrendChart({ snapshots }: { snapshots: Snapshot[] })
             tickFormatter={(v) => `$${v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v.toFixed(2)}`} />
           <Tooltip
             contentStyle={{ borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 12 }}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             formatter={(value: any, name: any) => [`$${Number(value).toFixed(2)}`, String(name).replace('Amazon ', '').replace('AWS ', '')]}
           />
           <Legend iconType="circle" iconSize={8}

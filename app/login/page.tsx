@@ -1,6 +1,7 @@
 import { SignIn } from '@clerk/nextjs'
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 
 function Logo({ size = 32 }: { size?: number }) {
   return (
@@ -32,10 +33,10 @@ export default async function LoginPage() {
       />
 
       <div className="relative z-10 w-full max-w-md flex flex-col items-center">
-        <a href="/" className="flex items-center gap-3 mb-8 group w-fit">
+        <Link href="/" className="flex items-center gap-3 mb-8 group w-fit">
           <Logo size={34} />
           <span className="text-gray-900 font-bold text-xl tracking-tight">Cloudlink</span>
-        </a>
+        </Link>
 
         <SignIn
           forceRedirectUrl="/dashboard"

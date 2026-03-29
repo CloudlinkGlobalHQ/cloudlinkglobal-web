@@ -150,7 +150,7 @@ export default function PricingPage() {
           </motion.h1>
 
           <motion.p variants={fadeUp} className="text-xl text-[#94A3B8] mb-12 max-w-xl mx-auto">
-            15% of verified savings. Zero if we save you zero. That's it.
+            15% of verified savings. Zero if we save you zero. That&apos;s it.
           </motion.p>
 
           {/* Giant 15% display */}
@@ -236,7 +236,7 @@ export default function PricingPage() {
               <span className="inline-flex items-center gap-2 rounded-full border border-[#1E2D4F] bg-[#141C33] px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#94A3B8] mb-4">
                 Calculator
               </span>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#F1F5F9]">See what you'd save</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#F1F5F9]">See what you&apos;d save</h2>
               <p className="text-[#94A3B8] mt-3">Based on industry averages for AWS spend.</p>
             </motion.div>
 
@@ -303,7 +303,7 @@ export default function PricingPage() {
                 FAQ
               </span>
               <h2 className="text-3xl sm:text-4xl font-bold text-[#F1F5F9]">What counts as savings?</h2>
-              <p className="text-[#94A3B8] mt-3">Everything you'd want to know before connecting.</p>
+              <p className="text-[#94A3B8] mt-3">Everything you&apos;d want to know before connecting.</p>
             </motion.div>
 
             <motion.div variants={fadeUp} className="flex flex-col gap-3">
@@ -388,14 +388,14 @@ export default function PricingPage() {
               Zero risk. Real savings.
             </motion.h2>
             <motion.p variants={fadeUp} className="text-[#94A3B8] text-lg mb-8">
-              Connect in minutes. If we don't save you money, you owe us nothing.
+              Connect in minutes. If we don&apos;t save you money, you owe us nothing.
             </motion.p>
             <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4 mb-8">
               <Link
                 href="/signup"
                 className="inline-flex items-center gap-2 rounded-full bg-[#10B981] hover:bg-[#3d5ce6] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#10B981]/25 transition-all duration-200"
               >
-                Start saving — it's free <ArrowRight size={16} />
+                Start saving — it&apos;s free <ArrowRight size={16} />
               </Link>
             </motion.div>
             <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-6 text-sm text-[#94A3B8]">

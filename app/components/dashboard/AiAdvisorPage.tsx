@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/purity */
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
@@ -204,6 +205,7 @@ export default function AiAdvisorPage() {
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
+   
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, isTyping])

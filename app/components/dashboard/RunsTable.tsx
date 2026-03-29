@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { getRuns } from '../../lib/api'
 
 export default function RunsTable() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [runs, setRuns]       = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState('')
@@ -11,10 +12,12 @@ export default function RunsTable() {
   const load = async () => {
     setLoading(true)
     setError('')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     try { const d = await getRuns(); setRuns(d.items || []) } catch (e: any) { setError(e?.message || 'Something went wrong') }
     setLoading(false)
   }
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { load() }, [])
 
   return (

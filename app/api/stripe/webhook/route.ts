@@ -2,6 +2,14 @@ import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { getStripe } from '../../../lib/stripe'
 
+interface StripeSubscriptionExpanded extends Stripe.Subscription {
+  current_period_end: number
+}
+
+type StripeInvoice = Omit<Stripe.Invoice, 'subscription'> & {
+  subscription: string | null
+}
+
 const API_URL = process.env.CLOUDLINK_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents-production.up.railway.app'
 const BACKEND_SYNC_SECRET =
   process.env.CLOUDLINK_WEBHOOK_SECRET ||
@@ -65,8 +73,8 @@ export async function POST(req: Request) {
   let event: Stripe.Event
   try {
     event = getStripe().webhooks.constructEvent(body, sig, webhookSecret)
-  } catch (err: any) {
-    console.error('Stripe webhook signature verification failed:', err.message)
+  } catch (err: unknown) {
+    console.error('Stripe webhook signature verification failed:', (err as Error).message)
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
@@ -84,7 +92,6 @@ export async function POST(req: Request) {
             stripe_customer_id: session.customer,
             setup_intent: session.setup_intent,
           })
-          console.log(`Payment method saved: user=${clerkUserId}`)
         }
         break
       }
@@ -97,7 +104,8 @@ export async function POST(req: Request) {
       if (clerkUserId) {
         let periodEnd: string | undefined
         try {
-          const sub = await getStripe().subscriptions.retrieve(subscriptionId) as any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const sub = await getStripe().subscriptions.retrieve(subscriptionId) as any as StripeSubscriptionExpanded
           if (sub.current_period_end) {
             periodEnd = new Date(sub.current_period_end * 1000).toISOString()
           }
@@ -111,14 +119,13 @@ export async function POST(req: Request) {
           status: 'active',
           current_period_end: periodEnd,
         })
-        console.log(`Subscription synced: user=${clerkUserId}, plan=${plan}`)
       }
       break
     }
 
     // ── Subscription updates ─────────────────────────────────────────────────
     case 'customer.subscription.updated': {
-      const sub = event.data.object as any
+      const sub = event.data.object as StripeSubscriptionExpanded
       const customerId = sub.customer as string
       const priceId = sub.items?.data?.[0]?.price?.id || ''
       const plan = planFromPriceId(priceId)
@@ -134,12 +141,11 @@ export async function POST(req: Request) {
           current_period_end: periodEnd,
         })
       }
-      console.log(`Subscription updated: ${sub.id}, status=${sub.status}, plan=${plan}`)
       break
     }
 
     case 'customer.subscription.deleted': {
-      const sub = event.data.object as any
+      const sub = event.data.object as StripeSubscriptionExpanded
       const clerkUserId = sub.metadata?.clerk_user_id
       if (clerkUserId) {
         await syncSubscription({
@@ -156,13 +162,12 @@ export async function POST(req: Request) {
           cancelled_at: new Date().toISOString(),
         })
       }
-      console.log(`Subscription cancelled: ${sub.id}`)
       break
     }
 
     // ── Invoice events ───────────────────────────────────────────────────────
     case 'invoice.payment_succeeded': {
-      const invoice = event.data.object as any
+      const invoice = event.data.object as StripeInvoice
       const customerId = invoice.customer as string
       const amountPaidCents = invoice.amount_paid as number
       const invoiceId = invoice.id as string
@@ -171,7 +176,7 @@ export async function POST(req: Request) {
       let clerkUserId: string | undefined
       if (invoice.subscription) {
         try {
-          const sub = await getStripe().subscriptions.retrieve(invoice.subscription as string) as any
+          const sub = await getStripe().subscriptions.retrieve(invoice.subscription as string)
           clerkUserId = sub.metadata?.clerk_user_id
         } catch {}
       }
@@ -186,16 +191,15 @@ export async function POST(req: Request) {
           paid_at: new Date().toISOString(),
         })
       }
-      console.log(`Invoice paid: ${invoiceId}, customer=${customerId}, amount=$${(amountPaidCents / 100).toFixed(2)}`)
       break
     }
 
     case 'invoice.payment_failed': {
-      const invoice = event.data.object as any
+      const invoice = event.data.object as StripeInvoice
       const subId = invoice.subscription
       if (subId && typeof subId === 'string') {
         try {
-          const subscription = await getStripe().subscriptions.retrieve(subId) as any
+          const subscription = await getStripe().subscriptions.retrieve(subId)
           const clerkUserId = subscription.metadata?.clerk_user_id
           if (clerkUserId) {
             await syncSubscription({
@@ -214,7 +218,6 @@ export async function POST(req: Request) {
           }
         } catch {}
       }
-      console.log(`Payment failed: customer=${invoice.customer}`)
       break
     }
   }

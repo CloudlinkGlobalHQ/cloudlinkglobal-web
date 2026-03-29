@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
@@ -149,9 +150,11 @@ export default function BillingPage() {
     }
   }, [])
 
+   
   useEffect(() => { loadData() }, [loadData])
 
   // Check if returning from successful setup
+   
   useEffect(() => {
     if (typeof window !== 'undefined' && window.location.search.includes('setup=success')) {
       showToast('Payment method saved. You\'re all set.')
@@ -167,6 +170,7 @@ export default function BillingPage() {
       const data = await res.json()
       if (data.url) window.location.href = data.url
       else throw new Error(data.error || 'Could not open billing portal')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showToast(e.message || 'Could not open billing portal')
     } finally {
@@ -181,6 +185,7 @@ export default function BillingPage() {
       const data = await res.json()
       if (data.url) window.location.href = data.url
       else throw new Error(data.error || 'Could not open payment setup')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showToast(e.message || 'Could not open payment setup')
     } finally {
@@ -200,6 +205,7 @@ export default function BillingPage() {
       showToast('Dispute submitted. We\'ll review within 2 business days.')
       setDisputeEvent(null)
       await loadData()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showToast(e.message || 'Could not submit dispute')
     }

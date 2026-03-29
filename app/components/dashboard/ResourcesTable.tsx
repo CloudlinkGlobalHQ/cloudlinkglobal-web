@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -138,6 +139,7 @@ export default function ResourcesTable() {
     setLoading(false)
   }
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { load() }, [])
 
   const types = ['all', ...Array.from(new Set(resources.map((r: any) => r.resource_type).filter(Boolean)))]

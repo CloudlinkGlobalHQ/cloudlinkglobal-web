@@ -170,15 +170,15 @@ function SDKCard() {
         <span className="text-[#059669]">import</span>
         <span className="text-[#F1F5F9]"> {"{ track }"} </span>
         <span className="text-[#059669]">from</span>
-        <span className="text-yellow-300"> '@cloudlink/sdk'</span>
+        <span className="text-yellow-300"> &apos;@cloudlink/sdk&apos;</span>
       </div>
-      <div className="text-[#94A3B8]">// Track cost per API call</div>
+      <div className="text-[#94A3B8]">{"// Track cost per API call"}</div>
       <div>
         <span className="text-[#10B981]">track</span>
         <span className="text-[#F1F5F9]">{"({"}</span>
       </div>
       <div className="pl-4 text-[#F1F5F9]">
-        unit: <span className="text-yellow-300">'api_call'</span>,<br />
+        unit: <span className="text-yellow-300">&apos;api_call&apos;</span>,<br />
         dimension: userId,<br />
         metadata: {"{ endpoint, region }"}
       </div>
@@ -223,7 +223,7 @@ function MCPCard() {
   return (
     <div className="bg-[#0A0E1A] border border-[#1E2D4F] rounded-2xl p-6 font-mono text-sm space-y-3">
       <div className="text-[#94A3B8] text-xs mb-2">Cursor IDE · Cloudlink MCP</div>
-      <div className="text-[#94A3B8]">&gt; <span className="text-[#F1F5F9]">What's the most expensive service this week?</span></div>
+      <div className="text-[#94A3B8]">&gt; <span className="text-[#F1F5F9]">What&apos;s the most expensive service this week?</span></div>
       <div className="bg-[#141C33] border border-[#1E2D4F] rounded-xl p-3 text-xs space-y-1">
         <div className="text-[#10B981] mb-1">Cloudlink MCP · live data</div>
         <div className="flex justify-between"><span className="text-[#94A3B8]">api-gateway</span><span className="text-[#F1F5F9]">$4,821</span></div>

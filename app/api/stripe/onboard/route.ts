@@ -11,7 +11,8 @@ const BACKEND_SYNC_SECRET =
 
 // Called when a customer connects their first AWS account.
 // Creates a Stripe Customer + metered subscription so we can bill 15% of savings.
-export async function POST(req: Request) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function POST(_req: Request) {
   try {
     const { userId, getToken } = await auth()
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -82,7 +83,7 @@ export async function POST(req: Request) {
           stripe_subscription_item_id: subscriptionItemId,
           plan: 'performance',
           status: 'active',
-          current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
+          current_period_end: new Date((subscription.items.data[0]?.current_period_end ?? 0) * 1000).toISOString(),
         }),
       })
     }
@@ -92,8 +93,8 @@ export async function POST(req: Request) {
       stripe_subscription_id: subscription.id,
       stripe_subscription_item_id: subscriptionItemId,
     })
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[stripe/onboard]', err)
-    return NextResponse.json({ error: err.message || 'Onboarding failed' }, { status: 500 })
+    return NextResponse.json({ error: (err as Error).message || 'Onboarding failed' }, { status: 500 })
   }
 }

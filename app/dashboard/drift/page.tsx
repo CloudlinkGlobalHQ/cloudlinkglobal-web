@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -10,6 +11,19 @@ import {
   getDriftSummary,
   runDriftScan,
 } from '../../lib/api'
+
+interface DriftSummary {
+  baseline_count?: number
+  open_event_count?: number
+  event_count?: number
+  severity_counts?: Record<string, number>
+}
+
+interface ScanResult {
+  drifts_found: number
+  baselines_checked: number
+  scanned_at: string
+}
 
 interface DriftBaseline {
   id: string
@@ -44,10 +58,10 @@ const SEVERITY_COLORS: Record<string, string> = {
 export default function DriftPage() {
   const [baselines, setBaselines] = useState<DriftBaseline[]>([])
   const [events, setEvents] = useState<DriftEvent[]>([])
-  const [summary, setSummary] = useState<any>(null)
+  const [summary, setSummary] = useState<DriftSummary | null>(null)
   const [scanning, setScanning] = useState(false)
   const [showForm, setShowForm] = useState(false)
-  const [scanResult, setScanResult] = useState<any>(null)
+  const [scanResult, setScanResult] = useState<ScanResult | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [severityFilter, setSeverityFilter] = useState('all')
@@ -62,33 +76,36 @@ export default function DriftPage() {
     setError('')
     try {
       const [baselineData, eventData, summaryData] = await Promise.all([
-        getDriftBaselines(),
-        getDriftEvents({ limit: 50, ...(severityFilter !== 'all' ? { severity: severityFilter } : {}) }),
-        getDriftSummary(),
+        getDriftBaselines() as Promise<DriftBaseline[]>,
+        getDriftEvents({ limit: '50', ...(severityFilter !== 'all' ? { severity: severityFilter } : {}) }) as Promise<DriftEvent[]>,
+        getDriftSummary() as Promise<DriftSummary>,
       ])
       setBaselines(Array.isArray(baselineData) ? baselineData : [])
       setEvents(Array.isArray(eventData) ? eventData : [])
       setSummary(summaryData)
     } catch (e: any) {
-      setError(e?.message || 'Could not load drift data')
+      setError(e instanceof Error ? e.message : 'Could not load drift data')
     } finally {
       setLoading(false)
     }
   }
 
+   
   useEffect(() => {
+     
     fetchAll()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [severityFilter])
 
   async function runScan() {
     setScanning(true)
     setScanResult(null)
     try {
-      const data = await runDriftScan()
+      const data = await runDriftScan() as ScanResult
       setScanResult(data)
       await fetchAll()
     } catch (e: any) {
-      setError(e?.message || 'Drift scan failed')
+      setError(e instanceof Error ? e.message : 'Drift scan failed')
     } finally {
       setScanning(false)
     }
@@ -96,7 +113,7 @@ export default function DriftPage() {
 
   async function submitBaseline(e: React.FormEvent) {
     e.preventDefault()
-    let expectedState: any
+    let expectedState: unknown
     try {
       expectedState = JSON.parse(form.expected_state)
     } catch {
@@ -114,7 +131,7 @@ export default function DriftPage() {
       })
       await fetchAll()
     } catch (e: any) {
-      setError(e?.message || 'Could not create baseline')
+      setError(e instanceof Error ? e.message : 'Could not create baseline')
     }
   }
 
@@ -124,7 +141,7 @@ export default function DriftPage() {
       setEvents((current) => current.map((event) => (event.id === id ? { ...event, acknowledged: true } : event)))
       await fetchAll()
     } catch (e: any) {
-      setError(e?.message || 'Could not acknowledge drift event')
+      setError(e instanceof Error ? e.message : 'Could not acknowledge drift event')
     }
   }
 
@@ -133,7 +150,7 @@ export default function DriftPage() {
       await deleteDriftBaseline(id)
       await fetchAll()
     } catch (e: any) {
-      setError(e?.message || 'Could not delete baseline')
+      setError(e instanceof Error ? e.message : 'Could not delete baseline')
     }
   }
 

@@ -57,10 +57,12 @@ export default function KubernetesPage() {
       setSummary(s)
       setNamespaces(n.namespaces || [])
       setPods(p.pods || [])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) { setError(e.message) }
     finally { setLoading(false) }
   }, [hoursBack, selectedCluster])
 
+   
   useEffect(() => { load() }, [load])
 
   if (loading) return (

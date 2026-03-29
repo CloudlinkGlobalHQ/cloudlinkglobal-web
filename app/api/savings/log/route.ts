@@ -79,8 +79,8 @@ export async function POST(req: Request) {
     const savedEvent = await backendRes.json()
 
     return NextResponse.json({ ok: true, event: savedEvent })
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[savings/log]', err)
-    return NextResponse.json({ error: err.message || 'Failed to log saving' }, { status: 500 })
+    return NextResponse.json({ error: (err as Error).message || 'Failed to log saving' }, { status: 500 })
   }
 }

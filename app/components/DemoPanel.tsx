@@ -20,6 +20,7 @@ export default function DemoPanel({ cardClass }: { cardClass: string }) {
   const [mode, setMode] = useState<Mode>("after");
   const before = data.before;
   const after = data.after;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const change = useMemo(() => pctChange(before, after), []);
   const monthlyImpact = useMemo(() => (change > 0 ? change * 220 : 0), [change]);
   const series = mode === "before" ? before : after;

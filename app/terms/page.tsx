@@ -17,7 +17,7 @@ export default function TermsPage() {
         <div className="prose prose-sm prose-gray max-w-none space-y-6 text-gray-600 leading-relaxed">
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mt-8 mb-3">1. Acceptance of Terms</h2>
-            <p>By accessing or using Cloudlink ("the Service"), you agree to be bound by these Terms of Service. If you do not agree, do not use the Service.</p>
+            <p>By accessing or using Cloudlink (&ldquo;the Service&rdquo;), you agree to be bound by these Terms of Service. If you do not agree, do not use the Service.</p>
           </section>
 
           <section>
@@ -42,7 +42,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mt-8 mb-3">6. Service Availability</h2>
-            <p>We strive to maintain high availability but do not guarantee uninterrupted service. We may perform maintenance with reasonable notice. The Service is provided "as is" without warranty of any kind.</p>
+            <p>We strive to maintain high availability but do not guarantee uninterrupted service. We may perform maintenance with reasonable notice. The Service is provided &ldquo;as is&rdquo; without warranty of any kind.</p>
           </section>
 
           <section>

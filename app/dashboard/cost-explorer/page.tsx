@@ -96,6 +96,7 @@ function EmptyState() {
 
 // ─── Chart Tooltip ────────────────────────────────────────────────────────────
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function ChartTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null
   return (
@@ -124,11 +125,14 @@ export default function CostExplorerPage() {
   const [loading, setLoading] = useState(true)
   const [isEmpty, setIsEmpty] = useState(false)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [costSummary, setCostSummary] = useState<any>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [statsData, setStatsData] = useState<any>(null)
   const [snapshots, setSnapshots] = useState<CostSnapshot[]>([])
   const [services, setServices] = useState<TrackedService[]>([])
 
+   
   useEffect(() => {
     async function load() {
       try {
@@ -196,6 +200,7 @@ export default function CostExplorerPage() {
       cost: s.cost ?? s.amount ?? 0,
     }))
   } else if (Array.isArray(costSummary?.daily_costs)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     chartData = costSummary.daily_costs.map((d: any) => ({
       day: d.date ?? d.day ?? '',
       cost: d.cost ?? d.amount ?? d.value ?? 0,
@@ -224,10 +229,12 @@ export default function CostExplorerPage() {
       : null
 
   const topServiceName = topService?.service ?? topService?.name ?? '—'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const topServiceCost = topService?.cost ?? (topService as any)?.amount ?? 0
 
   // Table rows (services or by_service)
   const tableRows: { name: string; cost: number }[] =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (byService.length > 0 ? byService : services).map((s: any) => ({
       name: s.service ?? s.name ?? 'Unknown',
       cost: s.cost ?? s.amount ?? s.total_cost ?? s.monthly_cost ?? 0,

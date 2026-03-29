@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
@@ -11,7 +12,9 @@ export default function DashboardPage() {
     try { setStats(await getStats()) } catch {}
   }, [])
 
+   
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     refreshStats()
     const t = setInterval(refreshStats, 15000)
     return () => clearInterval(t)

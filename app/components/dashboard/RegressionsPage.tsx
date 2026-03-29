@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -59,6 +60,8 @@ export default function RegressionsPage() {
     setLoading(false)
   }
 
+   
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load() }, [filter])
 
   const handleAction = async (id: string, action: 'acknowledge' | 'resolve') => {

@@ -17,6 +17,7 @@ function duration(start: string, end: string) {
 }
 
 export default function ScansHistory() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [scans, setScans]     = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [scanning, setScanning] = useState(false)
@@ -26,10 +27,12 @@ export default function ScansHistory() {
   const load = async () => {
     setLoading(true)
     setError('')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     try { const d = await getScans(); setScans(d.items || []) } catch (e: any) { setError(e?.message || 'Something went wrong') }
     setLoading(false)
   }
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { load() }, [])
 
   const handleScan = async () => {
@@ -38,6 +41,7 @@ export default function ScansHistory() {
       const res = await scanNow()
       setMsg(`Scan complete — ${res.total_events_found ?? 0} events found across ${res.credentials_scanned ?? 0} credential(s)`)
       load()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) { setMsg(`Error: ${e.message}`) }
     setScanning(false)
   }

@@ -67,6 +67,7 @@ export default function RiRecommendationsPage() {
     setError(null)
     try {
       setData(await getRiRecommendations())
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       setError(e.message)
     } finally {
@@ -74,6 +75,7 @@ export default function RiRecommendationsPage() {
     }
   }, [])
 
+   
   useEffect(() => { load() }, [load])
 
   if (loading) {

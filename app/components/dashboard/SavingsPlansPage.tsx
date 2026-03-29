@@ -13,14 +13,6 @@ async function apiFetch(path: string, opts: RequestInit = {}) {
   return res.json()
 }
 
-interface SpOptions {
-  types: Record<string, {
-    description: string
-    eligible_services: string[]
-    terms: Record<string, string>
-  }>
-}
-
 interface SpAnalysis {
   commitment_type: string; term: string
   discount_rate_pct: number; coverage_pct_actual: number
@@ -64,6 +56,7 @@ export default function SavingsPlansPage() {
         }),
       })
       setAnalysis(res)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) { setError(e.message) }
     finally { setLoading(false) }
   }, [commitType, term, coverage, daysHistory])

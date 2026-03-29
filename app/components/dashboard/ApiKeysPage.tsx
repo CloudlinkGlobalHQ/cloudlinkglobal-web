@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
@@ -20,10 +21,11 @@ export default function ApiKeysPage() {
 
   const load = useCallback(async () => {
     setLoading(true)
-    try { setKeys(await getApiKeys().then((r: any) => r.api_keys || [])) } catch {}
+    try { setKeys(await getApiKeys().then((r: any) => (r.api_keys as ApiKey[]) || [])) } catch {}
     finally { setLoading(false) }
   }, [])
 
+   
   useEffect(() => { load() }, [load])
 
   const handleCreate = async () => {

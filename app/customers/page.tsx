@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import { motion } from "framer-motion";
@@ -93,7 +94,7 @@ const testimonials = [
     color: "#10B981",
   },
   {
-    quote: "Finally something that doesn't just tell you you're wasting money — it actually fixes it.",
+    quote: "Finally something that doesn&apos;t just tell you you&apos;re wasting money — it actually fixes it.",
     author: "Rohan M.",
     role: "VP Engineering",
     company: "SaaS platform",
