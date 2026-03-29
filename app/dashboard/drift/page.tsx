@@ -161,7 +161,7 @@ export default function DriftPage() {
     <div className="p-6 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Drift Detection</h1>
+          <h1 className="text-2xl font-bold text-slate-100">Drift Detection</h1>
           <p className="text-gray-500 text-sm mt-1">
             Monitor when live infrastructure drifts away from your expected state definitions.
           </p>
@@ -169,7 +169,7 @@ export default function DriftPage() {
         <div className="flex gap-3">
           <button
             onClick={() => setShowForm(true)}
-            className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium"
+            className="border border-gray-300 hover:bg-[#141C33] text-gray-700 px-4 py-2 rounded-lg text-sm font-medium"
           >
             + Add Baseline
           </button>
@@ -187,12 +187,12 @@ export default function DriftPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         {[
-          { label: 'Baselines Monitored', value: summary?.baseline_count ?? baselines.length, color: 'text-gray-900' },
-          { label: 'Open Drift Events', value: summary?.open_event_count ?? unackEvents.length, color: (summary?.open_event_count ?? unackEvents.length) > 0 ? 'text-orange-600' : 'text-gray-900' },
-          { label: 'Critical Drifts', value: criticalCount, color: criticalCount > 0 ? 'text-red-600' : 'text-gray-900' },
-          { label: 'Tracked Events', value: summary?.event_count ?? events.length, color: 'text-gray-900' },
+          { label: 'Baselines Monitored', value: summary?.baseline_count ?? baselines.length, color: 'text-slate-100' },
+          { label: 'Open Drift Events', value: summary?.open_event_count ?? unackEvents.length, color: (summary?.open_event_count ?? unackEvents.length) > 0 ? 'text-orange-600' : 'text-slate-100' },
+          { label: 'Critical Drifts', value: criticalCount, color: criticalCount > 0 ? 'text-red-600' : 'text-slate-100' },
+          { label: 'Tracked Events', value: summary?.event_count ?? events.length, color: 'text-slate-100' },
         ].map((stat) => (
-          <div key={stat.label} className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+          <div key={stat.label} className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-4 text-center">
             <div className={`text-3xl font-bold ${stat.color}`}>{stat.value}</div>
             <div className="text-sm text-gray-500 mt-1">{stat.label}</div>
           </div>
@@ -200,10 +200,10 @@ export default function DriftPage() {
       </div>
 
       {summary?.severity_counts && Object.keys(summary.severity_counts).length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6">
+        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-5 mb-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-sm font-semibold text-slate-800">Drift severity mix</h2>
+              <h2 className="text-sm font-semibold text-slate-200">Drift severity mix</h2>
               <p className="text-xs text-slate-400 mt-0.5">Use this to prioritize investigation and approvals.</p>
             </div>
             <div className="flex gap-2 flex-wrap">
@@ -212,7 +212,7 @@ export default function DriftPage() {
                   key={level}
                   onClick={() => setSeverityFilter(level)}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-                    severityFilter === level ? 'bg-green-600 text-white border-green-600' : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                    severityFilter === level ? 'bg-green-600 text-white border-green-600' : 'border-[#1E2D4F] text-slate-600 hover:bg-[#141C33]'
                   }`}
                 >
                   {level}
@@ -222,7 +222,7 @@ export default function DriftPage() {
           </div>
           <div className="flex gap-2 flex-wrap">
             {Object.entries(summary.severity_counts).map(([severity, count]) => (
-              <span key={severity} className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${SEVERITY_COLORS[severity] || 'bg-slate-100 text-slate-700 border-slate-200'}`}>
+              <span key={severity} className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${SEVERITY_COLORS[severity] || 'bg-[#1A2340] text-slate-700 border-[#1E2D4F]'}`}>
                 {severity}: {Number(count)}
               </span>
             ))}
@@ -232,7 +232,7 @@ export default function DriftPage() {
 
       {scanResult && (
         <div className={`rounded-xl border p-4 mb-6 ${scanResult.drifts_found > 0 ? 'bg-orange-50 border-orange-200' : 'bg-green-50 border-green-200'}`}>
-          <div className="font-medium text-gray-900">
+          <div className="font-medium text-slate-100">
             {scanResult.drifts_found > 0
               ? `${scanResult.drifts_found} drift(s) detected across ${scanResult.baselines_checked} baselines`
               : `No drift detected across ${scanResult.baselines_checked} baselines`}
@@ -242,8 +242,8 @@ export default function DriftPage() {
       )}
 
       {showForm && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Add Drift Baseline</h2>
+        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-6 mb-6">
+          <h2 className="text-lg font-semibold text-slate-100 mb-4">Add Drift Baseline</h2>
           <form onSubmit={submitBaseline} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Resource ID</label>
@@ -290,7 +290,7 @@ export default function DriftPage() {
               <button type="submit" className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
                 Add Baseline
               </button>
-              <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100">
+              <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-[#1A2340]">
                 Cancel
               </button>
             </div>
@@ -300,7 +300,7 @@ export default function DriftPage() {
 
       {unackEvents.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">Active Drift Events</h2>
+          <h2 className="text-lg font-semibold text-slate-100 mb-3">Active Drift Events</h2>
           <div className="space-y-2">
             {unackEvents.map((event) => (
               <div key={event.id} className={`rounded-xl border p-4 flex items-center justify-between ${SEVERITY_COLORS[event.severity]}`}>
@@ -316,7 +316,7 @@ export default function DriftPage() {
                 </div>
                 <button
                   onClick={() => onAcknowledge(event.id)}
-                  className="ml-4 px-3 py-1.5 bg-white rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 border border-gray-200 shrink-0"
+                  className="ml-4 px-3 py-1.5 bg-[#0F1629] rounded-lg text-xs font-medium text-gray-700 hover:bg-[#141C33] border border-[#1E2D4F] shrink-0"
                 >
                   Acknowledge
                 </button>
@@ -327,18 +327,18 @@ export default function DriftPage() {
       )}
 
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">Monitored Baselines</h2>
+        <h2 className="text-lg font-semibold text-slate-100 mb-3">Monitored Baselines</h2>
         {loading ? (
           <div className="text-center py-8 text-gray-400">Loading...</div>
         ) : baselines.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-12 text-center">
             <div className="text-4xl mb-3">🔎</div>
             <p className="text-gray-500">No baselines yet. Add a baseline to start monitoring drift.</p>
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-[#141C33] border-b border-[#1E2D4F]">
                 <tr>
                   {['Resource', 'Type', 'Region', 'Drift Count', 'Last Checked', ''].map((heading) => (
                     <th key={heading} className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">{heading}</th>
@@ -347,7 +347,7 @@ export default function DriftPage() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {baselines.map((baseline) => (
-                  <tr key={baseline.id} className="hover:bg-gray-50">
+                  <tr key={baseline.id} className="hover:bg-[#141C33]">
                     <td className="px-4 py-3 font-mono text-xs">{baseline.resource_id}</td>
                     <td className="px-4 py-3 text-gray-600">{baseline.resource_type}</td>
                     <td className="px-4 py-3 text-gray-600">{baseline.region}</td>

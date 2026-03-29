@@ -116,9 +116,9 @@ I'll model the impact of stopping \`prod-ml-training-01\`, \`staging-api-01\`, a
 
 | Instance | Risk | Notes |
 |----------|------|-------|
-| \`prod-ml-training-01\` | 🟡 Medium | Training jobs would queue. Restart time ~4min |
-| \`staging-api-01\` | 🟢 Low | No production traffic. Staging team notified |
-| \`dev-env-payments\` | 🟢 Low | Dev hours only. AutoStop already recommended |
+| \`prod-ml-training-01\` | Medium Medium | Training jobs would queue. Restart time ~4min |
+| \`staging-api-01\` | Low Low | No production traffic. Staging team notified |
+| \`dev-env-payments\` | Low Low | Dev hours only. AutoStop already recommended |
 
 **Recommended approach:**
 

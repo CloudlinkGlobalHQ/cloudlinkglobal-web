@@ -72,17 +72,17 @@ export default function CostTrendChart({ snapshots }: { snapshots: Snapshot[] })
   if (!chartData.length) return null
 
   return (
-    <div className="mb-6 overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+    <div className="mb-6 overflow-hidden rounded-[24px] border border-[#1E2D4F] bg-[#0F1629]">
+      <div className="flex items-center justify-between border-b border-[#1E2D4F]/50 px-5 py-4">
         <div>
-          <h2 className="text-sm font-semibold text-slate-900">Cost Trend</h2>
+          <h2 className="text-sm font-semibold text-slate-100">Cost Trend</h2>
           <p className="mt-1 text-xs text-slate-500">Service-level spend over time across the selected window.</p>
         </div>
         <div className="flex gap-1">
           {(['24h', '7d', '30d'] as const).map(r => (
             <button key={r} onClick={() => setRange(r)}
               className={`px-3 py-1 text-xs rounded-lg font-medium transition ${
-                range === r ? 'bg-green-100 text-green-700' : 'text-slate-500 hover:bg-slate-100'
+                range === r ? 'bg-[#10B981]/20 text-[#10B981]' : 'text-slate-400 hover:bg-[#141C33]'
               }`}>
               {r}
             </button>

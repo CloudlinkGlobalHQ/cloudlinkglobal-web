@@ -45,7 +45,7 @@ function SlackCard() {
   }
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6">
+    <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-6 mb-6">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-[#4A154B] flex items-center justify-center flex-shrink-0">
@@ -57,7 +57,7 @@ function SlackCard() {
             </svg>
           </div>
           <div>
-            <h2 className="font-semibold text-slate-800">Slack Alerts</h2>
+            <h2 className="font-semibold text-slate-100">Slack Alerts</h2>
             <p className="text-xs text-slate-500">Get notified in Slack when a cost regression is detected</p>
           </div>
         </div>
@@ -82,7 +82,7 @@ function SlackCard() {
         </button>
         {saved && (
           <button onClick={handleTest} disabled={testing}
-            className="border border-slate-200 hover:bg-slate-50 text-slate-600 text-sm font-medium px-4 py-2 rounded-lg transition whitespace-nowrap">
+            className="border border-[#1E2D4F] hover:bg-[#141C33] text-slate-400 text-sm font-medium px-4 py-2 rounded-lg transition whitespace-nowrap">
             {testing ? 'Sending…' : 'Test alert'}
           </button>
         )}
@@ -146,11 +146,11 @@ export default function WebhooksPanel() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Webhooks & Integrations</h1>
+          <h1 className="text-2xl font-bold text-slate-100">Webhooks & Integrations</h1>
           <p className="text-slate-500 text-sm mt-1">Receive real-time Cloudlink events via HTTP POST or Slack</p>
         </div>
         <div className="flex gap-2">
-          {hooks.length > 0 && <button onClick={handleTest} className="border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-medium px-4 py-2 rounded-lg transition">Send test ping</button>}
+          {hooks.length > 0 && <button onClick={handleTest} className="border border-[#1E2D4F] text-slate-400 hover:bg-[#141C33] text-sm font-medium px-4 py-2 rounded-lg transition">Send test ping</button>}
           <button onClick={() => setShowForm(s => !s)} className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">+ Add webhook</button>
         </div>
       </div>
@@ -161,8 +161,8 @@ export default function WebhooksPanel() {
       {msg && <p className="text-sm text-green-600 mb-4">{msg}</p>}
 
       {showForm && (
-        <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6">
-          <h2 className="font-semibold text-slate-800 mb-4">Register webhook</h2>
+        <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-6 mb-6">
+          <h2 className="font-semibold text-slate-100 mb-4">Register webhook</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div className="md:col-span-2">
               <label className="block text-xs font-medium text-slate-600 mb-1">URL *</label>
@@ -195,19 +195,19 @@ export default function WebhooksPanel() {
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] overflow-hidden">
         {loading ? (
           <div className="p-10 text-center text-slate-400 text-sm">Loading…</div>
         ) : hooks.length === 0 ? (
           <div className="p-10 text-center text-slate-400 text-sm">No webhooks yet. Add one above to receive real-time events.</div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-slate-50 border-b border-slate-200">
+            <thead className="bg-[#141C33] border-b border-[#1E2D4F]">
               <tr>{['URL','Events','Last Fired','Last Status',''].map(h => <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">{h}</th>)}</tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {hooks.map((h: any) => (
-                <tr key={h.webhook_id} className="hover:bg-slate-50">
+                <tr key={h.webhook_id} className="hover:bg-[#141C33]">
                   <td className="px-4 py-3 font-mono text-xs text-slate-700 max-w-xs truncate">{h.url}</td>
                   <td className="px-4 py-3"><div className="flex flex-wrap gap-1">{(h.events || []).map((ev: string) => <span key={ev} className="text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded font-mono">{ev}</span>)}</div></td>
                   <td className="px-4 py-3 text-xs text-slate-400">{h.last_fired_at ? new Date(h.last_fired_at).toLocaleString() : '—'}</td>

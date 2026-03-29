@@ -111,7 +111,7 @@ export default function TTLPage() {
     <div className="p-6 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">TTL Auto-Destroy</h1>
+          <h1 className="text-2xl font-bold text-slate-100">TTL Auto-Destroy</h1>
           <p className="text-gray-500 text-sm mt-1">
             Set time-to-live on dev/staging environments. Cloudlink auto-terminates them when the timer expires.
           </p>
@@ -131,7 +131,7 @@ export default function TTLPage() {
           { label: "Expiring Soon", value: warning, color: "text-yellow-600" },
           { label: "Expired", value: expired, color: "text-red-600" },
         ].map(s => (
-          <div key={s.label} className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+          <div key={s.label} className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-4 text-center">
             <div className={`text-3xl font-bold ${s.color}`}>{s.value}</div>
             <div className="text-sm text-gray-500 mt-1">{s.label}</div>
           </div>
@@ -140,8 +140,8 @@ export default function TTLPage() {
 
       {/* Create form */}
       {showForm && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Create TTL Rule</h2>
+        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-6 mb-6">
+          <h2 className="text-lg font-semibold text-slate-100 mb-4">Create TTL Rule</h2>
           <form onSubmit={createRule} className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Environment Name</label>
@@ -215,7 +215,7 @@ export default function TTLPage() {
               <button type="submit" className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
                 Create Rule
               </button>
-              <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100">
+              <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-[#1A2340]">
                 Cancel
               </button>
             </div>
@@ -227,20 +227,19 @@ export default function TTLPage() {
       {loading ? (
         <div className="text-center py-12 text-gray-400">Loading TTL rules...</div>
       ) : rules.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-          <div className="text-4xl mb-3">⏰</div>
-          <p className="text-gray-500">No TTL rules yet. Create one to auto-destroy environments.</p>
+        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-12 text-center">
+          <p className="text-slate-400">No TTL rules yet. Create one to auto-destroy environments.</p>
         </div>
       ) : (
         <div className="space-y-3">
           {rules.map(rule => (
-            <div key={rule.id} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between">
+            <div key={rule.id} className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-4 flex items-center justify-between">
               <div className="flex items-start gap-4">
                 <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${statusColors[rule.status]}`}>
                   {rule.status}
                 </span>
                 <div>
-                  <div className="font-medium text-gray-900">{rule.environment_name}</div>
+                  <div className="font-medium text-slate-100">{rule.environment_name}</div>
                   <div className="text-sm text-gray-500">{rule.resource_id} · {rule.resource_type} · {rule.region}</div>
                   {rule.notes && <div className="text-xs text-gray-400 mt-0.5">{rule.notes}</div>}
                 </div>
@@ -263,7 +262,7 @@ export default function TTLPage() {
                   )}
                   <button
                     onClick={() => deleteRule(rule.id)}
-                    className="px-3 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg text-xs font-medium"
+                    className="px-3 py-1.5 bg-[#141C33] hover:bg-[#1A2340] text-gray-600 rounded-lg text-xs font-medium"
                   >
                     Cancel
                   </button>

@@ -19,7 +19,7 @@ function fmt(n: number) { return `$${n.toLocaleString('en-US', { minimumFraction
 function fmtK(n: number) { return n >= 1000 ? `$${(n / 1000).toFixed(1)}k` : fmt(n) }
 
 const BUDGET_STATUS_STYLES: Record<string, string> = {
-  ok: 'bg-green-100 text-green-700',
+  ok: 'bg-green-900/40 text-green-300',
   warning: 'bg-yellow-100 text-yellow-700',
   breach: 'bg-red-100 text-red-600',
 }
@@ -51,49 +51,49 @@ export default function SavingsReportPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Monthly Savings Report</h1>
+          <h1 className="text-2xl font-bold text-slate-100">Monthly Savings Report</h1>
           <p className="text-sm text-slate-500 mt-0.5">
             {data.report_month} · Generated {new Date(data.generated_at).toLocaleString()}
           </p>
         </div>
         <button onClick={() => window.print()}
-          className="px-4 py-2 text-sm font-medium border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition">
+          className="px-4 py-2 text-sm font-medium border border-slate-200 rounded-lg text-slate-600 hover:bg-[#141C33] transition">
           🖨 Print / Export
         </button>
       </div>
 
       {/* Hero stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-l-4 border-l-blue-500 border-slate-200 p-5 shadow-sm">
+        <div className="bg-[#0F1629] rounded-xl border border-l-4 border-l-blue-500 border-[#1E2D4F] p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">MTD Spend</p>
-          <p className="text-2xl font-bold text-slate-900 mt-1">{fmtK(spend.mtd_usd)}</p>
+          <p className="text-2xl font-bold text-slate-100 mt-1">{fmtK(spend.mtd_usd)}</p>
           {spend.prev_month_usd > 0 && (
             <p className={`text-xs mt-1 font-medium ${momDir === 'up' ? 'text-red-500' : 'text-green-600'}`}>
               {momDir === 'up' ? '↑' : '↓'} {Math.abs(spend.mom_delta_pct).toFixed(1)}% vs last month
             </p>
           )}
         </div>
-        <div className="bg-white rounded-xl border border-l-4 border-l-green-500 border-slate-200 p-5 shadow-sm">
+        <div className="bg-[#0F1629] rounded-xl border border-l-4 border-l-green-500 border-[#1E2D4F] p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Savings Est.</p>
           <p className="text-2xl font-bold text-green-600 mt-1">{fmtK(savings.total_est_usd)}</p>
           <p className="text-xs text-slate-400 mt-1">this month</p>
         </div>
-        <div className="bg-white rounded-xl border border-l-4 border-l-purple-500 border-slate-200 p-5 shadow-sm">
+        <div className="bg-[#0F1629] rounded-xl border border-l-4 border-l-purple-500 border-[#1E2D4F] p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">AutoStop Savings</p>
-          <p className="text-2xl font-bold text-slate-900 mt-1">{fmtK(savings.autostop_usd)}</p>
+          <p className="text-2xl font-bold text-slate-100 mt-1">{fmtK(savings.autostop_usd)}</p>
           <p className="text-xs text-slate-400 mt-1">{savings.autostop_events} stop events</p>
         </div>
-        <div className="bg-white rounded-xl border border-l-4 border-l-orange-500 border-slate-200 p-5 shadow-sm">
+        <div className="bg-[#0F1629] rounded-xl border border-l-4 border-l-orange-500 border-[#1E2D4F] p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Actions Completed</p>
-          <p className="text-2xl font-bold text-slate-900 mt-1">{savings.completed_actions}</p>
+          <p className="text-2xl font-bold text-slate-100 mt-1">{savings.completed_actions}</p>
           <p className="text-xs text-slate-400 mt-1">{data.resources_tracked} resources tracked</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Top services */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-          <h2 className="font-semibold text-slate-800 mb-4">Top Services by Spend</h2>
+        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-5">
+          <h2 className="font-semibold text-slate-100 mb-4">Top Services by Spend</h2>
           {data.top_services.length === 0 ? (
             <p className="text-sm text-slate-400">No cost data for this month yet.</p>
           ) : (
@@ -105,9 +105,9 @@ export default function SavingsReportPage() {
                   <div key={svc.service}>
                     <div className="flex justify-between text-sm mb-1">
                       <span className="text-slate-700 font-medium">{svc.service}</span>
-                      <span className="font-mono text-slate-800">{fmt(svc.mtd_usd)}</span>
+                      <span className="font-mono text-slate-200">{fmt(svc.mtd_usd)}</span>
                     </div>
-                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-2 bg-[#1A2340] rounded-full overflow-hidden">
                       <div className={`h-full rounded-full ${colors[i % colors.length]}`} style={{ width: `${pct}%` }} />
                     </div>
                   </div>
@@ -118,8 +118,8 @@ export default function SavingsReportPage() {
         </div>
 
         {/* Actions breakdown */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-          <h2 className="font-semibold text-slate-800 mb-4">Actions Taken This Month</h2>
+        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-5">
+          <h2 className="font-semibold text-slate-100 mb-4">Actions Taken This Month</h2>
           {Object.keys(data.actions_by_type).length === 0 ? (
             <p className="text-sm text-slate-400">No actions completed this month.</p>
           ) : (
@@ -128,9 +128,9 @@ export default function SavingsReportPage() {
                 {Object.entries(data.actions_by_type)
                   .sort(([, a], [, b]) => b - a)
                   .map(([type, count]) => (
-                    <tr key={type} className="hover:bg-slate-50">
+                    <tr key={type} className="hover:bg-[#141C33]">
                       <td className="py-2 text-slate-700 font-medium capitalize">{type.replace(/_/g, ' ')}</td>
-                      <td className="py-2 text-right font-bold text-slate-800">{count}</td>
+                      <td className="py-2 text-right font-bold text-slate-200">{count}</td>
                     </tr>
                   ))}
               </tbody>
@@ -139,8 +139,8 @@ export default function SavingsReportPage() {
         </div>
 
         {/* Budget health */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-          <h2 className="font-semibold text-slate-800 mb-4">Budget Health</h2>
+        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-5">
+          <h2 className="font-semibold text-slate-100 mb-4">Budget Health</h2>
           {data.budgets.length === 0 ? (
             <p className="text-sm text-slate-400">No budgets configured. <a href="/dashboard/budgets" className="text-green-600 underline">Set one up →</a></p>
           ) : (
@@ -153,7 +153,7 @@ export default function SavingsReportPage() {
                       {b.utilization_pct}%
                     </span>
                   </div>
-                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-[#1A2340] rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full ${b.status === 'breach' ? 'bg-red-500' : b.status === 'warning' ? 'bg-yellow-500' : 'bg-green-500'}`}
                       style={{ width: `${Math.min(b.utilization_pct, 100)}%` }}
@@ -170,8 +170,8 @@ export default function SavingsReportPage() {
         </div>
 
         {/* Summary stats */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-          <h2 className="font-semibold text-slate-800 mb-4">Month Summary</h2>
+        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-5">
+          <h2 className="font-semibold text-slate-100 mb-4">Month Summary</h2>
           <dl className="space-y-3 text-sm">
             {[
               ['Report period', data.report_month],
@@ -183,7 +183,7 @@ export default function SavingsReportPage() {
             ].map(([k, v]) => (
               <div key={k} className="flex justify-between border-b border-slate-50 pb-2">
                 <dt className="text-slate-500">{k}</dt>
-                <dd className="font-medium text-slate-800">{v}</dd>
+                <dd className="font-medium text-slate-200">{v}</dd>
               </div>
             ))}
           </dl>

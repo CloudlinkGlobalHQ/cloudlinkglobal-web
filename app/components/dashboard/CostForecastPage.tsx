@@ -30,7 +30,7 @@ interface ForecastData {
 
 const TREND_COLORS = { up: 'text-red-500', down: 'text-green-600', stable: 'text-slate-500' }
 const TREND_ICONS = { up: '↑', down: '↓', stable: '→' }
-const TREND_BG = { up: 'bg-red-50 border-red-200', down: 'bg-green-50 border-green-200', stable: 'bg-slate-50 border-slate-200' }
+const TREND_BG = { up: 'bg-red-50 border-red-200', down: 'bg-green-50 border-green-200', stable: 'bg-[#141C33] border-[#1E2D4F]' }
 
 function fmt(n: number) {
   return `$${n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
@@ -120,7 +120,7 @@ export default function CostForecastPage() {
   )
   if (!data) return null
   if (!data.has_data) return (
-    <div className="bg-slate-50 border border-slate-200 rounded-xl p-10 text-center">
+    <div className="bg-[#141C33] border border-[#1E2D4F] rounded-xl p-10 text-center">
       <p className="text-slate-500">{data.message}</p>
     </div>
   )
@@ -140,7 +140,7 @@ export default function CostForecastPage() {
             <span className="text-xs text-slate-500">History:</span>
             {[14, 30, 60].map(d => (
               <button key={d} onClick={() => setDaysBack(d)}
-                className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition ${daysBack === d ? 'bg-green-600 text-white border-green-600' : 'border-slate-200 text-slate-600 hover:border-green-400'}`}>
+                className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition ${daysBack === d ? 'bg-green-600 text-white border-green-600' : 'border-[#1E2D4F] text-slate-600 hover:border-green-400'}`}>
                 {d}d
               </button>
             ))}
@@ -149,7 +149,7 @@ export default function CostForecastPage() {
             <span className="text-xs text-slate-500">Forecast:</span>
             {[7, 14, 30, 60].map(d => (
               <button key={d} onClick={() => setDaysAhead(d)}
-                className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition ${daysAhead === d ? 'bg-green-600 text-white border-green-600' : 'border-slate-200 text-slate-600 hover:border-green-400'}`}>
+                className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition ${daysAhead === d ? 'bg-green-600 text-white border-green-600' : 'border-[#1E2D4F] text-slate-600 hover:border-green-400'}`}>
                 {d}d
               </button>
             ))}
@@ -159,15 +159,15 @@ export default function CostForecastPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="rounded-[22px] border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-[22px] border border-[#1E2D4F] bg-[#0F1629] p-5 shadow-sm">
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Actual ({daysBack}d)</p>
-          <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">{fmt(data.historical_period_usd)}</p>
+          <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-100">{fmt(data.historical_period_usd)}</p>
         </div>
-        <div className="rounded-[22px] border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-[22px] border border-[#1E2D4F] bg-[#0F1629] p-5 shadow-sm">
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Forecast ({daysAhead}d)</p>
-          <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">{fmt(data.forecast_period_usd)}</p>
+          <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-100">{fmt(data.forecast_period_usd)}</p>
         </div>
-        <div className={`rounded-[22px] border border-slate-200 bg-white p-5 shadow-sm`}>
+        <div className={`rounded-[22px] border border-[#1E2D4F] bg-[#0F1629] p-5 shadow-sm`}>
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Projected Change</p>
           <p className={`mt-2 text-2xl font-semibold tracking-tight ${delta > 0 ? 'text-red-500' : 'text-green-600'}`}>
             {delta >= 0 ? '+' : ''}{fmt(delta)}
@@ -176,7 +176,7 @@ export default function CostForecastPage() {
             {deltaPct >= 0 ? '+' : ''}{deltaPct.toFixed(1)}%
           </p>
         </div>
-        <div className={`rounded-[22px] border border-slate-200 bg-white p-5 shadow-sm`}>
+        <div className={`rounded-[22px] border border-[#1E2D4F] bg-[#0F1629] p-5 shadow-sm`}>
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Daily Trend</p>
           <p className={`mt-2 text-2xl font-semibold tracking-tight ${TREND_COLORS[data.trend_direction]}`}>
             {TREND_ICONS[data.trend_direction]} {data.daily_trend_usd >= 0 ? '+' : ''}{fmt(data.daily_trend_usd)}/d
@@ -185,10 +185,10 @@ export default function CostForecastPage() {
       </div>
 
       {/* Chart */}
-      <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm">
-        <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+      <div className="overflow-hidden rounded-[24px] border border-[#1E2D4F] bg-[#0F1629] shadow-sm">
+        <div className="flex items-center justify-between border-b border-[#1E2D4F]/50 px-5 py-4">
           <div>
-            <h2 className="font-semibold text-slate-900">Spend Trend &amp; Forecast</h2>
+            <h2 className="font-semibold text-slate-100">Spend Trend &amp; Forecast</h2>
             <p className="mt-1 text-xs text-slate-500">Historical actuals, forecast projection, and confidence band in a single view.</p>
           </div>
           <div className="flex items-center gap-4 text-xs text-slate-500">
@@ -204,14 +204,14 @@ export default function CostForecastPage() {
 
       {/* Service forecasts */}
       {data.service_forecasts.length > 0 && (
-        <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm">
-          <div className="border-b border-slate-100 px-5 py-4">
-            <h2 className="font-semibold text-slate-900">Per-Service Projections</h2>
+        <div className="overflow-hidden rounded-[24px] border border-[#1E2D4F] bg-[#0F1629] shadow-sm">
+          <div className="border-b border-[#1E2D4F]/50 px-5 py-4">
+            <h2 className="font-semibold text-slate-100">Per-Service Projections</h2>
             <p className="mt-1 text-xs text-slate-500">Compare current spend to the next projected period by service.</p>
           </div>
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-slate-50 text-left text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+              <tr className="bg-[#141C33] text-left text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
                 <th className="px-5 py-3">Service</th>
                 <th className="px-5 py-3 text-right">Current ({daysBack}d)</th>
                 <th className="px-5 py-3 text-right">Forecast ({daysAhead}d)</th>
@@ -221,10 +221,10 @@ export default function CostForecastPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {data.service_forecasts.map(sf => (
-                <tr key={sf.service} className="hover:bg-slate-50">
-                  <td className="px-5 py-3 font-medium text-slate-800">{sf.service}</td>
+                <tr key={sf.service} className="hover:bg-[#141C33]">
+                  <td className="px-5 py-3 font-medium text-slate-200">{sf.service}</td>
                   <td className="px-5 py-3 text-right font-mono text-slate-600">{fmt(sf.current_period_usd)}</td>
-                  <td className="px-5 py-3 text-right font-mono font-semibold text-slate-800">{fmt(sf.forecast_next_period_usd)}</td>
+                  <td className="px-5 py-3 text-right font-mono font-semibold text-slate-200">{fmt(sf.forecast_next_period_usd)}</td>
                   <td className={`px-5 py-3 text-right font-mono text-sm ${TREND_COLORS[sf.trend_direction]}`}>
                     {sf.daily_trend_usd >= 0 ? '+' : ''}{sf.daily_trend_usd.toFixed(2)}/d
                   </td>

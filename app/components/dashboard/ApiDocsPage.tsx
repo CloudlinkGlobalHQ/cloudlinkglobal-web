@@ -146,10 +146,10 @@ const API_SECTIONS: Section[] = [
 ]
 
 const METHOD_COLORS: Record<string, string> = {
-  GET: 'bg-blue-50 text-blue-700 border-blue-200',
-  POST: 'bg-green-50 text-green-700 border-green-200',
-  PUT: 'bg-yellow-50 text-yellow-700 border-yellow-200',
-  DELETE: 'bg-red-50 text-red-700 border-red-200',
+  GET: 'bg-blue-900/40 text-blue-300 border-blue-700/50',
+  POST: 'bg-green-900/40 text-green-300 border-green-700/50',
+  PUT: 'bg-yellow-900/40 text-yellow-300 border-yellow-700/50',
+  DELETE: 'bg-red-900/40 text-red-300 border-red-700/50',
 }
 
 export default function ApiDocsPage() {
@@ -165,7 +165,7 @@ export default function ApiDocsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">API Documentation</h1>
+        <h1 className="text-2xl font-bold text-slate-100">API Documentation</h1>
         <p className="text-sm text-slate-500 mt-0.5">
           Complete reference for the Cloudlink REST API. All endpoints require Bearer token authentication.
         </p>
@@ -182,39 +182,38 @@ export default function ApiDocsPage() {
       {/* Sections */}
       <div className="space-y-3">
         {API_SECTIONS.map(section => (
-          <div key={section.name} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div key={section.name} className="bg-[#0F1629] rounded-2xl border border-[#1E2D4F] overflow-hidden">
             <button
               onClick={() => setActiveSection(activeSection === section.name ? null : section.name)}
-              className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-slate-50 transition"
+              className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-[#141C33] transition"
             >
               <div className="flex items-center gap-3">
-                <span className="text-xl">{section.emoji}</span>
-                <span className="font-semibold text-slate-800">{section.name}</span>
-                <span className="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">{section.endpoints.length} endpoints</span>
+                <span className="font-semibold text-slate-100">{section.name}</span>
+                <span className="text-xs text-slate-400 bg-[#1A2340] px-2 py-0.5 rounded-full">{section.endpoints.length} endpoints</span>
               </div>
               <span className="text-slate-400">{activeSection === section.name ? '▲' : '▼'}</span>
             </button>
 
             {activeSection === section.name && (
-              <div className="border-t border-slate-100">
+              <div className="border-t border-[#1E2D4F]">
                 {section.endpoints.map((ep, i) => (
-                  <div key={i} className={`px-6 py-4 ${i > 0 ? 'border-t border-slate-50' : ''}`}>
+                  <div key={i} className={`px-6 py-4 ${i > 0 ? 'border-t border-[#1E2D4F]/50' : ''}`}>
                     <div className="flex items-start gap-3 flex-wrap">
                       <span className={`text-xs font-bold px-2 py-1 rounded border ${METHOD_COLORS[ep.method]} shrink-0`}>
                         {ep.method}
                       </span>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <code className="text-sm font-mono text-slate-800">{ep.path}</code>
+                          <code className="text-sm font-mono text-slate-200">{ep.path}</code>
                           {ep.params && <code className="text-xs font-mono text-slate-400">{ep.params}</code>}
                           <button
                             onClick={() => copy(`${BASE}${ep.path}${ep.params || ''}`, ep.path)}
-                            className={`text-xs px-2 py-0.5 rounded transition ${copiedPath === ep.path ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                            className={`text-xs px-2 py-0.5 rounded transition ${copiedPath === ep.path ? 'bg-green-900/40 text-green-400' : 'bg-[#1A2340] text-slate-400 hover:bg-[#1E2D4F]'}`}
                           >
                             {copiedPath === ep.path ? '✓' : 'copy URL'}
                           </button>
                         </div>
-                        <p className="text-sm text-slate-500 mt-0.5">{ep.description}</p>
+                        <p className="text-sm text-slate-400 mt-0.5">{ep.description}</p>
                         {ep.body && (
                           <div className="mt-2">
                             <p className="text-xs text-slate-400 mb-1">Request body:</p>
@@ -232,13 +231,13 @@ export default function ApiDocsPage() {
       </div>
 
       {/* OpenAPI link */}
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center justify-between">
+      <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-4 flex items-center justify-between">
         <div>
-          <p className="font-semibold text-blue-800">Interactive API Explorer</p>
-          <p className="text-sm text-blue-600">Test endpoints directly in your browser using the OpenAPI/Swagger UI.</p>
+          <p className="font-semibold text-slate-100">Interactive API Explorer</p>
+          <p className="text-sm text-slate-400">Test endpoints directly in your browser using the OpenAPI/Swagger UI.</p>
         </div>
         <a href={`${BASE}/docs`} target="_blank" rel="noopener noreferrer"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition shrink-0">
+          className="bg-[#10B981] hover:bg-[#059669] text-white px-4 py-2 rounded-lg text-sm font-medium transition shrink-0">
           Open Swagger →
         </a>
       </div>

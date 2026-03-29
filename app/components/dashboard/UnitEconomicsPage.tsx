@@ -79,9 +79,9 @@ function StatCard({ label, value, sub, color = 'green' }: {
   const ring = color === 'green' ? 'border-l-green-500' : color === 'blue' ? 'border-l-blue-500'
     : color === 'purple' ? 'border-l-purple-500' : 'border-l-yellow-500'
   return (
-    <div className={`bg-white rounded-xl border border-slate-200 border-l-4 ${ring} p-5 shadow-sm`}>
+    <div className={`bg-[#0F1629] rounded-xl border border-l-4 border-[#1E2D4F] ${ring} p-5 shadow-sm`}>
       <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">{label}</p>
-      <p className="text-2xl font-bold text-slate-900 mt-1">{value}</p>
+      <p className="text-2xl font-bold text-slate-100 mt-1">{value}</p>
       {sub && <p className="text-xs text-slate-500 mt-1">{sub}</p>}
     </div>
   )
@@ -95,7 +95,7 @@ function MiniBar({ label, value, max, total, colorClass }: {
   return (
     <div className="flex items-center gap-3">
       <div className="w-28 truncate text-sm text-slate-700 font-medium" title={label}>{label}</div>
-      <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+      <div className="flex-1 h-2 bg-[#1A2340] rounded-full overflow-hidden">
         <div className={`h-full rounded-full ${colorClass}`} style={{ width: `${pct}%` }} />
       </div>
       <div className="text-sm text-slate-700 font-mono w-20 text-right">{fmt(value)}</div>
@@ -188,7 +188,7 @@ export default function UnitEconomicsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Unit Economics</h1>
+          <h1 className="text-2xl font-bold text-slate-100">Unit Economics</h1>
           <p className="text-sm text-slate-500 mt-0.5">Cost breakdown by service, resource type, and action</p>
         </div>
         <div className="flex items-center gap-2">
@@ -198,7 +198,7 @@ export default function UnitEconomicsPage() {
               className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition ${
                 days === d
                   ? 'bg-green-600 text-white border-green-600'
-                  : 'border-slate-200 text-slate-600 hover:border-green-400 hover:text-green-600'
+                  : 'border-[#1E2D4F] text-slate-600 hover:border-green-400 hover:text-green-600'
               }`}>
               {d}d
             </button>
@@ -235,9 +235,9 @@ export default function UnitEconomicsPage() {
       </div>
 
       {/* Daily Trend */}
-      <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+      <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-5">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-semibold text-slate-800">Daily Cost Trend</h2>
+          <h2 className="font-semibold text-slate-100">Daily Cost Trend</h2>
           {data.daily_trend.length > 0 && (
             <span className="text-xs text-slate-500">
               {data.daily_trend[0]?.date} → {data.daily_trend[data.daily_trend.length - 1]?.date}
@@ -254,14 +254,14 @@ export default function UnitEconomicsPage() {
       </div>
 
       {/* Breakdown tabs */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="border-b border-slate-200 flex">
+      <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] overflow-hidden">
+        <div className="border-b border-[#1E2D4F] flex">
           {(['services', 'resources', 'actions'] as const).map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               className={`px-5 py-3 text-sm font-medium border-b-2 transition capitalize ${
                 activeTab === tab
                   ? 'border-green-600 text-green-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-800'
+                  : 'border-transparent text-slate-500 hover:text-slate-200'
               }`}>
               {tab === 'services' ? 'By Service' : tab === 'resources' ? 'By Resource Type' : 'By Action'}
             </button>
@@ -317,7 +317,7 @@ export default function UnitEconomicsPage() {
               : (
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide border-b border-slate-100">
+                    <tr className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide border-b border-[#1E2D4F]/50">
                       <th className="pb-2">Action Type</th>
                       <th className="pb-2 text-right">Count</th>
                       <th className="pb-2 text-right">Cost / Action</th>
@@ -328,13 +328,13 @@ export default function UnitEconomicsPage() {
                   </thead>
                   <tbody className="divide-y divide-slate-50">
                     {data.action_breakdown.map((a, i) => (
-                      <tr key={a.action_type} className="hover:bg-slate-50">
-                        <td className="py-2.5 font-medium text-slate-800">{a.action_type}</td>
+                      <tr key={a.action_type} className="hover:bg-[#141C33]">
+                        <td className="py-2.5 font-medium text-slate-200">{a.action_type}</td>
                         <td className="py-2.5 text-right text-slate-600">{fmtNum(a.count)}</td>
                         <td className="py-2.5 text-right font-mono text-slate-700">{fmt(a.cost_per_action_usd, 4)}</td>
                         <td className="py-2.5 pl-3">
                           <div className="flex items-center gap-2">
-                            <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div className="flex-1 h-1.5 bg-[#1A2340] rounded-full overflow-hidden">
                               <div
                                 className={`h-full rounded-full ${COLORS[i % COLORS.length]}`}
                                 style={{ width: `${(a.count / maxActionCount) * 100}%` }}
@@ -356,13 +356,13 @@ export default function UnitEconomicsPage() {
 
       {/* Top Resources */}
       {data.top_resources.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-100">
-            <h2 className="font-semibold text-slate-800">Top 10 Most Expensive Resources (MTD)</h2>
+        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] overflow-hidden">
+          <div className="px-5 py-4 border-b border-[#1E2D4F]/50">
+            <h2 className="font-semibold text-slate-100">Top 10 Most Expensive Resources (MTD)</h2>
           </div>
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide bg-slate-50">
+              <tr className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide bg-[#141C33]">
                 <th className="px-5 py-2.5">#</th>
                 <th className="px-5 py-2.5">Resource</th>
                 <th className="px-5 py-2.5">Type</th>
@@ -372,19 +372,19 @@ export default function UnitEconomicsPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {data.top_resources.map((r, i) => (
-                <tr key={r.resource_id} className="hover:bg-slate-50">
+                <tr key={r.resource_id} className="hover:bg-[#141C33]">
                   <td className="px-5 py-3 text-slate-400 text-xs">{i + 1}</td>
                   <td className="px-5 py-3">
-                    <div className="font-medium text-slate-800">{r.name}</div>
+                    <div className="font-medium text-slate-200">{r.name}</div>
                     <div className="text-xs text-slate-400 font-mono">{r.resource_id?.slice(0, 12)}…</div>
                   </td>
                   <td className="px-5 py-3">
-                    <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-medium">
+                    <span className="text-xs bg-[#1A2340] text-slate-400 px-2 py-0.5 rounded-full font-medium">
                       {r.resource_type}
                     </span>
                   </td>
                   <td className="px-5 py-3 text-slate-500 text-xs">{r.region ?? '—'}</td>
-                  <td className="px-5 py-3 text-right font-mono font-semibold text-slate-800">
+                  <td className="px-5 py-3 text-right font-mono font-semibold text-slate-100">
                     {fmt(r.mtd_cost_usd)}
                   </td>
                 </tr>

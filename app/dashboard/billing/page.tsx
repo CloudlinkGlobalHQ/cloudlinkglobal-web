@@ -65,14 +65,14 @@ function DisputeModal({ event, onClose, onSubmit }: {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-        <h3 className="text-base font-semibold text-slate-900 mb-1">Dispute this saving</h3>
+      <div className="bg-[#0F1629] rounded-2xl border border-[#1E2D4F] shadow-xl w-full max-w-md p-6">
+        <h3 className="text-base font-semibold text-slate-100 mb-1">Dispute this saving</h3>
         <p className="text-xs text-slate-500 mb-4">
           Disputed savings are excluded from your invoice and flagged for manual review.
           Our team will reach out within 2 business days.
         </p>
 
-        <div className="bg-slate-50 rounded-xl p-3 mb-4 text-xs text-slate-600 space-y-1">
+        <div className="bg-[#141C33] rounded-xl p-3 mb-4 text-xs text-slate-300 space-y-1">
           <div className="flex justify-between">
             <span className="text-slate-400">Type</span>
             <span className="font-medium">{SAVING_TYPE_LABELS[event.saving_type] || event.saving_type}</span>
@@ -93,7 +93,7 @@ function DisputeModal({ event, onClose, onSubmit }: {
           onChange={e => setReason(e.target.value)}
           rows={3}
           placeholder="e.g. This resource was not actually idle — it was serving traffic from a secondary region."
-          className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-300 resize-none"
+          className="w-full rounded-xl border border-[#1E2D4F] px-3 py-2.5 text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-300 resize-none"
         />
 
         <div className="flex gap-2 mt-4">
@@ -106,7 +106,7 @@ function DisputeModal({ event, onClose, onSubmit }: {
           </button>
           <button
             onClick={onClose}
-            className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
+            className="rounded-xl border border-[#1E2D4F] px-4 py-2.5 text-sm font-medium text-slate-300 hover:bg-[#141C33] transition"
           >
             Cancel
           </button>
@@ -233,7 +233,7 @@ export default function BillingPage() {
       )}
 
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Billing</h1>
+        <h1 className="text-2xl font-bold text-slate-100">Billing</h1>
         <p className="text-sm text-gray-500 mt-1">
           Performance billing — 15% of verified savings. Nothing until we save you money.
         </p>
@@ -270,9 +270,9 @@ export default function BillingPage() {
             { label: 'All-time savings', value: fmt(summary.savings_all_time_usd), sub: 'you keep 85%' },
             { label: 'All-time fees', value: fmt(summary.cloudlink_fee_all_time_usd), sub: 'total paid to Cloudlink' },
           ].map(({ label, value, sub, accent }) => (
-            <div key={label} className="rounded-xl border border-gray-200 bg-white p-5">
+            <div key={label} className="rounded-xl border border-[#1E2D4F] bg-[#0F1629] p-5">
               <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">{label}</p>
-              <p className={`text-2xl font-bold mt-1 ${accent === 'green' ? 'text-green-600' : 'text-gray-900'}`}>{value}</p>
+              <p className={`text-2xl font-bold mt-1 ${accent === 'green' ? 'text-green-600' : 'text-slate-100'}`}>{value}</p>
               {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
             </div>
           ))}
@@ -304,14 +304,14 @@ export default function BillingPage() {
 
       <div className="grid gap-5 md:grid-cols-2">
         {/* ── Payment method ── */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6">
+        <div className="rounded-xl border border-[#1E2D4F] bg-[#0F1629] p-6">
           <div className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Payment method</div>
 
           {hasPaymentMethod ? (
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-2 h-2 rounded-full bg-green-400" />
-                <span className="text-sm font-medium text-gray-800">Card on file</span>
+                <span className="text-sm font-medium text-slate-200">Card on file</span>
               </div>
               <p className="text-xs text-gray-500 mb-4">
                 You'll be automatically charged at the end of each month when savings exceed $500.
@@ -321,7 +321,7 @@ export default function BillingPage() {
                 <button
                   onClick={openPortal}
                   disabled={portalLoading}
-                  className="rounded-lg bg-white border border-gray-200 hover:border-green-300 px-4 py-2 text-sm font-medium text-gray-700 hover:text-green-700 transition disabled:opacity-60"
+                  className="rounded-lg bg-[#0F1629] border border-[#1E2D4F] hover:border-[#10B981]/50 px-4 py-2 text-sm font-medium text-slate-300 hover:text-[#10B981] transition disabled:opacity-60"
                 >
                   {portalLoading ? 'Opening…' : 'Manage payment method'}
                 </button>
@@ -331,7 +331,7 @@ export default function BillingPage() {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-2 h-2 rounded-full bg-amber-400" />
-                <span className="text-sm font-medium text-gray-800">No card on file</span>
+                <span className="text-sm font-medium text-slate-200">No card on file</span>
               </div>
               <p className="text-xs text-gray-500 mb-4">
                 Add a payment method now so we can charge you automatically when you hit the $500 savings threshold.
@@ -349,7 +349,7 @@ export default function BillingPage() {
         </div>
 
         {/* ── Billing model FAQ ── */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6">
+        <div className="rounded-xl border border-[#1E2D4F] bg-[#0F1629] p-6">
           <div className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">How billing works</div>
           <div className="space-y-3 text-sm">
             {[
@@ -359,7 +359,7 @@ export default function BillingPage() {
               { q: 'Can I dispute a saving?', a: 'Yes. Flag any event and it\'s excluded from your invoice while we review it.' },
             ].map(({ q, a }) => (
               <div key={q}>
-                <p className="font-medium text-gray-800">{q}</p>
+                <p className="font-medium text-slate-200">{q}</p>
                 <p className="text-gray-500 text-xs mt-0.5">{a}</p>
               </div>
             ))}
@@ -369,10 +369,10 @@ export default function BillingPage() {
 
       {/* ── Savings events with dispute button ── */}
       {events.length > 0 && (
-        <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+        <div className="rounded-xl border border-[#1E2D4F] bg-[#0F1629] overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <div>
-              <h2 className="text-sm font-semibold text-gray-900">Verified savings events</h2>
+              <h2 className="text-sm font-semibold text-slate-100">Verified savings events</h2>
               <p className="text-xs text-gray-400 mt-0.5">
                 Flag any saving you believe is inaccurate — disputed events are excluded from your invoice.
               </p>
@@ -382,10 +382,10 @@ export default function BillingPage() {
             {events.map((ev) => {
               const isDisputed = ev.disputed || disputedEventIds.has(ev.id)
               return (
-                <div key={ev.id} className="flex items-center justify-between px-6 py-3 hover:bg-gray-50 transition">
+                <div key={ev.id} className="flex items-center justify-between px-6 py-3 hover:bg-[#141C33] transition">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-medium text-gray-700 bg-gray-100 px-2 py-0.5 rounded-full">
+                      <span className="text-xs font-medium text-slate-300 bg-[#1A2340] px-2 py-0.5 rounded-full">
                         {SAVING_TYPE_LABELS[ev.saving_type] || ev.saving_type}
                       </span>
                       {ev.billed && (
@@ -423,7 +423,7 @@ export default function BillingPage() {
           <h2 className="text-sm font-semibold text-amber-900 mb-3">Open disputes ({disputes.length})</h2>
           <div className="space-y-2">
             {disputes.map(d => (
-              <div key={d.id} className="flex items-start justify-between text-xs bg-white rounded-lg border border-amber-100 px-4 py-3">
+              <div key={d.id} className="flex items-start justify-between text-xs bg-[#1A1800] rounded-lg border border-amber-900/40 px-4 py-3">
                 <div>
                   <p className="font-medium text-gray-700">Event #{d.saving_event_id.slice(-8)}</p>
                   <p className="text-gray-500 mt-0.5">{d.reason}</p>
@@ -431,7 +431,7 @@ export default function BillingPage() {
                 <span className={`ml-3 px-2 py-0.5 rounded-full font-medium capitalize flex-shrink-0 ${
                   d.status === 'open' ? 'bg-amber-100 text-amber-700' :
                   d.status === 'resolved' ? 'bg-green-100 text-green-700' :
-                  'bg-gray-100 text-gray-600'
+                  'bg-[#1A2340] text-slate-400'
                 }`}>{d.status}</span>
               </div>
             ))}

@@ -115,12 +115,12 @@ export default function BudgetsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Budget Guardrails</h1>
+          <h1 className="text-2xl font-bold text-slate-100">Budget Guardrails</h1>
           <p className="text-sm text-slate-500 mt-1">Set spend limits, get alerts at thresholds, and prevent cost overruns.</p>
         </div>
         <div className="flex gap-3">
           <button onClick={handleCheck} disabled={checking}
-            className="text-sm font-medium px-4 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition disabled:opacity-60">
+            className="text-sm font-medium px-4 py-2 rounded-lg border border-[#1E2D4F] bg-[#0F1629] hover:bg-[#141C33] text-slate-700 transition disabled:opacity-60">
             {checking ? 'Checking…' : 'Run budget check'}
           </button>
           <button onClick={() => setShowCreate(true)}
@@ -140,8 +140,8 @@ export default function BudgetsPage() {
 
       {/* Create form */}
       {showCreate && (
-        <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Create Budget</h2>
+        <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-slate-100 mb-4">Create Budget</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Budget Name</label>
@@ -178,7 +178,7 @@ export default function BudgetsPage() {
               {creating ? 'Creating…' : 'Create budget'}
             </button>
             <button onClick={() => setShowCreate(false)}
-              className="text-sm font-medium px-4 py-2 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition">
+              className="text-sm font-medium px-4 py-2 rounded-lg border border-[#1E2D4F] bg-[#0F1629] text-slate-400 hover:bg-[#141C33] transition">
               Cancel
             </button>
           </div>
@@ -187,18 +187,17 @@ export default function BudgetsPage() {
 
       {/* Budget cards */}
       {budgets.length === 0 ? (
-        <div className="bg-white border border-slate-200 rounded-xl p-12 text-center">
-          <div className="text-4xl mb-3">📊</div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">No budgets yet</h3>
-          <p className="text-sm text-slate-500">Create your first budget to start monitoring cloud spend.</p>
+        <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-12 text-center">
+          <h3 className="text-lg font-semibold text-slate-200 mb-1">No budgets yet</h3>
+          <p className="text-sm text-slate-400">Create your first budget to start monitoring cloud spend.</p>
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {budgets.map(b => (
-            <div key={b.budget_id} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <div key={b.budget_id} className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-5">
               <div className="flex items-start justify-between mb-3">
                 <div>
-                  <h3 className="font-semibold text-gray-900">{b.name}</h3>
+                  <h3 className="font-semibold text-slate-100">{b.name}</h3>
                   <p className="text-xs text-slate-500 mt-0.5">
                     {b.scope === 'service' && b.service ? b.service : 'All services'} · Alerts at {b.alert_thresholds.join('%, ')}%
                   </p>
@@ -213,7 +212,7 @@ export default function BudgetsPage() {
                   <span className="text-slate-500">${(b.current_spend_usd || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} spent</span>
                   <span className="text-slate-500">${b.monthly_limit_usd.toLocaleString()} limit</span>
                 </div>
-                <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                <div className="w-full h-2.5 bg-[#1A2340] rounded-full overflow-hidden">
                   <div className={`h-full rounded-full transition-all ${barColor(b.utilization_pct || 0)}`}
                     style={{ width: `${Math.min(b.utilization_pct || 0, 100)}%` }} />
                 </div>
@@ -235,11 +234,11 @@ export default function BudgetsPage() {
       {/* Alert history */}
       {alerts.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">Recent Alerts</h2>
-          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <h2 className="text-lg font-semibold text-slate-100 mb-3">Recent Alerts</h2>
+          <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-100">
+                <tr className="bg-[#141C33] border-b border-[#1E2D4F]">
                   <th className="text-left px-4 py-2.5 font-medium text-slate-500">Budget</th>
                   <th className="text-left px-4 py-2.5 font-medium text-slate-500">Threshold</th>
                   <th className="text-left px-4 py-2.5 font-medium text-slate-500">Spend</th>
@@ -252,7 +251,7 @@ export default function BudgetsPage() {
                   const budget = budgets.find(b => b.budget_id === a.budget_id)
                   return (
                     <tr key={a.alert_id} className="border-b border-slate-50 last:border-0">
-                      <td className="px-4 py-2.5 text-gray-900">{budget?.name || a.budget_id.slice(0, 8)}</td>
+                      <td className="px-4 py-2.5 text-slate-100">{budget?.name || a.budget_id.slice(0, 8)}</td>
                       <td className="px-4 py-2.5">
                         <span className={`text-xs font-bold px-2 py-0.5 rounded ${a.threshold_pct >= 100 ? 'bg-red-100 text-red-700' : a.threshold_pct >= 80 ? 'bg-amber-100 text-amber-700' : 'bg-yellow-100 text-yellow-700'}`}>
                           {a.threshold_pct}%

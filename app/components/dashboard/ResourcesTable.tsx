@@ -22,7 +22,7 @@ const ISSUE_COLORS: Record<string, string> = {
   public_access_not_fully_blocked: 'bg-red-100 text-red-700',
   no_public_access_block: 'bg-red-100 text-red-700',
   no_encryption: 'bg-yellow-100 text-yellow-700',
-  versioning_disabled: 'bg-slate-100 text-slate-600',
+  versioning_disabled: 'bg-[#1A2340] text-slate-600',
   no_automated_backups: 'bg-orange-100 text-orange-700',
   no_backup_configuration: 'bg-orange-100 text-orange-700',
   unattached: 'bg-orange-100 text-orange-700',
@@ -33,7 +33,7 @@ const ISSUE_COLORS: Record<string, string> = {
 
 function IssueTag({ issue }: { issue: string }) {
   const key = issue.split(':')[0]
-  const cls = ISSUE_COLORS[key] || 'bg-slate-100 text-slate-600'
+  const cls = ISSUE_COLORS[key] || 'bg-[#1A2340] text-slate-600'
   return <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${cls}`}>{key.replace(/_/g, ' ')}</span>
 }
 
@@ -43,7 +43,7 @@ function ResourceDetail({ r }: { r: any }) {
   if (type === 'ec2_instance') return (
     <div className="flex flex-wrap items-center gap-1.5">
       {p.name && p.name !== r.resource_id && <span className="font-medium text-slate-700">{p.name}</span>}
-      {p.instance_type && <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-xs">{p.instance_type}</span>}
+      {p.instance_type && <span className="bg-[#1A2340] text-slate-600 px-1.5 py-0.5 rounded text-xs">{p.instance_type}</span>}
       {p.avg_cpu_7d != null && <span className={`px-1.5 py-0.5 rounded text-xs ${p.is_idle ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}`}>CPU {p.avg_cpu_7d}%</span>}
       {p.is_idle && <span className="bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded text-xs font-medium">Idle</span>}
     </div>
@@ -79,7 +79,7 @@ function ResourceDetail({ r }: { r: any }) {
   if (type === 'rds_instance') return (
     <div>
       <span className="font-medium text-slate-700 mr-2">{p.name}</span>
-      {p.engine && <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.engine} {p.engine_version}</span>}
+      {p.engine && <span className="bg-[#1A2340] text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.engine} {p.engine_version}</span>}
       <div className="flex flex-wrap gap-1 mt-1">{(p.issues || []).map((iss: string, i: number) => <IssueTag key={i} issue={iss} />)}</div>
     </div>
   )
@@ -87,14 +87,14 @@ function ResourceDetail({ r }: { r: any }) {
     <div>
       <span className="font-medium text-slate-700 mr-2">{p.dataset_id || p.name || r.resource_id}</span>
       {p.project_id && <span className="text-slate-400 mr-2 text-xs">{p.project_id}</span>}
-      {p.location && <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.location}</span>}
+      {p.location && <span className="bg-[#1A2340] text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.location}</span>}
       <div className="flex flex-wrap gap-1 mt-1">{(p.issues || []).map((iss: string, i: number) => <IssueTag key={i} issue={iss} />)}</div>
     </div>
   )
   if (type === 'gcp_cloudsql_instance') return (
     <div>
       <span className="font-medium text-slate-700 mr-2">{p.name || r.resource_id}</span>
-      {p.database_version && <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.database_version}</span>}
+      {p.database_version && <span className="bg-[#1A2340] text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.database_version}</span>}
       {p.project_id && <span className="text-slate-400 mr-2 text-xs">{p.project_id}</span>}
       <div className="flex flex-wrap gap-1 mt-1">{(p.issues || []).map((iss: string, i: number) => <IssueTag key={i} issue={iss} />)}</div>
     </div>
@@ -103,15 +103,15 @@ function ResourceDetail({ r }: { r: any }) {
     <div>
       <span className="font-medium text-slate-700 mr-2">{p.name || r.resource_id}</span>
       {p.ip_address && <span className="text-slate-500 text-xs mr-2">{p.ip_address}</span>}
-      {p.sku && <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.sku}</span>}
+      {p.sku && <span className="bg-[#1A2340] text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.sku}</span>}
       <div className="flex flex-wrap gap-1 mt-1">{(p.issues || []).map((iss: string, i: number) => <IssueTag key={i} issue={iss} />)}</div>
     </div>
   )
   if (type === 'azure_managed_disk') return (
     <div>
       <span className="font-medium text-slate-700 mr-2">{p.name || r.resource_id}</span>
-      {p.disk_size_gb != null && <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.disk_size_gb} GB</span>}
-      {p.sku && <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.sku}</span>}
+      {p.disk_size_gb != null && <span className="bg-[#1A2340] text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.disk_size_gb} GB</span>}
+      {p.sku && <span className="bg-[#1A2340] text-slate-600 px-1.5 py-0.5 rounded text-xs mr-1">{p.sku}</span>}
       <div className="flex flex-wrap gap-1 mt-1">{(p.issues || []).map((iss: string, i: number) => <IssueTag key={i} issue={iss} />)}</div>
     </div>
   )
@@ -163,7 +163,7 @@ export default function ResourcesTable() {
             {withIssues.length > 0 && <span className="ml-2 text-orange-600 font-medium">• {withIssues.length} with issues</span>}
           </p>
         </div>
-        <button onClick={load} className="rounded-xl border border-slate-200 px-3.5 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Refresh</button>
+        <button onClick={load} className="rounded-xl border border-[#1E2D4F] px-3.5 py-2 text-sm font-medium text-slate-700 transition hover:bg-[#141C33]">Refresh</button>
       </div>
 
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
@@ -171,11 +171,11 @@ export default function ResourcesTable() {
       {resources.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search resources…"
-            className="min-w-48 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-green-500" />
+            className="min-w-48 rounded-xl border border-[#1E2D4F] bg-[#0F1629] px-3 py-2 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-green-500" />
           <div className="flex gap-1.5 flex-wrap">
             {types.map(t => (
               <button key={t} onClick={() => setFilterType(t)}
-                className={`text-xs px-3 py-1.5 rounded-full border transition font-medium ${filterType === t ? 'bg-green-600 text-white border-green-600' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                className={`text-xs px-3 py-1.5 rounded-full border transition font-medium ${filterType === t ? 'bg-green-600 text-white border-green-600' : 'border-[#1E2D4F] text-slate-600 hover:bg-[#141C33]'}`}>
                 {t === 'all' ? `All (${resources.length})` : `${TYPE_ICONS[t] || 'GEN'} ${t.replace(/_/g, ' ')} (${resources.filter(r => r.resource_type === t).length})`}
               </button>
             ))}
@@ -183,7 +183,7 @@ export default function ResourcesTable() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-[24px] border border-[#1E2D4F] bg-[#0F1629] shadow-sm">
         {loading ? (
           <div className="p-10 text-center text-slate-400 text-sm">Loading…</div>
         ) : visible.length === 0 ? (
@@ -192,7 +192,7 @@ export default function ResourcesTable() {
           </div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="border-b border-slate-200 bg-slate-50">
+            <thead className="border-b border-[#1E2D4F] bg-[#141C33]">
               <tr>
                 {['Type', 'Resource ID', 'Cloud', 'Region', 'Details'].map(h => (
                   <th key={h} className="text-left px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">{h}</th>
@@ -201,16 +201,16 @@ export default function ResourcesTable() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {visible.map(r => (
-                <tr key={r.resource_id} className="transition hover:bg-slate-50/80">
+                <tr key={r.resource_id} className="transition hover:bg-[#141C33]/80">
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <span className="mr-2 inline-flex rounded-md border border-slate-200 bg-slate-50 px-1.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-600">{TYPE_ICONS[r.resource_type] || 'GEN'}</span>
+                    <span className="mr-2 inline-flex rounded-md border border-[#1E2D4F] bg-[#141C33] px-1.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-600">{TYPE_ICONS[r.resource_type] || 'GEN'}</span>
                     <span className="text-slate-600 text-xs">{r.resource_type?.replace(/_/g, ' ')}</span>
                   </td>
                   <td className="px-4 py-3 font-mono text-xs text-slate-700 max-w-[200px]">
                     <span className="truncate block" title={r.resource_id}>{r.resource_id}</span>
                   </td>
                   <td className="px-4 py-3">
-                    {r.provider && <span className={`text-xs border px-2 py-0.5 rounded font-medium ${PROVIDER_COLORS[r.provider] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>{r.provider?.toUpperCase()}</span>}
+                    {r.provider && <span className={`text-xs border px-2 py-0.5 rounded font-medium ${PROVIDER_COLORS[r.provider] || 'bg-[#141C33] text-slate-600 border-[#1E2D4F]'}`}>{r.provider?.toUpperCase()}</span>}
                   </td>
                   <td className="px-4 py-3 text-xs text-slate-500 whitespace-nowrap">{r.region || '—'}</td>
                   <td className="px-4 py-3"><ResourceDetail r={r} /></td>

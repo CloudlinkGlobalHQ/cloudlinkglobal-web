@@ -27,7 +27,7 @@ const RISK_STYLES: Record<string, string> = {
   low: 'bg-green-50 text-green-700 border-green-200',
   medium: 'bg-yellow-50 text-yellow-700 border-yellow-200',
   high: 'bg-red-50 text-red-700 border-red-200',
-  insufficient_data: 'bg-slate-50 text-slate-600 border-slate-200',
+  insufficient_data: 'bg-[#141C33] text-slate-400 border-slate-200',
 }
 
 function fmt(n: number) { return `$${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` }
@@ -76,27 +76,27 @@ export default function SavingsPlansPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Savings Plans Analyzer</h1>
+        <h1 className="text-2xl font-bold text-slate-100">Savings Plans Analyzer</h1>
         <p className="text-sm text-slate-500 mt-0.5">
           Analyze historical usage and get a data-driven AWS Savings Plans commitment recommendation
         </p>
       </div>
 
       {/* Configuration */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-        <h2 className="text-base font-semibold text-slate-800 mb-4">Configure Analysis</h2>
+      <div className="bg-[#0F1629] rounded-2xl border border-[#1E2D4F] p-6">
+        <h2 className="text-base font-semibold text-slate-100 mb-4">Configure Analysis</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
           <div>
             <label className="block text-xs font-medium text-slate-600 mb-1.5">Plan Type</label>
             <select value={commitType} onChange={e => { setCommitType(e.target.value); setTerm((TERMS[e.target.value] || [])[0] || '') }}
-              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-green-500 outline-none">
+              className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm bg-[#0A0E1A] focus:ring-2 focus:ring-green-500 outline-none">
               {SP_TYPES.map(t => <option key={t} value={t}>{t.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}</option>)}
             </select>
           </div>
           <div>
             <label className="block text-xs font-medium text-slate-600 mb-1.5">Term & Upfront</label>
             <select value={term} onChange={e => setTerm(e.target.value)}
-              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-green-500 outline-none">
+              className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm bg-[#0A0E1A] focus:ring-2 focus:ring-green-500 outline-none">
               {(TERMS[commitType] || []).map(t => (
                 <option key={t} value={t}>{t.replace(/_/g, ' ')} ({DISCOUNTS[commitType]?.[t]}% off)</option>
               ))}
@@ -113,14 +113,14 @@ export default function SavingsPlansPage() {
           <div>
             <label className="block text-xs font-medium text-slate-600 mb-1.5">History (days)</label>
             <select value={daysHistory} onChange={e => setDaysHistory(Number(e.target.value))}
-              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-green-500 outline-none">
+              className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm bg-[#0A0E1A] focus:ring-2 focus:ring-green-500 outline-none">
               {[30, 60, 90, 180].map(d => <option key={d} value={d}>{d} days</option>)}
             </select>
           </div>
         </div>
         <button onClick={analyze} disabled={loading}
           className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
-          {loading ? '⟳ Analyzing…' : '▶ Run Analysis'}
+          {loading ? 'Analyzing…' : 'Run Analysis'}
         </button>
       </div>
 
@@ -138,9 +138,9 @@ export default function SavingsPlansPage() {
               { label: 'ROI', value: `${analysis.recommendation.roi_pct}%`, sub: `${analysis.recommendation.payback_months}mo payback`, color: 'purple' },
               { label: 'Coverage', value: `${analysis.coverage_pct_actual}%`, sub: 'of eligible spend', color: 'yellow' },
             ].map(({ label, value, sub, color }) => (
-              <div key={label} className={`bg-white rounded-xl border border-slate-200 border-l-4 border-l-${color}-500 shadow-sm p-5`}>
+              <div key={label} className={`bg-[#0F1629] rounded-xl border border-[#1E2D4F] border-l-4 border-l-${color}-500 shadow-sm p-5`}>
                 <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">{label}</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">{value}</p>
+                <p className="text-2xl font-bold text-slate-100 mt-1">{value}</p>
                 <p className="text-xs text-slate-400 mt-0.5">{sub}</p>
               </div>
             ))}
@@ -148,8 +148,8 @@ export default function SavingsPlansPage() {
 
           {/* Risk + details */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-              <h3 className="text-base font-semibold text-slate-800 mb-4">Usage Analysis</h3>
+            <div className="bg-[#0F1629] rounded-2xl border border-[#1E2D4F] p-6">
+              <h3 className="text-base font-semibold text-slate-100 mb-4">Usage Analysis</h3>
               <div className="space-y-3 text-sm">
                 {[
                   ['Days Analyzed', `${analysis.usage.days_analyzed} days`],
@@ -160,7 +160,7 @@ export default function SavingsPlansPage() {
                 ].map(([label, value]) => (
                   <div key={label} className="flex justify-between items-center py-1.5 border-b border-slate-50">
                     <span className="text-slate-500">{label}</span>
-                    <span className="font-semibold text-slate-800">{value}</span>
+                    <span className="font-semibold text-slate-100">{value}</span>
                   </div>
                 ))}
               </div>
@@ -170,16 +170,16 @@ export default function SavingsPlansPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-              <h3 className="text-base font-semibold text-slate-800 mb-4">Top Eligible Services</h3>
+            <div className="bg-[#0F1629] rounded-2xl border border-[#1E2D4F] p-6">
+              <h3 className="text-base font-semibold text-slate-100 mb-4">Top Eligible Services</h3>
               {analysis.top_eligible_services.length === 0 ? (
                 <p className="text-sm text-slate-400 italic">No eligible services found — run a cloud scan first.</p>
               ) : (
                 <div className="space-y-2">
                   {analysis.top_eligible_services.map(svc => (
                     <div key={svc.service} className="flex items-center gap-3">
-                      <span className="text-sm text-slate-700 flex-1 truncate font-mono text-xs bg-slate-50 px-2 py-1 rounded">{svc.service}</span>
-                      <span className="text-sm font-semibold text-slate-900 shrink-0">{fmt(svc.eligible_spend_usd)}</span>
+                      <span className="text-sm text-slate-700 flex-1 truncate font-mono text-xs bg-[#141C33] px-2 py-1 rounded">{svc.service}</span>
+                      <span className="text-sm font-semibold text-slate-200 shrink-0">{fmt(svc.eligible_spend_usd)}</span>
                     </div>
                   ))}
                 </div>
@@ -210,7 +210,7 @@ export default function SavingsPlansPage() {
               </div>
               <a href="https://console.aws.amazon.com/billing/home#/savingsPlans/purchase"
                 target="_blank" rel="noopener noreferrer"
-                className="shrink-0 bg-white text-green-700 hover:bg-green-50 px-5 py-2.5 rounded-lg text-sm font-bold transition shadow">
+                className="shrink-0 bg-[#0F1629] text-green-400 hover:bg-green-900/20 px-5 py-2.5 rounded-lg text-sm font-bold transition shadow">
                 Open AWS Console →
               </a>
             </div>

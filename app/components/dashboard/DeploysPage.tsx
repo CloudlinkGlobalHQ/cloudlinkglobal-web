@@ -17,11 +17,11 @@ function timeAgo(iso: string | null) {
 
 function EnvBadge({ env }: { env: string }) {
   const map: Record<string, string> = {
-    production: 'bg-green-50 text-green-700 border-green-200',
-    staging:    'bg-yellow-50 text-yellow-700 border-yellow-200',
-    preview:    'bg-blue-50 text-blue-700 border-blue-200',
+    production: 'bg-green-900/40 text-green-300 border-green-700/50',
+    staging:    'bg-yellow-900/40 text-yellow-300 border-yellow-700/50',
+    preview:    'bg-blue-900/40 text-blue-300 border-blue-700/50',
   }
-  const cls = map[env?.toLowerCase()] || 'bg-slate-100 text-slate-600 border-slate-200'
+  const cls = map[env?.toLowerCase()] || 'bg-[#1A2340] text-slate-400 border-[#1E2D4F]'
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${cls}`}>
       {env || 'production'}
@@ -32,13 +32,13 @@ function EnvBadge({ env }: { env: string }) {
 function RegressionBadge({ status }: { status?: string }) {
   if (!status || status === 'none') return <span className="text-xs text-slate-400">—</span>
   const map: Record<string, string> = {
-    open:         'bg-red-50 text-red-700 border-red-200',
-    acknowledged: 'bg-yellow-50 text-yellow-700 border-yellow-200',
-    resolved:     'bg-green-50 text-green-700 border-green-200',
-    clean:        'bg-slate-50 text-slate-500 border-slate-200',
+    open:         'bg-red-900/40 text-red-300 border-red-700/50',
+    acknowledged: 'bg-yellow-900/40 text-yellow-300 border-yellow-700/50',
+    resolved:     'bg-green-900/40 text-green-300 border-green-700/50',
+    clean:        'bg-[#0A0E1A] text-slate-400 border-[#1E2D4F]',
   }
-  const cls = map[status] || 'bg-slate-100 text-slate-600 border-slate-200'
-  const icons: Record<string, string> = { open: '⚠️', acknowledged: '👀', resolved: '✓', clean: '✓' }
+  const cls = map[status] || 'bg-[#1A2340] text-slate-400 border-[#1E2D4F]'
+  const icons: Record<string, string> = { open: '!', acknowledged: '~', resolved: '✓', clean: '✓' }
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium border ${cls}`}>
       {icons[status] || ''} {status}
@@ -92,7 +92,7 @@ export default function DeploysPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Deploys</h1>
+          <h1 className="text-2xl font-bold text-slate-100">Deploys</h1>
           <p className="text-slate-500 text-sm mt-1">Track deploys and link them to cost regressions</p>
         </div>
         <div className="flex items-center gap-3">
@@ -103,9 +103,9 @@ export default function DeploysPage() {
           </button>
           <button onClick={handleRunDetection} disabled={running}
             className="bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
-            {running ? '⟳ Running…' : '▶ Run detection'}
+            {running ? 'Running…' : 'Run detection'}
           </button>
-          <button onClick={load} className="text-sm text-green-600 hover:underline">↻ Refresh</button>
+          <button onClick={load} className="text-sm text-green-600 hover:underline">Refresh</button>
         </div>
       </div>
 
@@ -123,11 +123,11 @@ export default function DeploysPage() {
       {loading ? (
         <div className="flex items-center justify-center py-16 text-slate-400 text-sm">Loading…</div>
       ) : deploys.length === 0 ? (
-        <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
-          <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl">🚀</span>
+        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-12 text-center">
+          <div className="w-12 h-12 bg-[#1A2340] rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-[#10B981] text-lg font-bold">↑</span>
           </div>
-          <p className="text-slate-700 font-medium mb-1">No deploys tracked yet</p>
+          <p className="text-slate-200 font-medium mb-1">No deploys tracked yet</p>
           <p className="text-slate-400 text-sm mb-4">Send a webhook from your CI/CD pipeline after each deploy.</p>
           <button onClick={() => setShowSnippet(true)}
             className="text-sm bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
@@ -135,10 +135,10 @@ export default function DeploysPage() {
           </button>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50">
+              <tr className="border-b border-[#1E2D4F] bg-[#141C33]">
                 <th className="text-left px-5 py-3 text-xs font-medium text-slate-500 uppercase tracking-wide">Service</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase tracking-wide">Version</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase tracking-wide">Env</th>
@@ -149,13 +149,13 @@ export default function DeploysPage() {
             </thead>
             <tbody>
               {deploys.map((d: any) => (
-                <tr key={d.deploy_id} className="border-b border-slate-100 hover:bg-slate-50 transition">
+                <tr key={d.deploy_id} className="border-b border-[#1E2D4F] hover:bg-[#141C33] transition">
                   <td className="px-5 py-3">
-                    <span className="font-medium text-slate-800">{d.service}</span>
+                    <span className="font-medium text-slate-200">{d.service}</span>
                   </td>
                   <td className="px-4 py-3">
                     {d.version
-                      ? <code className="text-xs bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded">{d.version.slice(0, 8)}</code>
+                      ? <code className="text-xs bg-[#1A2340] text-slate-300 px-1.5 py-0.5 rounded">{d.version.slice(0, 8)}</code>
                       : <span className="text-slate-400">—</span>}
                   </td>
                   <td className="px-4 py-3"><EnvBadge env={d.environment} /></td>

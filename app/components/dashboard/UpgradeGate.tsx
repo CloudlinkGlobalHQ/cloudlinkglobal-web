@@ -29,7 +29,7 @@ export default function UpgradeGate({ feature, requiredPlan = 'starter', childre
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         </svg>
       </div>
-      <h3 className="text-lg font-semibold text-gray-900 mb-1">{feature} requires {requiredPlan}</h3>
+      <h3 className="text-lg font-semibold text-slate-100 mb-1">{feature} requires {requiredPlan}</h3>
       <p className="text-sm text-gray-500 mb-4 text-center max-w-md">
         Upgrade to the {requiredPlan.charAt(0).toUpperCase() + requiredPlan.slice(1)} plan to unlock {feature.toLowerCase()}.
       </p>

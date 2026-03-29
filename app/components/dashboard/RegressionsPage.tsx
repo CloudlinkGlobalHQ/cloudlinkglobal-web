@@ -17,11 +17,11 @@ function timeAgo(iso: string | null) {
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
-    open:         'bg-red-50 text-red-700 border-red-200',
-    acknowledged: 'bg-yellow-50 text-yellow-700 border-yellow-200',
-    resolved:     'bg-green-50 text-green-700 border-green-200',
+    open:         'bg-red-900/40 text-red-300 border-red-700/50',
+    acknowledged: 'bg-yellow-900/40 text-yellow-300 border-yellow-700/50',
+    resolved:     'bg-green-900/40 text-green-300 border-green-700/50',
   }
-  const cls = map[status] || 'bg-slate-100 text-slate-600 border-slate-200'
+  const cls = map[status] || 'bg-[#1A2340] text-slate-400 border-[#1E2D4F]'
   return (
     <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wide border ${cls}`}>
       {status}
@@ -33,7 +33,7 @@ function SeverityBar({ pct }: { pct: number }) {
   const color = pct >= 50 ? 'bg-red-500' : pct >= 20 ? 'bg-orange-400' : 'bg-yellow-400'
   return (
     <div className="flex items-center gap-2">
-      <div className="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+      <div className="w-20 h-1.5 bg-[#1A2340] rounded-full overflow-hidden">
         <div className={`h-full ${color} rounded-full`} style={{ width: `${Math.min(pct, 100)}%` }} />
       </div>
       <span className={`text-xs font-semibold ${pct >= 50 ? 'text-red-600' : pct >= 20 ? 'text-orange-500' : 'text-yellow-600'}`}>
@@ -119,7 +119,7 @@ export default function RegressionsPage() {
     <div>
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-3">
             Regressions
             {openCount > 0 && (
               <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{openCount}</span>
@@ -133,16 +133,16 @@ export default function RegressionsPage() {
             className="bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
             {running ? 'Running...' : 'Run detection'}
           </button>
-          <button onClick={() => load()} className="rounded-xl border border-slate-200 px-3.5 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Refresh</button>
+          <button onClick={() => load()} className="rounded-xl border border-[#1E2D4F] px-3.5 py-2 text-sm font-medium text-slate-300 transition hover:bg-[#141C33]">Refresh</button>
         </div>
       </div>
 
       {/* Filter tabs */}
-      <div className="flex gap-1 mb-6 bg-slate-100 p-1 rounded-lg w-fit">
+      <div className="flex gap-1 mb-6 bg-[#0F1629] p-1 rounded-lg w-fit border border-[#1E2D4F]">
         {FILTERS.map(f => (
           <button key={f} onClick={() => setFilter(f)}
             className={`px-4 py-1.5 text-sm font-medium rounded-md transition capitalize ${
-              filter === f ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+              filter === f ? 'bg-[#141C33] text-slate-100 shadow-sm' : 'text-slate-400 hover:text-slate-200'
             }`}>
             {f}
           </button>
@@ -152,7 +152,7 @@ export default function RegressionsPage() {
       {loading ? (
         <div className="flex items-center justify-center py-16 text-slate-400 text-sm">Loading…</div>
       ) : regressions.length === 0 ? (
-        <div className="rounded-[24px] border border-slate-200 bg-white p-12 text-center shadow-sm">
+        <div className="rounded-[24px] border border-[#1E2D4F] bg-[#0F1629] p-12 text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-50">
             <div className="h-2.5 w-2.5 rounded-full bg-green-500" />
           </div>
@@ -169,15 +169,15 @@ export default function RegressionsPage() {
         <div className="space-y-4">
           {regressions.map((r: any) => (
             <div key={r.regression_id}
-              className={`rounded-[24px] border bg-white p-5 shadow-sm ${r.status === 'open' ? 'border-red-200' : 'border-slate-200'}`}>
+              className={`rounded-[24px] border bg-[#0F1629] p-5 ${r.status === 'open' ? 'border-red-700/50' : 'border-[#1E2D4F]'}`}>
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   {/* Header row */}
                   <div className="flex items-center gap-3 mb-2 flex-wrap">
                     <StatusBadge status={r.status} />
-                    <span className="font-semibold text-slate-800 text-sm">{r.service}</span>
+                    <span className="font-semibold text-slate-100 text-sm">{r.service}</span>
                     {r.environment && (
-                      <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded">{r.environment}</span>
+                      <span className="text-xs bg-[#1A2340] text-slate-300 px-2 py-0.5 rounded">{r.environment}</span>
                     )}
                     <SeverityBar pct={r.pct_change ?? 0} />
                   </div>
@@ -202,7 +202,7 @@ export default function RegressionsPage() {
                   {r.deploy_id && (
                     <div className="flex items-center gap-2 text-xs text-slate-500">
                       <span>Deploy:</span>
-                      {r.version && <code className="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded">{r.version.slice(0, 8)}</code>}
+                      {r.version && <code className="bg-[#1A2340] text-slate-300 px-1.5 py-0.5 rounded">{r.version.slice(0, 8)}</code>}
                       <span>{timeAgo(r.deployed_at)}</span>
                       {r.source && <span className="text-slate-400">via {r.source}</span>}
                     </div>
@@ -216,7 +216,7 @@ export default function RegressionsPage() {
                       Load deploy risk context
                     </button>
                     {risk[r.service] && (
-                      <div className="mt-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-xs text-slate-600">
+                      <div className="mt-2 rounded-lg bg-[#141C33] border border-[#1E2D4F] px-3 py-2 text-xs text-slate-400">
                         <span className="font-semibold text-slate-700">Deploy risk:</span> {risk[r.service].score}/100 ({risk[r.service].level})
                         <p className="mt-1 text-slate-500">{risk[r.service].recommendation}</p>
                       </div>

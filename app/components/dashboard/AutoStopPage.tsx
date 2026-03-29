@@ -67,7 +67,7 @@ function Badge({ label, color }: { label: string; color: string }) {
     green:  'bg-green-50 text-green-700 ring-green-200',
     red:    'bg-red-50 text-red-700 ring-red-200',
     yellow: 'bg-yellow-50 text-yellow-700 ring-yellow-200',
-    slate:  'bg-slate-100 text-slate-600 ring-slate-200',
+    slate:  'bg-[#1A2340] text-slate-400 ring-[#1E2D4F]',
     blue:   'bg-blue-50 text-blue-700 ring-blue-200',
   }
   return (
@@ -139,8 +139,8 @@ function RuleModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6">
-        <h2 className="text-lg font-bold text-slate-900 mb-5">
+      <div className="bg-[#0F1629] rounded-2xl border border-[#1E2D4F] shadow-2xl w-full max-w-lg mx-4 p-6">
+        <h2 className="text-lg font-bold text-slate-100 mb-5">
           {initial ? 'Edit rule' : 'New AutoStop rule'}
         </h2>
 
@@ -149,7 +149,7 @@ function RuleModal({
           <div>
             <label className="block text-xs font-semibold text-slate-500 mb-1">Rule name</label>
             <input
-              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:border-green-500"
+              className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:border-green-500"
               placeholder="Stop idle dev instances"
               value={form.name}
               onChange={e => set('name', e.target.value)}
@@ -162,7 +162,7 @@ function RuleModal({
               Environment tag <span className="text-slate-400 font-normal">(AWS "Environment" tag value, or * for all)</span>
             </label>
             <input
-              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:border-green-500"
+              className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:border-green-500"
               placeholder="dev, staging, or *"
               value={form.environment_tag}
               onChange={e => set('environment_tag', e.target.value)}
@@ -177,7 +177,7 @@ function RuleModal({
               </label>
               <input
                 type="number" min={0} max={100} step={0.5}
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:border-green-500"
+                className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:border-green-500"
                 value={form.idle_threshold_pct}
                 onChange={e => set('idle_threshold_pct', e.target.value)}
               />
@@ -188,7 +188,7 @@ function RuleModal({
               </label>
               <input
                 type="number" min={1} max={168}
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:border-green-500"
+                className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:border-green-500"
                 value={form.idle_lookback_hours}
                 onChange={e => set('idle_lookback_hours', e.target.value)}
               />
@@ -203,7 +203,7 @@ function RuleModal({
               </label>
               <input
                 type="time"
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:border-green-500"
+                className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:border-green-500"
                 value={form.schedule_stop || ''}
                 onChange={e => set('schedule_stop', e.target.value)}
               />
@@ -214,7 +214,7 @@ function RuleModal({
               </label>
               <input
                 type="time"
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:border-green-500"
+                className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:border-green-500"
                 value={form.schedule_start || ''}
                 onChange={e => set('schedule_start', e.target.value)}
               />
@@ -227,7 +227,7 @@ function RuleModal({
               onClick={() => set('enabled', !form.enabled)}
               className={`relative w-10 h-5 rounded-full transition-colors ${form.enabled ? 'bg-green-500' : 'bg-slate-300'}`}
             >
-              <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${form.enabled ? 'translate-x-5' : ''}`} />
+              <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-[#0F1629] shadow transition-transform ${form.enabled ? 'translate-x-5' : ''}`} />
             </div>
             <span className="text-sm text-slate-700">Rule enabled</span>
           </label>
@@ -236,7 +236,7 @@ function RuleModal({
         {err && <p className="mt-3 text-sm text-red-500">{err}</p>}
 
         <div className="mt-6 flex justify-end gap-3">
-          <button onClick={onClose} className="px-4 py-2 text-sm text-slate-600 hover:text-slate-900 transition">Cancel</button>
+          <button onClick={onClose} className="px-4 py-2 text-sm text-slate-400 hover:text-slate-100 transition">Cancel</button>
           <button
             onClick={submit}
             disabled={saving}
@@ -358,7 +358,7 @@ export default function AutoStopPage() {
     )
   }
 
-  const runLabel = { idle: '▶ Run now', running: '⟳ Running…', done: '✓ Done', error: '✕ Error' }[runState]
+  const runLabel = { idle: 'Run now', running: 'Running…', done: '✓ Done', error: '✕ Error' }[runState]
   const totalSavings = savings?.total_savings_usd ?? 0
   const monthlySavings = totalSavings * 24 * 30
 
@@ -368,7 +368,7 @@ export default function AutoStopPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">AutoStopping</h1>
+          <h1 className="text-2xl font-bold text-slate-100">AutoStopping</h1>
           <p className="text-sm text-slate-500 mt-0.5">
             Automatically stop idle non-prod resources. Save 70–90% on dev/staging costs.
           </p>
@@ -400,7 +400,7 @@ export default function AutoStopPage() {
           { label: 'Est. hourly savings', value: `$${totalSavings.toFixed(2)}`, color: 'text-green-700', sub: 'from stopped resources' },
           { label: 'Est. monthly savings', value: `$${monthlySavings.toFixed(0)}`, color: 'text-green-700', sub: 'if sustained' },
         ].map(({ label, value, color, sub }) => (
-          <div key={label} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+          <div key={label} className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-4">
             <p className="text-xs text-slate-500 mb-1">{label}</p>
             <p className={`text-2xl font-bold ${color}`}>{value}</p>
             <p className="text-xs text-slate-400 mt-0.5">{sub}</p>
@@ -409,9 +409,9 @@ export default function AutoStopPage() {
       </div>
 
       {/* Rules */}
-      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-          <h2 className="font-semibold text-slate-900">AutoStop rules</h2>
+      <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl overflow-hidden">
+        <div className="px-5 py-4 border-b border-[#1E2D4F]/50 flex items-center justify-between">
+          <h2 className="font-semibold text-slate-100">AutoStop rules</h2>
           <span className="text-xs text-slate-400">{rules.length} rule{rules.length !== 1 ? 's' : ''}</span>
         </div>
         {rules.length === 0 ? (
@@ -426,7 +426,7 @@ export default function AutoStopPage() {
           </div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
+            <thead className="bg-[#141C33] text-xs text-slate-500 uppercase tracking-wide">
               <tr>
                 <th className="px-5 py-3 text-left">Name</th>
                 <th className="px-5 py-3 text-left">Environment</th>
@@ -438,8 +438,8 @@ export default function AutoStopPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {rules.map(rule => (
-                <tr key={rule.rule_id} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-5 py-3 font-medium text-slate-800">{rule.name}</td>
+                <tr key={rule.rule_id} className="hover:bg-[#141C33] transition-colors">
+                  <td className="px-5 py-3 font-medium text-slate-200">{rule.name}</td>
                   <td className="px-5 py-3">
                     <Badge
                       label={rule.environment_tag === '*' ? 'All envs' : rule.environment_tag}
@@ -463,7 +463,7 @@ export default function AutoStopPage() {
                     <div className="flex justify-end gap-2">
                       <button
                         onClick={() => setModal(rule)}
-                        className="text-xs text-slate-500 hover:text-slate-800 px-2 py-1 rounded hover:bg-slate-100 transition"
+                        className="text-xs text-slate-500 hover:text-slate-200 px-2 py-1 rounded hover:bg-[#141C33] transition"
                       >
                         Edit
                       </button>
@@ -484,16 +484,16 @@ export default function AutoStopPage() {
 
       {/* Idle resources */}
       {idleResources.length > 0 && (
-        <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+        <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl overflow-hidden">
+          <div className="px-5 py-4 border-b border-[#1E2D4F]/50 flex items-center justify-between">
             <div>
-              <h2 className="font-semibold text-slate-900">Idle resources</h2>
+              <h2 className="font-semibold text-slate-100">Idle resources</h2>
               <p className="text-xs text-slate-400 mt-0.5">These resources are idle now and can be stopped</p>
             </div>
             <Badge label={`${idleResources.length} idle`} color="yellow" />
           </div>
           <table className="w-full text-sm">
-            <thead className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
+            <thead className="bg-[#141C33] text-xs text-slate-500 uppercase tracking-wide">
               <tr>
                 <th className="px-5 py-3 text-left">Resource</th>
                 <th className="px-5 py-3 text-left">Type</th>
@@ -507,7 +507,7 @@ export default function AutoStopPage() {
                 const p = r.payload || {}
                 const state = actionStates[r.resource_id]
                 return (
-                  <tr key={r.resource_id} className="hover:bg-slate-50 transition-colors">
+                  <tr key={r.resource_id} className="hover:bg-[#141C33] transition-colors">
                     <td className="px-5 py-3">
                       <div className="font-mono text-xs text-slate-700">{r.resource_id}</div>
                       {p.name && p.name !== r.resource_id && (
@@ -530,14 +530,14 @@ export default function AutoStopPage() {
                           disabled={!!state}
                           className="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg font-medium transition disabled:opacity-60"
                         >
-                          {state === 'stopping' ? '⟳ Stopping…' : '⏹ Stop'}
+                          {state === 'stopping' ? 'Stopping…' : 'Stop'}
                         </button>
                         <button
                           onClick={() => handleStart(r)}
                           disabled={!!state}
                           className="text-xs bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1.5 rounded-lg font-medium transition disabled:opacity-60"
                         >
-                          {state === 'starting' ? '⟳ Starting…' : '▶ Start'}
+                          {state === 'starting' ? 'Starting…' : 'Start'}
                         </button>
                       </div>
                     </td>
@@ -550,16 +550,16 @@ export default function AutoStopPage() {
       )}
 
       {/* Event log */}
-      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-slate-100">
-          <h2 className="font-semibold text-slate-900">AutoStop history</h2>
+      <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl overflow-hidden">
+        <div className="px-5 py-4 border-b border-[#1E2D4F]/50">
+          <h2 className="font-semibold text-slate-100">AutoStop history</h2>
           <p className="text-xs text-slate-400 mt-0.5">Last 50 stop/start events</p>
         </div>
         {events.length === 0 ? (
           <p className="px-5 py-10 text-center text-sm text-slate-400">No events yet — run an evaluation to get started.</p>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
+            <thead className="bg-[#141C33] text-xs text-slate-500 uppercase tracking-wide">
               <tr>
                 <th className="px-5 py-3 text-left">Resource</th>
                 <th className="px-5 py-3 text-left">Action</th>
@@ -570,7 +570,7 @@ export default function AutoStopPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {events.map(ev => (
-                <tr key={ev.event_id} className="hover:bg-slate-50 transition-colors">
+                <tr key={ev.event_id} className="hover:bg-[#141C33] transition-colors">
                   <td className="px-5 py-3 font-mono text-xs text-slate-700">{ev.resource_id}</td>
                   <td className="px-5 py-3">
                     <Badge

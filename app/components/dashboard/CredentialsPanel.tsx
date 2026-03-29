@@ -42,13 +42,13 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
     const identity = res?.identity || {}
     if (identity.provider === 'gcp' || identity.project_id || identity.accessible_projects) {
       const projects = identity.accessible_projects?.join(', ') || identity.project_id || 'verified'
-      return `✅ GCP credential verified!\nProjects: ${projects}`
+      return `GCP credential verified!\nProjects: ${projects}`
     }
     if (identity.provider === 'azure' || identity.subscription_id || identity.subscription_ids) {
       const subscriptions = identity.subscription_ids?.join(', ') || identity.subscription_id || 'verified'
-      return `✅ Azure credential verified!\nSubscriptions: ${subscriptions}`
+      return `Azure credential verified!\nSubscriptions: ${subscriptions}`
     }
-    return `✅ AWS credential verified!\nAccount: ${identity?.account || '—'}\nARN: ${identity?.arn || '—'}`
+    return `AWS credential verified!\nAccount: ${identity?.account || '—'}\nARN: ${identity?.arn || '—'}`
   }
 
   const handleAdd = async () => {
@@ -98,7 +98,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
       alert(formatVerifySuccess(res))
       load()
      
-    } catch (e: any) { alert(`❌ Verification failed: ${e.message}`) }
+    } catch (e: any) { alert(`Verification failed: ${e.message}`) }
     setBusy(b => ({ ...b, [id]: null }))
   }
 
@@ -137,7 +137,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Credentials</h1>
+          <h1 className="text-2xl font-bold text-slate-100">Credentials</h1>
           <p className="text-slate-500 text-sm mt-1">Cloud credentials used to scan and remediate infrastructure</p>
         </div>
         <button onClick={() => setShowForm(s => !s)} className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
@@ -149,7 +149,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
       {msg && <p className="text-sm text-green-600 mb-4">{msg}</p>}
 
       {showForm && (
-        <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6">
+        <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-6 mb-6">
           <div className="flex gap-1 border-b border-slate-200 mb-6">
             {CLOUD_TABS.map(t => (
               <button key={t} onClick={() => setCloudTab(t)}
@@ -159,7 +159,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
 
           {cloudTab === 'AWS' && (
             <>
-              <h2 className="font-semibold text-slate-800 mb-1">Connect AWS Account</h2>
+              <h2 className="font-semibold text-slate-100 mb-1">Connect AWS Account</h2>
               <p className="text-xs text-slate-500 mb-4">
                 Cloudlink uses a read-only IAM Role — no credentials are stored, and you can revoke access instantly.
               </p>
@@ -175,7 +175,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
                     <p className="text-slate-500 mb-3">Download the CloudFormation template, then deploy it in your AWS Console. It creates a read-only role that Cloudlink can assume — nothing else. Takes about 60 seconds.</p>
                     <div className="flex gap-2 flex-wrap">
                       <a href={`${getBase()}/setup/cloudformation-template`} download="cloudlink-role.yaml" className="inline-flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition">↓ Download cloudlink-role.yaml</a>
-                      <a href="https://console.aws.amazon.com/cloudformation/home#/stacks/create" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 border border-slate-300 text-slate-600 hover:bg-slate-100 text-xs font-medium px-3 py-1.5 rounded-lg transition">Open CloudFormation Console ↗</a>
+                      <a href="https://console.aws.amazon.com/cloudformation/home#/stacks/create" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 border border-[#1E2D4F] text-slate-400 hover:bg-[#141C33] text-xs font-medium px-3 py-1.5 rounded-lg transition">Open CloudFormation Console ↗</a>
                     </div>
                     <p className="mt-3 text-slate-500">Step 2 — Copy the <code className="bg-green-100 px-1 rounded font-mono">RoleArn</code> from the CloudFormation Outputs tab and paste it above.</p>
                   </div>
@@ -185,7 +185,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
               {awsAuthTab === 'Access Key' && (
                 <>
                   <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 text-xs text-red-800">
-                    <p className="font-semibold mb-1">⚠️ Not recommended for production</p>
+                    <p className="font-semibold mb-1">Warning: Not recommended for production</p>
                     <p>Access keys are long-lived credentials. If exposed, they grant permanent access to your AWS account. Use IAM Role assumption instead — it uses short-lived tokens and is the industry standard.</p>
                     <button onClick={() => setAwsAuthTab('IAM Role')} className="mt-2 underline text-red-700 hover:text-red-900">Switch to IAM Role (recommended)</button>
                   </div>
@@ -212,7 +212,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
 
           {cloudTab === 'GCP' && (
             <>
-              <h2 className="font-semibold text-slate-800 mb-4">Register GCP Service Account</h2>
+              <h2 className="font-semibold text-slate-100 mb-4">Register GCP Service Account</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div><label className="block text-xs font-medium text-slate-600 mb-1">Label</label><input value={gcpForm.label} onChange={e => setGcpForm(f => ({ ...f, label: e.target.value }))} placeholder="e.g. GCP Production" className={inp} /></div>
                 <div><label className="block text-xs font-medium text-slate-600 mb-1">Project IDs</label><input value={gcpForm.project_ids} onChange={e => setGcpForm(f => ({ ...f, project_ids: e.target.value }))} placeholder="project-a, project-b" className={inp} /></div>
@@ -226,7 +226,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
 
           {cloudTab === 'Azure' && (
             <>
-              <h2 className="font-semibold text-slate-800 mb-4">Register Azure Service Principal</h2>
+              <h2 className="font-semibold text-slate-100 mb-4">Register Azure Service Principal</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div><label className="block text-xs font-medium text-slate-600 mb-1">Label</label><input value={azureForm.label} onChange={e => setAzureForm(f => ({ ...f, label: e.target.value }))} placeholder="e.g. Azure Production" className={inp} /></div>
                 <div><label className="block text-xs font-medium text-slate-600 mb-1">Tenant ID *</label><input value={azureForm.tenant_id_az} onChange={e => setAzureForm(f => ({ ...f, tenant_id_az: e.target.value }))} placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" className={`${inp} font-mono`} /></div>
@@ -246,21 +246,21 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] overflow-hidden">
         {loading ? (
           <div className="p-10 text-center text-slate-400 text-sm">Loading…</div>
         ) : creds.length === 0 ? (
           <div className="p-10 text-center text-slate-400 text-sm">No credentials yet. Add one above to connect your cloud account.</div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-slate-50 border-b border-slate-200">
+            <thead className="bg-[#141C33] border-b border-[#1E2D4F]">
               <tr>{['Label','Cloud','Type','Added','Last Verified','Actions'].map(h => <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">{h}</th>)}</tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {creds.map(c => (
-                <tr key={c.credential_id} className="hover:bg-slate-50">
+                <tr key={c.credential_id} className="hover:bg-[#141C33]">
                   <td className="px-4 py-3 font-medium text-slate-700">{c.label || '—'}</td>
-                  <td className="px-4 py-3"><span className={`text-xs border px-2 py-0.5 rounded font-medium ${CLOUD_COLORS[c.cloud] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>{c.cloud?.toUpperCase()}</span></td>
+                  <td className="px-4 py-3"><span className={`text-xs border px-2 py-0.5 rounded font-medium ${CLOUD_COLORS[c.cloud] || 'bg-[#141C33] text-slate-400 border-[#1E2D4F]'}`}>{c.cloud?.toUpperCase()}</span></td>
                   <td className="px-4 py-3"><span className="bg-green-50 text-green-700 px-2 py-0.5 rounded text-xs font-medium">{c.credential_type}</span></td>
                   <td className="px-4 py-3 text-xs text-slate-400">{new Date(c.created_at).toLocaleDateString()}</td>
                   <td className="px-4 py-3 text-xs">
@@ -270,8 +270,8 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
                     <div className="flex gap-1.5 flex-wrap">
                       {(c.credential_type === 'iam_role' || c.credential_type === 'access_key' || c.credential_type === 'service_account_json' || c.credential_type === 'client_secret') && (
                         <>
-                          <button disabled={!!busy[c.credential_id]} onClick={() => handleVerify(c.credential_id)} className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs rounded-lg disabled:opacity-50 transition">{busy[c.credential_id] === 'verify' ? '…' : 'Verify'}</button>
-                          <button disabled={!!busy[c.credential_id]} onClick={() => handleScan(c.credential_id)} className="px-2 py-1 bg-green-50 hover:bg-green-100 text-green-700 text-xs rounded-lg disabled:opacity-50 transition">{busy[c.credential_id] === 'scan' ? '⟳' : 'Scan'}</button>
+                          <button disabled={!!busy[c.credential_id]} onClick={() => handleVerify(c.credential_id)} className="px-2 py-1 bg-[#1A2340] hover:bg-[#1E2D4F] text-slate-300 text-xs rounded-lg disabled:opacity-50 transition">{busy[c.credential_id] === 'verify' ? '…' : 'Verify'}</button>
+                          <button disabled={!!busy[c.credential_id]} onClick={() => handleScan(c.credential_id)} className="px-2 py-1 bg-green-50 hover:bg-green-100 text-green-700 text-xs rounded-lg disabled:opacity-50 transition">{busy[c.credential_id] === 'scan' ? '…' : 'Scan'}</button>
                         </>
                       )}
                       <button disabled={!!busy[c.credential_id]} onClick={() => handleDelete(c.credential_id)} className="px-2 py-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs rounded-lg disabled:opacity-50 transition">Delete</button>

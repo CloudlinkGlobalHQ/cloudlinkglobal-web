@@ -36,7 +36,7 @@ interface RiData {
 const CONFIDENCE_STYLES = {
   high: 'bg-green-100 text-green-700',
   medium: 'bg-yellow-100 text-yellow-700',
-  low: 'bg-slate-100 text-slate-500',
+  low: 'bg-[#1A2340] text-slate-400',
 }
 
 function fmt(n: number) {
@@ -48,7 +48,7 @@ function CpuBar({ pct }: { pct: number }) {
   const color = pct > 20 ? 'bg-green-500' : pct > 5 ? 'bg-yellow-500' : 'bg-red-400'
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+      <div className="flex-1 h-1.5 bg-[#1A2340] rounded-full overflow-hidden">
         <div className={`h-full rounded-full ${color}`} style={{ width: `${Math.min(pct, 100)}%` }} />
       </div>
       <span className="text-xs text-slate-500 w-10 text-right">{pct.toFixed(0)}%</span>
@@ -106,7 +106,7 @@ export default function RiRecommendationsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Reserved Instance Recommendations</h1>
+          <h1 className="text-2xl font-bold text-slate-100">Reserved Instance Recommendations</h1>
           <p className="text-sm text-slate-500 mt-0.5">
             Commit to Reserved Instances for predictable workloads and save up to 57%
           </p>
@@ -126,22 +126,22 @@ export default function RiRecommendationsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-l-4 border-l-green-500 border-slate-200 p-5 shadow-sm">
+        <div className="bg-[#0F1629] rounded-xl border border-l-4 border-l-green-500 border-[#1E2D4F] p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">EC2 Analyzed</p>
-          <p className="text-2xl font-bold text-slate-900 mt-1">{data.ec2_analyzed}</p>
+          <p className="text-2xl font-bold text-slate-100 mt-1">{data.ec2_analyzed}</p>
           <p className="text-xs text-slate-400 mt-1">of {data.ec2_total} total</p>
         </div>
-        <div className="bg-white rounded-xl border border-l-4 border-l-blue-500 border-slate-200 p-5 shadow-sm">
+        <div className="bg-[#0F1629] rounded-xl border border-l-4 border-l-blue-500 border-[#1E2D4F] p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">On-Demand Monthly</p>
-          <p className="text-2xl font-bold text-slate-900 mt-1">{fmt(data.total_monthly_ondemand_usd)}</p>
+          <p className="text-2xl font-bold text-slate-100 mt-1">{fmt(data.total_monthly_ondemand_usd)}</p>
           <p className="text-xs text-slate-400 mt-1">current spend</p>
         </div>
-        <div className="bg-white rounded-xl border border-l-4 border-l-yellow-500 border-slate-200 p-5 shadow-sm">
+        <div className="bg-[#0F1629] rounded-xl border border-l-4 border-l-yellow-500 border-[#1E2D4F] p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Monthly Savings ({view})</p>
           <p className="text-2xl font-bold text-green-600 mt-1">{fmt(data.total_monthly_savings_1yr_usd)}</p>
           <p className="text-xs text-slate-400 mt-1">if all RI committed</p>
         </div>
-        <div className="bg-white rounded-xl border border-l-4 border-l-purple-500 border-slate-200 p-5 shadow-sm">
+        <div className="bg-[#0F1629] rounded-xl border border-l-4 border-l-purple-500 border-[#1E2D4F] p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Annual Savings ({view})</p>
           <p className="text-2xl font-bold text-green-600 mt-1">{fmt(annualSavings)}</p>
           <p className="text-xs text-slate-400 mt-1">if all RI committed</p>
@@ -150,7 +150,7 @@ export default function RiRecommendationsPage() {
 
       {/* No data state */}
       {recs.length === 0 && (
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-10 text-center">
+        <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-10 text-center">
           <p className="text-4xl mb-3">🖥️</p>
           <p className="font-semibold text-slate-700">No EC2 instances found</p>
           <p className="text-sm text-slate-500 mt-1">
@@ -161,15 +161,15 @@ export default function RiRecommendationsPage() {
 
       {/* Recommendations table */}
       {recs.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-            <h2 className="font-semibold text-slate-800">Instance Type Analysis</h2>
+            <h2 className="font-semibold text-slate-100">Instance Type Analysis</h2>
             <span className="text-xs text-slate-400">{recs.length} type(s) with active instances</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide bg-slate-50">
+                <tr className="text-left text-xs font-medium text-slate-500 uppercase tracking-wide bg-[#141C33]">
                   <th className="px-5 py-3">Instance Type</th>
                   <th className="px-5 py-3 text-center">Active</th>
                   <th className="px-5 py-3">Avg CPU</th>
@@ -186,13 +186,13 @@ export default function RiRecommendationsPage() {
                   const annSav = view === '1yr' ? rec.annual_savings_1yr_usd : rec.annual_savings_3yr_usd
                   const discPct = view === '1yr' ? rec.discount_pct_1yr : rec.discount_pct_3yr
                   return (
-                    <tr key={rec.instance_type} className="hover:bg-slate-50">
+                    <tr key={rec.instance_type} className="hover:bg-[#141C33]">
                       <td className="px-5 py-3">
-                        <div className="font-semibold text-slate-800">{rec.instance_type}</div>
+                        <div className="font-semibold text-slate-100">{rec.instance_type}</div>
                         <div className="text-xs text-slate-400">{rec.regions.slice(0, 2).join(', ')}</div>
                       </td>
                       <td className="px-5 py-3 text-center">
-                        <span className="font-bold text-slate-800">{rec.active_count}</span>
+                        <span className="font-bold text-slate-200">{rec.active_count}</span>
                         {rec.idle_count > 0 && (
                           <span className="text-xs text-slate-400 ml-1">({rec.idle_count} idle)</span>
                         )}
@@ -216,10 +216,10 @@ export default function RiRecommendationsPage() {
                   )
                 })}
               </tbody>
-              <tfoot className="bg-slate-50 border-t-2 border-slate-200">
+              <tfoot className="bg-[#141C33] border-t-2 border-[#1E2D4F]">
                 <tr>
                   <td colSpan={4} className="px-5 py-3 font-semibold text-slate-700">Total</td>
-                  <td className="px-5 py-3 text-right font-mono font-bold text-slate-800">
+                  <td className="px-5 py-3 text-right font-mono font-bold text-slate-200">
                     {fmt(data.total_monthly_ondemand_usd)}
                   </td>
                   <td className="px-5 py-3" />

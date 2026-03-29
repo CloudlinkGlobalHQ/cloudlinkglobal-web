@@ -50,38 +50,38 @@ export default function ScansHistory() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Scan History</h1>
+          <h1 className="text-2xl font-bold text-slate-100">Scan History</h1>
           <p className="text-slate-500 text-sm mt-1">Every time Cloudlink scanned your cloud accounts</p>
         </div>
         <div className="flex items-center gap-3">
           {msg && <span className="text-sm text-green-600">{msg}</span>}
           <button onClick={handleScan} disabled={scanning} className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
-            {scanning ? '⟳ Scanning…' : '▶ Scan now'}
+            {scanning ? 'Scanning…' : '▶ Scan now'}
           </button>
-          <button onClick={load} className="text-sm text-green-600 hover:underline">↻ Refresh</button>
+          <button onClick={load} className="text-sm text-green-600 hover:underline">Refresh</button>
         </div>
       </div>
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] overflow-hidden">
         {loading ? (
           <div className="p-10 text-center text-slate-400 text-sm">Loading…</div>
         ) : scans.length === 0 ? (
           <div className="p-10 text-center text-slate-400 text-sm">No scans yet. Add a credential and click Scan now.</div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-slate-50 border-b border-slate-200">
+            <thead className="bg-[#141C33] border-b border-[#1E2D4F]">
               <tr>{['Scan ID','Credential','Regions','Started','Duration','Status','Events','Actions Queued'].map(h => <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">{h}</th>)}</tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {scans.map(s => (
-                <tr key={s.scan_id} className="hover:bg-slate-50">
+                <tr key={s.scan_id} className="hover:bg-[#141C33]">
                   <td className="px-4 py-3 font-mono text-xs text-slate-400">{s.scan_id?.slice(0,8)}…</td>
                   <td className="px-4 py-3 font-medium text-slate-700">{s.credential_label || s.credential_id?.slice(0,8) || '—'}</td>
                   <td className="px-4 py-3 text-xs text-slate-500">{(s.regions || []).join(', ') || '—'}</td>
                   <td className="px-4 py-3 text-xs text-slate-500">{fmt(s.started_at)}</td>
                   <td className="px-4 py-3 text-xs text-slate-500">{duration(s.started_at, s.finished_at)}</td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLES[s.status] || 'bg-slate-100 text-slate-600'}`}>{s.status}</span>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLES[s.status] || 'bg-[#1A2340] text-slate-600'}`}>{s.status}</span>
                     {s.error && <p className="text-xs text-red-500 mt-1 max-w-xs truncate">{s.error}</p>}
                   </td>
                   <td className="px-4 py-3 text-center text-slate-700 font-medium">{s.events_found ?? 0}</td>

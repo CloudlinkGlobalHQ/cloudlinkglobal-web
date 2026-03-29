@@ -47,11 +47,11 @@ export default function SavingsWidget() {
 
   if (loading) {
     return (
-      <div className="mb-6 rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm animate-pulse">
-        <div className="h-4 bg-slate-100 rounded w-48 mb-4" />
+      <div className="mb-6 rounded-[24px] border border-[#1E2D4F] bg-[#0F1629] p-5 animate-pulse">
+        <div className="h-4 bg-[#1A2340] rounded w-48 mb-4" />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-20 bg-slate-100 rounded-xl" />
+            <div key={i} className="h-20 bg-[#1A2340] rounded-xl" />
           ))}
         </div>
       </div>
@@ -75,10 +75,10 @@ export default function SavingsWidget() {
   const hasAnySavings = savings_all_time_usd > 0 || savings_this_month_usd > 0
 
   return (
-    <div className="mb-6 rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="mb-6 rounded-[24px] border border-[#1E2D4F] bg-[#0F1629] p-5">
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h2 className="text-sm font-semibold text-slate-900">Cloudlink Savings</h2>
+          <h2 className="text-sm font-semibold text-slate-100">Cloudlink Savings</h2>
           <p className="text-xs text-slate-400 mt-0.5">
             We charge 15% of verified savings. Zero if we save you zero.
           </p>
@@ -92,7 +92,7 @@ export default function SavingsWidget() {
 
       {/* 4 stat tiles */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
-        <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+        <div className="rounded-2xl border border-[#1E2D4F] bg-[#141C33] p-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">Savings this month</p>
           <p className="mt-1.5 text-2xl font-bold text-green-600">{fmt(savings_this_month_usd)}</p>
           {rollover_usd > 0 && (
@@ -100,7 +100,7 @@ export default function SavingsWidget() {
           )}
         </div>
 
-        <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+        <div className="rounded-2xl border border-[#1E2D4F] bg-[#141C33] p-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">Projected fee (15%)</p>
           <p className="mt-1.5 text-2xl font-bold text-slate-700">{fmt(cloudlink_fee_this_month_usd)}</p>
           <p className="text-xs text-slate-400 mt-0.5">
@@ -108,15 +108,15 @@ export default function SavingsWidget() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+        <div className="rounded-2xl border border-[#1E2D4F] bg-[#141C33] p-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">All-time savings</p>
-          <p className="mt-1.5 text-2xl font-bold text-slate-800">{fmt(savings_all_time_usd)}</p>
+          <p className="mt-1.5 text-2xl font-bold text-slate-100">{fmt(savings_all_time_usd)}</p>
           <p className="text-xs text-slate-400 mt-0.5">you keep 85%</p>
         </div>
 
-        <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+        <div className="rounded-2xl border border-[#1E2D4F] bg-[#141C33] p-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">All-time fees paid</p>
-          <p className="mt-1.5 text-2xl font-bold text-slate-800">{fmt(cloudlink_fee_all_time_usd)}</p>
+          <p className="mt-1.5 text-2xl font-bold text-slate-100">{fmt(cloudlink_fee_all_time_usd)}</p>
           <p className="text-xs text-slate-400 mt-0.5">total Cloudlink commission</p>
         </div>
       </div>
@@ -153,7 +153,7 @@ export default function SavingsWidget() {
               return (
                 <div key={type} className="flex items-center gap-3">
                   <span className="text-xs text-slate-600 w-44 shrink-0">{SAVING_TYPE_LABELS[type] || type}</span>
-                  <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="flex-1 h-1.5 bg-[#1A2340] rounded-full overflow-hidden">
                     <div className="h-full bg-green-400 rounded-full" style={{ width: `${pct}%` }} />
                   </div>
                   <span className="text-xs font-medium text-slate-700 w-20 text-right">{fmt(amount as number)}</span>
