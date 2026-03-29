@@ -67,6 +67,10 @@ export async function POST(_req: Request) {
     })
 
     const subscriptionItemId = subscription.items.data[0]?.id
+    if (!subscriptionItemId) {
+      console.error('[stripe/onboard] Subscription created but no items found:', subscription.id)
+      return NextResponse.json({ error: 'Subscription setup incomplete — no billing item' }, { status: 500 })
+    }
 
     // 3. Sync to backend
     if (BACKEND_SYNC_SECRET) {

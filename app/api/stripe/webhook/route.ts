@@ -62,13 +62,23 @@ function planFromPriceId(priceId: string): string {
   if (priceId === process.env.STRIPE_STARTER_PRICE_ID) return 'starter'
   if (priceId === process.env.STRIPE_GROWTH_PRICE_ID) return 'growth'
   if (priceId === process.env.STRIPE_METERED_PRICE_ID) return 'performance'
+  console.error(`[stripe/webhook] Unrecognised price ID "${priceId}" — check STRIPE_*_PRICE_ID env vars`)
   return 'unknown'
 }
 
 export async function POST(req: Request) {
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+  if (!webhookSecret) {
+    console.error('[stripe/webhook] STRIPE_WEBHOOK_SECRET is not configured')
+    return NextResponse.json({ error: 'Webhook not configured' }, { status: 503 })
+  }
+
+  const sig = req.headers.get('stripe-signature')
+  if (!sig) {
+    return NextResponse.json({ error: 'Missing stripe-signature header' }, { status: 400 })
+  }
+
   const body = await req.text()
-  const sig = req.headers.get('stripe-signature')!
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || ''
 
   let event: Stripe.Event
   try {
