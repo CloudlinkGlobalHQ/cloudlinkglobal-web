@@ -120,8 +120,8 @@ function CloudlinkLogo() {
     <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
       <defs>
         <linearGradient id="cl-docs-logo" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#4F6EF7" />
-          <stop offset="100%" stopColor="#6B8AFA" />
+          <stop offset="0%" stopColor="#10B981" />
+          <stop offset="100%" stopColor="#34D399" />
         </linearGradient>
       </defs>
       <rect width="40" height="40" rx="10" fill="url(#cl-docs-logo)" />
@@ -269,9 +269,9 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
                     fontFamily: 'Inter, sans-serif',
                     fontSize: '13px',
                     fontWeight: isActive ? 500 : 400,
-                    color: isActive ? '#4F6EF7' : '#94A3B8',
+                    color: isActive ? '#10B981' : '#94A3B8',
                     textDecoration: 'none',
-                    borderLeft: isActive ? '2px solid #4F6EF7' : '2px solid transparent',
+                    borderLeft: isActive ? '2px solid #10B981' : '2px solid transparent',
                     transition: 'color 0.15s, border-color 0.15s',
                   }}
                   onMouseEnter={(e) => {
@@ -305,7 +305,7 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
       >
         <Link
           href="/"
-          style={{ color: '#4F6EF7', textDecoration: 'none' }}
+          style={{ color: '#10B981', textDecoration: 'none' }}
           onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.textDecoration = 'underline')}
           onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.textDecoration = 'none')}
         >

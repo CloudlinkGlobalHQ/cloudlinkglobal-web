@@ -28,6 +28,9 @@ export default function Nav() {
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMenuOpen(false); }, [pathname]);
 
+  // Docs pages have their own sidebar — hide the global nav there
+  if (pathname?.startsWith('/docs')) return null;
+
   const isDashboard = pathname?.startsWith("/dashboard");
   if (isDashboard) return null;
 

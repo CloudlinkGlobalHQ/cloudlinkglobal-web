@@ -9,7 +9,7 @@ const colors = {
   sidebar: '#0F1629',
   card: '#141C33',
   border: '#1E2D4F',
-  blue: '#4F6EF7',
+  blue: '#10B981',
   textPrimary: '#F1F5F9',
   textSecondary: '#94A3B8',
   textMuted: '#475569',
@@ -232,7 +232,7 @@ function EndpointRow({
 }) {
   const methodColors: Record<string, string> = {
     GET: '#10B981',
-    POST: colors.blue,
+    POST: '#3B82F6',
     PUT: '#F59E0B',
     DELETE: '#EF4444',
   }
