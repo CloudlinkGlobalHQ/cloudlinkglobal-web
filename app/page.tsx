@@ -223,7 +223,7 @@ function HeroSection() {
                   className="inline-block h-1.5 w-1.5 rounded-full"
                   style={{ background: "#10B981" }}
                 />
-                Now in private beta — join 47 teams
+                Now in private beta — early access open
               </span>
             </motion.div>
 
@@ -297,8 +297,8 @@ function HeroSection() {
             <motion.div variants={fadeUp} className="flex flex-wrap gap-3">
               {[
                 { label: "$2.3M tracked" },
-                { label: "47 teams" },
-                { label: "<2hr detection" },
+                { label: "< 2hr detection" },
+                { label: "Zero upfront cost" },
               ].map((badge) => (
                 <span
                   key={badge.label}
@@ -1040,7 +1040,7 @@ const footerCols = [
   },
   {
     heading: "Company",
-    links: ["About", "Blog", "Careers", "Press", "Contact"],
+    links: ["About", "Customers", "Careers", "Press", "Contact"],
   },
   {
     heading: "Resources",
