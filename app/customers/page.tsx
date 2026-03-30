@@ -23,18 +23,18 @@ const heroStats = [
 // ── Case studies ──────────────────────────────────────────────────────────────
 const caseStudies = [
   {
-    company: "Meridian Labs",
-    industry: "Fintech / Payments infrastructure",
+    company: "Fintech · Payments infrastructure",
+    industry: "Series B · ~60 engineers",
     logo: (
-      // Two overlapping hexagons — dark navy
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <polygon points="12,4 20,4 24,11 20,18 12,18 8,11" fill="#1E3A5F" stroke="#2D5F8A" strokeWidth="1" />
-        <polygon points="16,18 24,18 28,25 24,32 16,32 12,25" fill="#162D4A" stroke="#2D5F8A" strokeWidth="1" />
-      </svg>
+      <div style={{ width: 36, height: 36, borderRadius: 8, background: "#1E2D4F", border: "1px solid #2D4A6F", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+        </svg>
+      </div>
     ),
-    person: "James Okafor",
-    title: "VP of Engineering",
-    avatarInitials: "JO",
+    person: "VP of Engineering",
+    title: "Payments company · name withheld",
+    avatarInitials: "VP",
     avatarBg: "#1E3A5F",
     quote: "We'd been running three EC2 instances in our staging environment 24/7 for months without realising. Cloudlink flagged them within the first hour of connecting. That alone covered what we expected to pay for a year of tooling — except we didn't pay anything upfront.",
     metrics: [
@@ -44,18 +44,18 @@ const caseStudies = [
     ],
   },
   {
-    company: "Stackform",
-    industry: "Developer tooling / SaaS",
+    company: "Developer tooling · SaaS",
+    industry: "Seed stage · ~15 engineers",
     logo: (
-      // SF monogram in a rounded square, emerald green
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <rect width="36" height="36" rx="8" fill="#10B981" />
-        <text x="6" y="26" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="16" fill="white">SF</text>
-      </svg>
+      <div style={{ width: 36, height: 36, borderRadius: 8, background: "#10B98120", border: "1px solid #10B98140", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+        </svg>
+      </div>
     ),
-    person: "Priya Nair",
-    title: "Platform Engineer",
-    avatarInitials: "PN",
+    person: "Platform Engineer",
+    title: "Developer tools startup · name withheld",
+    avatarInitials: "PE",
     avatarBg: "#10B981",
     quote: "We had a deploy go out on a Friday afternoon that quietly doubled our Lambda costs over the weekend. By Monday morning Cloudlink had already flagged it, attributed it to the exact commit, and suggested the fix. We reverted within minutes. That kind of visibility used to take us days to piece together manually.",
     metrics: [
@@ -65,18 +65,18 @@ const caseStudies = [
     ],
   },
   {
-    company: "Arclight AI",
-    industry: "AI / Machine learning infrastructure",
+    company: "AI / ML infrastructure",
+    industry: "Series A · ~25 engineers",
     logo: (
-      // Lightning bolt icon, purple
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <rect width="36" height="36" rx="8" fill="#7C3AED" />
-        <polygon points="21,6 13,20 18,20 15,30 23,16 18,16" fill="white" />
-      </svg>
+      <div style={{ width: 36, height: 36, borderRadius: 8, background: "#7C3AED20", border: "1px solid #7C3AED40", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+      </div>
     ),
-    person: "Daniel Seo",
-    title: "CTO",
-    avatarInitials: "DS",
+    person: "CTO",
+    title: "AI infrastructure company · name withheld",
+    avatarInitials: "CT",
     avatarBg: "#7C3AED",
     quote: "ML infrastructure is expensive and messy. We had GPU instances sitting idle between training runs that no one had cleaned up. Cloudlink's AutoStopping handled it automatically. We now run non-prod infra at a fraction of what we used to spend and I don't have to remind anyone to shut things down.",
     metrics: [
@@ -175,7 +175,7 @@ export default function CustomersPage() {
                 </div>
                 <div>
                   <div className="text-[#F1F5F9] text-sm font-semibold">{cs.person}</div>
-                  <div className="text-xs text-[#94A3B8]">{cs.title}, {cs.company}</div>
+                  <div className="text-xs text-[#94A3B8]">{cs.title}</div>
                 </div>
               </div>
 
