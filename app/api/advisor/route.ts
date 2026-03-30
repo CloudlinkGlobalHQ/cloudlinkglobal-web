@@ -124,7 +124,7 @@ export async function POST(req: NextRequest) {
   ;(async () => {
     try {
       const anthropicStream = await client.messages.stream({
-        model: 'claude-opus-4-5',
+        model: 'claude-haiku-4-5',
         max_tokens: 1024,
         system: systemPrompt,
         messages: messages.map((m) => ({
@@ -142,8 +142,20 @@ export async function POST(req: NextRequest) {
         }
       }
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'AI error'
-      await writer.write(encoder.encode(`\n\n_Error: ${msg}_`))
+      let msg = 'Something went wrong. Please try again.'
+      if (err instanceof Error) {
+        const raw = err.message
+        if (raw.includes('credit balance is too low') || raw.includes('insufficient_quota') || raw.includes('billing')) {
+          msg = 'The AI Advisor is temporarily unavailable — the Anthropic account needs credits. Please top up at console.anthropic.com/billing.'
+        } else if (raw.includes('invalid_api_key') || raw.includes('authentication')) {
+          msg = 'AI Advisor configuration error — invalid API key.'
+        } else if (raw.includes('rate_limit')) {
+          msg = 'Too many requests — please wait a moment and try again.'
+        } else if (raw.includes('overloaded')) {
+          msg = 'The AI is currently overloaded. Please try again in a few seconds.'
+        }
+      }
+      await writer.write(encoder.encode(msg))
     } finally {
       await writer.close()
     }
