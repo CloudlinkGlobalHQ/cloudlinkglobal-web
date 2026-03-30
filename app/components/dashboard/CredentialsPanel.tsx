@@ -7,9 +7,9 @@ import { getCredentials, addCredential, verifyCredential, deleteCredential, scan
 
 const CLOUD_TABS = ['AWS', 'GCP', 'Azure']
 const CLOUD_COLORS: Record<string, string> = {
-  aws: 'bg-orange-50 text-orange-700 border-orange-200',
-  gcp: 'bg-blue-50 text-blue-700 border-blue-200',
-  azure: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+  aws: 'bg-orange-500/15 text-orange-400 border-orange-500/30',
+  gcp: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+  azure: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30',
 }
 
 export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: () => void }) {
@@ -170,24 +170,24 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
                   <div><label className="block text-xs font-medium text-slate-600 mb-1">Role ARN *</label><input value={awsRoleForm.role_arn} onChange={e => setAwsRoleForm(f => ({ ...f, role_arn: e.target.value }))} placeholder="arn:aws:iam::123456789012:role/CloudlinkRole" className={`${inp} font-mono`} /></div>
                   <div><label className="block text-xs font-medium text-slate-600 mb-1">External ID <span className="font-normal text-slate-400">(from your Cloudlink onboarding)</span></label><input value={awsRoleForm.external_id} onChange={e => setAwsRoleForm(f => ({ ...f, external_id: e.target.value }))} placeholder="optional" className={inp} /></div>
                   <div><label className="block text-xs font-medium text-slate-600 mb-1">Regions</label><input value={awsRoleForm.regions} onChange={e => setAwsRoleForm(f => ({ ...f, regions: e.target.value }))} placeholder="us-east-1, us-west-2" className={inp} /></div>
-                  <div className="md:col-span-2 bg-green-50 border border-green-200 rounded-lg p-4 text-xs text-slate-600">
-                    <p className="font-medium text-slate-700 mb-2">Step 1 — Deploy the IAM Role into your AWS account</p>
-                    <p className="text-slate-500 mb-3">Download the CloudFormation template, then deploy it in your AWS Console. It creates a read-only role that Cloudlink can assume — nothing else. Takes about 60 seconds.</p>
+                  <div className="md:col-span-2 bg-[#10B981]/10 border border-[#10B981]/30 rounded-lg p-4 text-xs text-[#94A3B8]">
+                    <p className="font-medium text-[#F1F5F9] mb-2">Step 1 — Deploy the IAM Role into your AWS account</p>
+                    <p className="text-[#64748B] mb-3">Download the CloudFormation template, then deploy it in your AWS Console. It creates a read-only role that Cloudlink can assume — nothing else. Takes about 60 seconds.</p>
                     <div className="flex gap-2 flex-wrap">
-                      <a href={`${getBase()}/setup/cloudformation-template`} download="cloudlink-role.yaml" className="inline-flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition">↓ Download cloudlink-role.yaml</a>
-                      <a href="https://console.aws.amazon.com/cloudformation/home#/stacks/create" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 border border-[#1E2D4F] text-slate-400 hover:bg-[#141C33] text-xs font-medium px-3 py-1.5 rounded-lg transition">Open CloudFormation Console ↗</a>
+                      <a href={`${getBase()}/setup/cloudformation-template`} download="cloudlink-role.yaml" className="inline-flex items-center gap-1 bg-[#10B981] hover:bg-[#059669] text-white text-xs font-medium px-3 py-1.5 rounded-lg transition">↓ Download cloudlink-role.yaml</a>
+                      <a href="https://console.aws.amazon.com/cloudformation/home#/stacks/create" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 border border-[#1E2D4F] text-[#94A3B8] hover:bg-[#141C33] text-xs font-medium px-3 py-1.5 rounded-lg transition">Open CloudFormation Console ↗</a>
                     </div>
-                    <p className="mt-3 text-slate-500">Step 2 — Copy the <code className="bg-green-100 px-1 rounded font-mono">RoleArn</code> from the CloudFormation Outputs tab and paste it above.</p>
+                    <p className="mt-3 text-[#64748B]">Step 2 — Copy the <code className="bg-[#141C33] px-1 rounded font-mono text-[#10B981]">RoleArn</code> from the CloudFormation Outputs tab and paste it above.</p>
                   </div>
                 </div>
               )}
 
               {awsAuthTab === 'Access Key' && (
                 <>
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 text-xs text-red-800">
+                  <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-4 text-xs text-red-400">
                     <p className="font-semibold mb-1">Warning: Not recommended for production</p>
                     <p>Access keys are long-lived credentials. If exposed, they grant permanent access to your AWS account. Use IAM Role assumption instead — it uses short-lived tokens and is the industry standard.</p>
-                    <button onClick={() => setAwsAuthTab('IAM Role')} className="mt-2 underline text-red-700 hover:text-red-900">Switch to IAM Role (recommended)</button>
+                    <button onClick={() => setAwsAuthTab('IAM Role')} className="mt-2 underline text-red-400 hover:text-red-300">Switch to IAM Role (recommended)</button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div><label className="block text-xs font-medium text-slate-600 mb-1">Label</label><input value={awsKeyForm.label} onChange={e => setAwsKeyForm(f => ({ ...f, label: e.target.value }))} placeholder="e.g. My AWS Account" className={inp} /></div>
@@ -261,20 +261,20 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
                 <tr key={c.credential_id} className="hover:bg-[#141C33]">
                   <td className="px-4 py-3 font-medium text-slate-700">{c.label || '—'}</td>
                   <td className="px-4 py-3"><span className={`text-xs border px-2 py-0.5 rounded font-medium ${CLOUD_COLORS[c.cloud] || 'bg-[#141C33] text-slate-400 border-[#1E2D4F]'}`}>{c.cloud?.toUpperCase()}</span></td>
-                  <td className="px-4 py-3"><span className="bg-green-50 text-green-700 px-2 py-0.5 rounded text-xs font-medium">{c.credential_type}</span></td>
+                  <td className="px-4 py-3"><span className="bg-[#10B981]/15 text-[#10B981] px-2 py-0.5 rounded text-xs font-medium">{c.credential_type}</span></td>
                   <td className="px-4 py-3 text-xs text-slate-400">{new Date(c.created_at).toLocaleDateString()}</td>
                   <td className="px-4 py-3 text-xs">
-                    {c.last_verified_at ? <span className="text-green-600">✓ {new Date(c.last_verified_at).toLocaleString()}</span> : <span className="text-yellow-600">Never verified</span>}
+                    {c.last_verified_at ? <span className="text-[#10B981]">✓ {new Date(c.last_verified_at).toLocaleString()}</span> : <span className="text-yellow-500">Never verified</span>}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-1.5 flex-wrap">
                       {(c.credential_type === 'iam_role' || c.credential_type === 'access_key' || c.credential_type === 'service_account_json' || c.credential_type === 'client_secret') && (
                         <>
                           <button disabled={!!busy[c.credential_id]} onClick={() => handleVerify(c.credential_id)} className="px-2 py-1 bg-[#1A2340] hover:bg-[#1E2D4F] text-slate-300 text-xs rounded-lg disabled:opacity-50 transition">{busy[c.credential_id] === 'verify' ? '…' : 'Verify'}</button>
-                          <button disabled={!!busy[c.credential_id]} onClick={() => handleScan(c.credential_id)} className="px-2 py-1 bg-green-50 hover:bg-green-100 text-green-700 text-xs rounded-lg disabled:opacity-50 transition">{busy[c.credential_id] === 'scan' ? '…' : 'Scan'}</button>
+                          <button disabled={!!busy[c.credential_id]} onClick={() => handleScan(c.credential_id)} className="px-2 py-1 bg-[#10B981]/15 hover:bg-[#10B981]/25 text-[#10B981] text-xs rounded-lg disabled:opacity-50 transition">{busy[c.credential_id] === 'scan' ? '…' : 'Scan'}</button>
                         </>
                       )}
-                      <button disabled={!!busy[c.credential_id]} onClick={() => handleDelete(c.credential_id)} className="px-2 py-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs rounded-lg disabled:opacity-50 transition">Delete</button>
+                      <button disabled={!!busy[c.credential_id]} onClick={() => handleDelete(c.credential_id)} className="px-2 py-1 bg-red-500/15 hover:bg-red-500/25 text-red-400 text-xs rounded-lg disabled:opacity-50 transition">Delete</button>
                     </div>
                   </td>
                 </tr>

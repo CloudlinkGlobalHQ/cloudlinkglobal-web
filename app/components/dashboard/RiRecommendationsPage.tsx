@@ -238,15 +238,15 @@ export default function RiRecommendationsPage() {
 
       {/* How to act */}
       {recs.length > 0 && (
-        <div className="bg-green-50 border border-green-200 rounded-xl p-5">
-          <h3 className="font-semibold text-green-800 mb-3">How to purchase Reserved Instances</h3>
-          <ol className="space-y-2 text-sm text-green-700">
-            <li className="flex gap-2"><span className="shrink-0 font-bold">1.</span>Go to <strong>AWS Console → EC2 → Reserved Instances → Purchase Reserved Instances</strong></li>
-            <li className="flex gap-2"><span className="shrink-0 font-bold">2.</span>Select the instance type, OS (Linux), and term (1 or 3 year)</li>
-            <li className="flex gap-2"><span className="shrink-0 font-bold">3.</span>Choose <strong>No Upfront</strong> for lowest commitment risk, or <strong>All Upfront</strong> for maximum discount</li>
-            <li className="flex gap-2"><span className="shrink-0 font-bold">4.</span>Consider <strong>Convertible RIs</strong> if you may need to change instance types within the term</li>
+        <div className="bg-[#10B981]/10 border border-[#10B981]/30 rounded-xl p-5">
+          <h3 className="font-semibold text-[#10B981] mb-3">How to purchase Reserved Instances</h3>
+          <ol className="space-y-2 text-sm text-[#94A3B8]">
+            <li className="flex gap-2"><span className="shrink-0 font-bold text-[#F1F5F9]">1.</span>Go to <strong className="text-[#F1F5F9]">AWS Console → EC2 → Reserved Instances → Purchase Reserved Instances</strong></li>
+            <li className="flex gap-2"><span className="shrink-0 font-bold text-[#F1F5F9]">2.</span>Select the instance type, OS (Linux), and term (1 or 3 year)</li>
+            <li className="flex gap-2"><span className="shrink-0 font-bold text-[#F1F5F9]">3.</span>Choose <strong className="text-[#F1F5F9]">No Upfront</strong> for lowest commitment risk, or <strong className="text-[#F1F5F9]">All Upfront</strong> for maximum discount</li>
+            <li className="flex gap-2"><span className="shrink-0 font-bold text-[#F1F5F9]">4.</span>Consider <strong className="text-[#F1F5F9]">Convertible RIs</strong> if you may need to change instance types within the term</li>
           </ol>
-          <p className="text-xs text-green-600 mt-3 italic">{data.note}</p>
+          <p className="text-xs text-[#64748B] mt-3 italic">{data.note}</p>
         </div>
       )}
     </div>

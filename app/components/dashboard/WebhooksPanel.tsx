@@ -62,7 +62,7 @@ function SlackCard() {
           </div>
         </div>
         {saved && (
-          <span className="text-xs font-medium bg-green-50 text-green-700 px-2 py-1 rounded-full">Connected</span>
+          <span className="text-xs font-medium bg-[#10B981]/15 text-[#10B981] px-2 py-1 rounded-full">Connected</span>
         )}
       </div>
 
@@ -209,7 +209,7 @@ export default function WebhooksPanel() {
               {hooks.map((h: any) => (
                 <tr key={h.webhook_id} className="hover:bg-[#141C33]">
                   <td className="px-4 py-3 font-mono text-xs text-slate-700 max-w-xs truncate">{h.url}</td>
-                  <td className="px-4 py-3"><div className="flex flex-wrap gap-1">{(h.events || []).map((ev: string) => <span key={ev} className="text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded font-mono">{ev}</span>)}</div></td>
+                  <td className="px-4 py-3"><div className="flex flex-wrap gap-1">{(h.events || []).map((ev: string) => <span key={ev} className="text-xs bg-[#10B981]/15 text-[#10B981] px-1.5 py-0.5 rounded font-mono">{ev}</span>)}</div></td>
                   <td className="px-4 py-3 text-xs text-slate-400">{h.last_fired_at ? new Date(h.last_fired_at).toLocaleString() : '—'}</td>
                   <td className="px-4 py-3 text-xs">
                     {h.last_status ? <span className={`px-2 py-0.5 rounded-full font-medium ${h.last_status?.startsWith('2') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>{h.last_status}</span> : <span className="text-slate-400">—</span>}

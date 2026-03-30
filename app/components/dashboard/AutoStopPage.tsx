@@ -64,11 +64,11 @@ function fmt(iso: string) {
 
 function Badge({ label, color }: { label: string; color: string }) {
   const cls: Record<string, string> = {
-    green:  'bg-green-50 text-green-700 ring-green-200',
-    red:    'bg-red-50 text-red-700 ring-red-200',
-    yellow: 'bg-yellow-50 text-yellow-700 ring-yellow-200',
+    green:  'bg-[#10B981]/15 text-[#10B981] ring-[#10B981]/30',
+    red:    'bg-red-500/15 text-red-400 ring-red-500/30',
+    yellow: 'bg-yellow-500/15 text-yellow-400 ring-yellow-500/30',
     slate:  'bg-[#1A2340] text-slate-400 ring-[#1E2D4F]',
-    blue:   'bg-blue-50 text-blue-700 ring-blue-200',
+    blue:   'bg-blue-500/15 text-blue-400 ring-blue-500/30',
   }
   return (
     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${cls[color] || cls.slate}`}>
@@ -225,11 +225,11 @@ function RuleModal({
           <label className="flex items-center gap-3 cursor-pointer select-none">
             <div
               onClick={() => set('enabled', !form.enabled)}
-              className={`relative w-10 h-5 rounded-full transition-colors ${form.enabled ? 'bg-green-500' : 'bg-slate-300'}`}
+              className={`relative w-10 h-5 rounded-full transition-colors ${form.enabled ? 'bg-[#10B981]' : 'bg-[#1E2D4F]'}`}
             >
-              <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-[#0F1629] shadow transition-transform ${form.enabled ? 'translate-x-5' : ''}`} />
+              <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-[#F1F5F9] shadow transition-transform ${form.enabled ? 'translate-x-5' : ''}`} />
             </div>
-            <span className="text-sm text-slate-700">Rule enabled</span>
+            <span className="text-sm text-[#94A3B8]">Rule enabled</span>
           </label>
         </div>
 
@@ -535,7 +535,7 @@ export default function AutoStopPage() {
                         <button
                           onClick={() => handleStart(r)}
                           disabled={!!state}
-                          className="text-xs bg-green-50 text-green-700 hover:bg-green-100 px-3 py-1.5 rounded-lg font-medium transition disabled:opacity-60"
+                          className="text-xs bg-[#10B981]/15 text-[#10B981] hover:bg-[#10B981]/25 px-3 py-1.5 rounded-lg font-medium transition disabled:opacity-60"
                         >
                           {state === 'starting' ? 'Starting…' : 'Start'}
                         </button>

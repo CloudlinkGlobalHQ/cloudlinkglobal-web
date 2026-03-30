@@ -13,22 +13,22 @@ const TYPE_ICONS: Record<string, string> = {
   azure_public_ip: 'IP', azure_managed_disk: 'DISK', azure_cost: 'COST',
 }
 const PROVIDER_COLORS: Record<string, string> = {
-  aws: 'bg-orange-50 text-orange-700 border-orange-200',
-  gcp: 'bg-blue-50 text-blue-700 border-blue-200',
-  azure: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+  aws: 'bg-orange-500/15 text-orange-400 border-orange-500/30',
+  gcp: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+  azure: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30',
 }
 const ISSUE_COLORS: Record<string, string> = {
-  publicly_accessible: 'bg-red-100 text-red-700',
-  public_access_not_fully_blocked: 'bg-red-100 text-red-700',
-  no_public_access_block: 'bg-red-100 text-red-700',
-  no_encryption: 'bg-yellow-100 text-yellow-700',
-  versioning_disabled: 'bg-[#1A2340] text-slate-600',
-  no_automated_backups: 'bg-orange-100 text-orange-700',
-  no_backup_configuration: 'bg-orange-100 text-orange-700',
-  unattached: 'bg-orange-100 text-orange-700',
-  unattached_disk: 'bg-orange-100 text-orange-700',
-  https_not_enforced: 'bg-red-100 text-red-700',
-  public_ip_assigned: 'bg-red-100 text-red-700',
+  publicly_accessible: 'bg-red-500/15 text-red-400',
+  public_access_not_fully_blocked: 'bg-red-500/15 text-red-400',
+  no_public_access_block: 'bg-red-500/15 text-red-400',
+  no_encryption: 'bg-yellow-500/15 text-yellow-400',
+  versioning_disabled: 'bg-[#1A2340] text-slate-500',
+  no_automated_backups: 'bg-orange-500/15 text-orange-400',
+  no_backup_configuration: 'bg-orange-500/15 text-orange-400',
+  unattached: 'bg-orange-500/15 text-orange-400',
+  unattached_disk: 'bg-orange-500/15 text-orange-400',
+  https_not_enforced: 'bg-red-500/15 text-red-400',
+  public_ip_assigned: 'bg-red-500/15 text-red-400',
 }
 
 function IssueTag({ issue }: { issue: string }) {

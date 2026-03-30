@@ -30,7 +30,7 @@ interface ForecastData {
 
 const TREND_COLORS = { up: 'text-red-500', down: 'text-green-600', stable: 'text-slate-500' }
 const TREND_ICONS = { up: '↑', down: '↓', stable: '→' }
-const TREND_BG = { up: 'bg-red-50 border-red-200', down: 'bg-green-50 border-green-200', stable: 'bg-[#141C33] border-[#1E2D4F]' }
+const TREND_BG = { up: 'bg-red-500/10 border-red-500/30', down: 'bg-[#10B981]/10 border-[#10B981]/30', stable: 'bg-[#141C33] border-[#1E2D4F]' }
 
 function fmt(n: number) {
   return `$${n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`

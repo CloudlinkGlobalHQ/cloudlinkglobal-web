@@ -61,18 +61,18 @@ export default function ApiKeysPage() {
 
       {/* New key banner */}
       {newKey && (
-        <div className="bg-green-50 border border-green-200 rounded-xl p-5">
+        <div className="bg-[#10B981]/10 border border-[#10B981]/30 rounded-xl p-5">
           <div className="flex items-start gap-3">
-            <span className="text-2xl">🔑</span>
+            <span className="text-2xl text-[#10B981]">↳</span>
             <div className="flex-1">
-              <p className="font-semibold text-green-800 mb-1">API Key Created — Store it now!</p>
-              <p className="text-sm text-green-700 mb-3">This key will not be shown again. Copy it and store it securely.</p>
+              <p className="font-semibold text-[#10B981] mb-1">API Key Created — Store it now!</p>
+              <p className="text-sm text-[#94A3B8] mb-3">This key will not be shown again. Copy it and store it securely.</p>
               <div className="flex items-center gap-2">
                 <code className="flex-1 bg-[#0F1629] border border-green-200 rounded-lg px-3 py-2 text-sm font-mono text-slate-200 break-all">
                   {newKey}
                 </code>
                 <button onClick={() => copy(newKey)}
-                  className={`shrink-0 px-3 py-2 rounded-lg text-sm font-medium transition ${copied ? 'bg-green-600 text-white' : 'bg-[#0F1629] border border-green-300 text-green-700 hover:bg-green-50'}`}>
+                  className={`shrink-0 px-3 py-2 rounded-lg text-sm font-medium transition ${copied ? 'bg-[#10B981] text-white' : 'bg-[#0F1629] border border-[#10B981]/40 text-[#10B981] hover:bg-[#10B981]/10'}`}>
                   {copied ? '✓ Copied' : 'Copy'}
                 </button>
               </div>

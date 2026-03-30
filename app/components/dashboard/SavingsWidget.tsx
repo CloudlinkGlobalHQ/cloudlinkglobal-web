@@ -84,7 +84,7 @@ export default function SavingsWidget() {
           </p>
         </div>
         {pending_billing && (
-          <span className="text-xs font-medium bg-green-50 border border-green-200 text-green-700 px-2.5 py-1 rounded-full">
+          <span className="text-xs font-medium bg-[#10B981]/15 border border-[#10B981]/30 text-[#10B981] px-2.5 py-1 rounded-full">
             Invoice generating this month
           </span>
         )}

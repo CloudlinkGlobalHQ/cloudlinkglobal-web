@@ -24,10 +24,10 @@ interface SpAnalysis {
 }
 
 const RISK_STYLES: Record<string, string> = {
-  low: 'bg-green-50 text-green-700 border-green-200',
-  medium: 'bg-yellow-50 text-yellow-700 border-yellow-200',
-  high: 'bg-red-50 text-red-700 border-red-200',
-  insufficient_data: 'bg-[#141C33] text-slate-400 border-slate-200',
+  low: 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30',
+  medium: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
+  high: 'bg-red-500/15 text-red-400 border-red-500/30',
+  insufficient_data: 'bg-[#141C33] text-slate-400 border-[#1E2D4F]',
 }
 
 function fmt(n: number) { return `$${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` }

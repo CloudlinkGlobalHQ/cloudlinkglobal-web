@@ -153,10 +153,10 @@ export default function RegressionsPage() {
         <div className="flex items-center justify-center py-16 text-slate-400 text-sm">Loading…</div>
       ) : regressions.length === 0 ? (
         <div className="rounded-[24px] border border-[#1E2D4F] bg-[#0F1629] p-12 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-50">
-            <div className="h-2.5 w-2.5 rounded-full bg-green-500" />
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#10B981]/15">
+            <div className="h-2.5 w-2.5 rounded-full bg-[#10B981]" />
           </div>
-          <p className="text-slate-700 font-medium mb-1">
+          <p className="text-[#F1F5F9] font-medium mb-1">
             {filter === 'all' ? 'No regressions detected' : `No ${filter} regressions`}
           </p>
           <p className="text-slate-400 text-sm">
@@ -241,7 +241,7 @@ export default function RegressionsPage() {
                   {r.status !== 'resolved' && (
                     <button onClick={() => handleAction(r.regression_id, 'resolve')}
                       disabled={!!busy[r.regression_id]}
-                      className="text-xs px-3 py-1.5 border border-green-300 text-green-700 hover:bg-green-50 rounded-lg transition disabled:opacity-50">
+                      className="text-xs px-3 py-1.5 border border-[#10B981]/40 text-[#10B981] hover:bg-[#10B981]/10 rounded-lg transition disabled:opacity-50">
                       {busy[r.regression_id] === 'resolve' ? 'Working...' : 'Resolve'}
                     </button>
                   )}
