@@ -124,6 +124,7 @@ function KpiCard({ title, value, sub }: { title: string; value: string; sub?: st
 export default function CostExplorerPage() {
   const [loading, setLoading] = useState(true)
   const [isEmpty, setIsEmpty] = useState(false)
+  const [chartsReady, setChartsReady] = useState(false)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [costSummary, setCostSummary] = useState<any>(null)
@@ -182,6 +183,10 @@ export default function CostExplorerPage() {
       }
     }
     load()
+  }, [])
+
+  useEffect(() => {
+    setChartsReady(true)
   }, [])
 
   if (loading) return <LoadingSkeleton />
@@ -277,7 +282,7 @@ export default function CostExplorerPage() {
           <div className="h-48 flex items-center justify-center text-[#64748B] text-sm">
             Collecting baseline data…
           </div>
-        ) : (
+        ) : chartsReady ? (
           <ResponsiveContainer width="100%" height={220}>
             <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
               <defs>
@@ -311,6 +316,8 @@ export default function CostExplorerPage() {
               />
             </AreaChart>
           </ResponsiveContainer>
+        ) : (
+          <div className="h-[220px] animate-pulse rounded-xl bg-[#1E2D4F]" />
         )}
       </div>
 

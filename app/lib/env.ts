@@ -20,9 +20,9 @@ const ENV_VARS: EnvVar[] = [
   { key: 'STRIPE_WEBHOOK_SECRET', required: true, description: 'Stripe webhook signing secret' },
   { key: 'STRIPE_STARTER_PRICE_ID', required: true, description: 'Stripe Starter plan price ID' },
   { key: 'STRIPE_GROWTH_PRICE_ID', required: true, description: 'Stripe Growth plan price ID' },
-  { key: 'STRIPE_METERED_PRICE_ID', required: true, description: 'Stripe metered (performance) price ID' },
-  // Billing cron
-  { key: 'CRON_SECRET', required: true, description: 'Secret for month-end billing cron' },
+  // Optional billing routes validate these at usage time so login/signup do not fail.
+  { key: 'STRIPE_METERED_PRICE_ID', required: false, description: 'Stripe metered (performance) price ID' },
+  { key: 'CRON_SECRET', required: false, description: 'Secret for month-end billing cron' },
   // Backend
   { key: 'NEXT_PUBLIC_API_URL', required: false, description: 'Cloudlink agents backend URL' },
 ]
@@ -57,6 +57,14 @@ function validateEnv(): void {
 
 validateEnv()
 
+export function requireEnv(key: string, description?: string): string {
+  const value = process.env[key]
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${key}${description ? ` — ${description}` : ''}`)
+  }
+  return value
+}
+
 export const env = {
   apiUrl: process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents-production.up.railway.app',
   clerk: {
@@ -68,7 +76,7 @@ export const env = {
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
     starterPriceId: process.env.STRIPE_STARTER_PRICE_ID!,
     growthPriceId: process.env.STRIPE_GROWTH_PRICE_ID!,
-    meteredPriceId: process.env.STRIPE_METERED_PRICE_ID!,
+    meteredPriceId: process.env.STRIPE_METERED_PRICE_ID,
   },
-  cronSecret: process.env.CRON_SECRET!,
+  cronSecret: process.env.CRON_SECRET,
 } as const

@@ -218,6 +218,7 @@ export default function Overview({ stats: _stats, onRefresh }: { stats: any; onR
   const [loading, setLoading]           = useState(true)
   const [isNewUser, setIsNewUser]       = useState(false)
   const [hoveredPie, setHoveredPie]     = useState<number | null>(null)
+  const [chartsReady, setChartsReady]   = useState(false)
 
   // Data state
   const [statsData, setStatsData]         = useState<any>(null)
@@ -271,6 +272,10 @@ export default function Overview({ stats: _stats, onRefresh }: { stats: any; onR
   useEffect(() => {
     fetchAll()
    
+  }, [])
+
+  useEffect(() => {
+    setChartsReady(true)
   }, [])
 
   const handleRefresh = () => {
@@ -414,7 +419,7 @@ export default function Overview({ stats: _stats, onRefresh }: { stats: any; onR
             <div className="h-[200px] flex items-center justify-center text-[#64748B] text-sm">
               Collecting baseline data…
             </div>
-          ) : (
+          ) : chartsReady ? (
             <ResponsiveContainer width="100%" height={200}>
               <AreaChart data={spendData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
                 <defs>
@@ -448,6 +453,8 @@ export default function Overview({ stats: _stats, onRefresh }: { stats: any; onR
                 />
               </AreaChart>
             </ResponsiveContainer>
+          ) : (
+            <div className="h-[200px] animate-pulse rounded-xl bg-[#1E2D4F]" />
           )}
         </motion.div>
 
@@ -468,7 +475,7 @@ export default function Overview({ stats: _stats, onRefresh }: { stats: any; onR
                 </div>
               </div>
             </div>
-          ) : (
+          ) : chartsReady ? (
             <>
               <ResponsiveContainer width="100%" height={140}>
                 <PieChart>
@@ -509,6 +516,8 @@ export default function Overview({ stats: _stats, onRefresh }: { stats: any; onR
                 ))}
               </div>
             </>
+          ) : (
+            <div className="h-[140px] animate-pulse rounded-full border-4 border-[#1E2D4F]" />
           )}
         </motion.div>
       </div>
@@ -607,7 +616,7 @@ export default function Overview({ stats: _stats, onRefresh }: { stats: any; onR
             <div className="h-[220px] flex items-center justify-center text-sm text-[#64748B]">
               No service cost data yet
             </div>
-          ) : (
+          ) : chartsReady ? (
             <ResponsiveContainer width="100%" height={220}>
               <BarChart
                 data={topServices}
@@ -641,6 +650,8 @@ export default function Overview({ stats: _stats, onRefresh }: { stats: any; onR
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
+          ) : (
+            <div className="h-[220px] animate-pulse rounded-xl bg-[#1E2D4F]" />
           )}
         </motion.div>
 

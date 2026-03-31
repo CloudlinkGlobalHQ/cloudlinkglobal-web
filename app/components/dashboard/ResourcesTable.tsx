@@ -2,6 +2,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { getResources } from '../../lib/api'
 
 const TYPE_ICONS: Record<string, string> = {
@@ -126,25 +127,41 @@ function ResourceDetail({ r }: { r: any }) {
 }
 
 export default function ResourcesTable() {
+  const searchParams = useSearchParams()
   const [resources, setResources] = useState<any[]>([])
   const [loading, setLoading]     = useState(false)
   const [error, setError]         = useState('')
   const [filterType, setFilterType] = useState('all')
   const [search, setSearch]       = useState('')
+  const [providerFilter, setProviderFilter] = useState('all')
 
   const load = async () => {
     setLoading(true)
     setError('')
-    try { const data = await getResources(); setResources(data.items || []) } catch (e: any) { setError(e?.message || 'Something went wrong') }
+    try {
+      const provider = providerFilter !== 'all' ? providerFilter : undefined
+      const data = await getResources(provider)
+      setResources(data.items || [])
+    } catch (e: any) { setError(e?.message || 'Something went wrong') }
     setLoading(false)
   }
 
+  useEffect(() => {
+    const q = searchParams.get('q') || ''
+    const cloud = (searchParams.get('cloud') || '').toLowerCase()
+    setSearch(q)
+    if (cloud === 'aws' || cloud === 'azure' || cloud === 'gcp') setProviderFilter(cloud)
+    else setProviderFilter('all')
+  }, [searchParams])
+
   // eslint-disable-next-line react-hooks/set-state-in-effect
-  useEffect(() => { load() }, [])
+  useEffect(() => { load() }, [providerFilter])
 
   const types = ['all', ...Array.from(new Set(resources.map((r: any) => r.resource_type).filter(Boolean)))]
+  const providers = ['all', ...Array.from(new Set(resources.map((r: any) => r.provider).filter(Boolean)))]
   const visible = resources.filter(r => {
     if (filterType !== 'all' && r.resource_type !== filterType) return false
+    if (providerFilter !== 'all' && r.provider !== providerFilter) return false
     if (search) {
       const q = search.toLowerCase()
       return r.resource_id?.toLowerCase().includes(q) || r.resource_type?.toLowerCase().includes(q) || (r.payload?.name || '').toLowerCase().includes(q)
@@ -172,6 +189,17 @@ export default function ResourcesTable() {
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search resources…"
             className="min-w-48 rounded-xl border border-[#1E2D4F] bg-[#0F1629] px-3 py-2 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-green-500" />
+          <div className="flex gap-1.5 flex-wrap">
+            {providers.map((provider) => (
+              <button
+                key={provider}
+                onClick={() => setProviderFilter(provider)}
+                className={`text-xs px-3 py-1.5 rounded-full border transition font-medium ${providerFilter === provider ? 'bg-[#10B981] text-white border-[#10B981]' : 'border-[#1E2D4F] text-slate-600 hover:bg-[#141C33]'}`}
+              >
+                {provider === 'all' ? 'All Clouds' : provider.toUpperCase()}
+              </button>
+            ))}
+          </div>
           <div className="flex gap-1.5 flex-wrap">
             {types.map(t => (
               <button key={t} onClick={() => setFilterType(t)}

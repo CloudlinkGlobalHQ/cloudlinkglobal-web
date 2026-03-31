@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/purity */
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts'
@@ -16,6 +16,11 @@ const COLORS = ['#16a34a', '#3b82f6', '#06b6d4', '#14b8a6', '#f59e0b', '#ef4444'
 
 export default function CostTrendChart({ snapshots }: { snapshots: Snapshot[] }) {
   const [range, setRange] = useState<'24h' | '7d' | '30d'>('7d')
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const { chartData, services } = useMemo(() => {
     if (!snapshots?.length) return { chartData: [], services: [] }
@@ -68,6 +73,20 @@ export default function CostTrendChart({ snapshots }: { snapshots: Snapshot[] })
 
     return { chartData, services }
   }, [snapshots, range])
+
+  if (!mounted) {
+    return (
+      <div className="mb-6 overflow-hidden rounded-[24px] border border-[#1E2D4F] bg-[#0F1629]">
+        <div className="flex items-center justify-between border-b border-[#1E2D4F]/50 px-5 py-4">
+          <div>
+            <h2 className="text-sm font-semibold text-slate-100">Cost Trend</h2>
+            <p className="mt-1 text-xs text-slate-500">Service-level spend over time across the selected window.</p>
+          </div>
+        </div>
+        <div className="h-[320px] animate-pulse bg-[#141C33]" />
+      </div>
+    )
+  }
 
   if (!chartData.length) return null
 

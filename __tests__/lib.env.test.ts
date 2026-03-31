@@ -33,8 +33,6 @@ describe('lib/env – validateEnv', () => {
       'STRIPE_WEBHOOK_SECRET',
       'STRIPE_STARTER_PRICE_ID',
       'STRIPE_GROWTH_PRICE_ID',
-      'STRIPE_METERED_PRICE_ID',
-      'CRON_SECRET',
     ]
     for (const k of requiredKeys) vi.stubEnv(k, '')
     await expect(import('../app/lib/env')).rejects.toThrow('Missing required environment variables')
@@ -50,8 +48,6 @@ describe('lib/env – validateEnv', () => {
     vi.stubEnv('STRIPE_WEBHOOK_SECRET', 'whsec_test')
     vi.stubEnv('STRIPE_STARTER_PRICE_ID', 'price_starter')
     vi.stubEnv('STRIPE_GROWTH_PRICE_ID', 'price_growth')
-    vi.stubEnv('STRIPE_METERED_PRICE_ID', 'price_metered')
-    vi.stubEnv('CRON_SECRET', 'cron-secret')
     await expect(import('../app/lib/env')).resolves.toBeDefined()
   })
 })

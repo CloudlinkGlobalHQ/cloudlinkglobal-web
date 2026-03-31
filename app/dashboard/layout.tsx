@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
-import { usePathname } from 'next/navigation'
+import { Suspense, useState, useCallback, useEffect } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import {
@@ -171,8 +171,10 @@ function Sidebar({
 
 // ─── Main layout ──────────────────────────────────────────────────────────────
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -181,6 +183,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [scanMsg, setScanMsg] = useState('')
   const [activeCloud, setActiveCloud] = useState<'AWS' | 'Azure' | 'GCP'>('AWS')
   const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d'>('30d')
+  const [globalSearch, setGlobalSearch] = useState('')
 
   const refreshStats = useCallback(async () => {
     try { setStats(await getStats()) } catch {}
@@ -193,6 +196,34 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const t = setInterval(refreshStats, 15000)
     return () => clearInterval(t)
   }, [refreshStats])
+
+  useEffect(() => {
+    const cloud = (searchParams.get('cloud') || '').toLowerCase()
+    const range = searchParams.get('range')
+    const q = searchParams.get('q') || ''
+
+    if (cloud === 'azure') setActiveCloud('Azure')
+    else if (cloud === 'gcp') setActiveCloud('GCP')
+    else setActiveCloud('AWS')
+
+    if (range === '7d' || range === '30d' || range === '90d') {
+      setDateRange(range)
+    } else {
+      setDateRange('30d')
+    }
+
+    setGlobalSearch(q)
+  }, [searchParams])
+
+  const updateQuery = useCallback((updates: Record<string, string | null>) => {
+    const params = new URLSearchParams(searchParams.toString())
+    for (const [key, value] of Object.entries(updates)) {
+      if (!value) params.delete(key)
+      else params.set(key, value)
+    }
+    const qs = params.toString()
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+  }, [pathname, router, searchParams])
 
   const handleRunScan = async () => {
     setScanState('scanning'); setScanMsg('Scanning...')
@@ -207,6 +238,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       setScanState('error')
     }
     setTimeout(() => { setScanState('idle'); setScanMsg('') }, 5000)
+  }
+
+  const handleGlobalSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const params = new URLSearchParams()
+    if (globalSearch.trim()) params.set('q', globalSearch.trim())
+    params.set('cloud', activeCloud.toLowerCase())
+    router.push(`/dashboard/resources${params.toString() ? `?${params.toString()}` : ''}`)
   }
 
   return (
@@ -270,7 +309,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               {(['AWS', 'Azure', 'GCP'] as const).map((cloud) => (
                 <button
                   key={cloud}
-                  onClick={() => setActiveCloud(cloud)}
+                  onClick={() => updateQuery({ cloud: cloud.toLowerCase() })}
+                  aria-label={`Filter dashboard for ${cloud}`}
                   className={[
                     'px-3 py-1 text-xs font-semibold rounded-md transition',
                     activeCloud === cloud
@@ -286,14 +326,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           {/* Center: search */}
           <div className="flex-1 max-w-lg mx-auto">
-            <div className="relative">
+            <form className="relative" onSubmit={handleGlobalSearch}>
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#3D5070]" />
               <input
                 type="text"
+                value={globalSearch}
+                onChange={(event) => setGlobalSearch(event.target.value)}
                 placeholder="Search resources, services, deploys..."
+                aria-label="Search resources, services, and deploys"
                 className="w-full bg-[#0A0E1A] border border-[#1E2D4F] rounded-lg pl-8 pr-3 py-1.5 text-sm text-[#94A3B8] placeholder-[#3D5070] focus:outline-none focus:border-[#10B981]/50 transition"
               />
-            </div>
+            </form>
           </div>
 
           {/* Right: date range, bell, scan, user */}
@@ -303,7 +346,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               {(['7d', '30d', '90d'] as const).map((range) => (
                 <button
                   key={range}
-                  onClick={() => setDateRange(range)}
+                  onClick={() => updateQuery({ range })}
+                  aria-label={`Set dashboard date range to ${range}`}
                   className={[
                     'px-2.5 py-1 text-xs font-medium rounded-md transition',
                     dateRange === range
@@ -317,10 +361,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
 
             {/* Bell */}
-            <button className="relative p-1.5 text-[#64748B] hover:text-[#94A3B8] rounded-md hover:bg-[#1E2D4F]/60 transition">
+            <Link
+              href="/dashboard/audit"
+              aria-label="Open activity and notifications"
+              className="relative p-1.5 text-[#64748B] hover:text-[#94A3B8] rounded-md hover:bg-[#1E2D4F]/60 transition"
+            >
               <Bell size={16} />
               <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-[#F59E0B] rounded-full border border-[#0F1629]" />
-            </button>
+            </Link>
 
             {/* Scan button */}
             {scanMsg && (
@@ -354,5 +402,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     </div>
     </SubscriptionProvider>
     </ClerkApiProvider>
+  )
+}
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0A0E1A]" />}>
+      <DashboardShell>{children}</DashboardShell>
+    </Suspense>
   )
 }

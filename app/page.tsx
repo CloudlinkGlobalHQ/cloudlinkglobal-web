@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -58,6 +58,71 @@ function fmt(n: number) {
   return "$" + Math.round(n).toLocaleString();
 }
 
+function SafeAreaPreview({
+  height,
+  gradientId,
+  strokeWidth = 2,
+  tooltip = false,
+}: {
+  height: number;
+  gradientId: string;
+  strokeWidth?: number;
+  tooltip?: boolean;
+}) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  return (
+    <div style={{ height }}>
+      {mounted ? (
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
+            <defs>
+              <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#10B981" stopOpacity={0.35} />
+                <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <XAxis
+              dataKey="time"
+              tick={{ fill: "#475569", fontSize: 10 }}
+              axisLine={false}
+              tickLine={false}
+            />
+            <YAxis hide />
+            {tooltip && (
+              <Tooltip
+                contentStyle={{
+                  background: "#0A0E1A",
+                  border: "1px solid rgba(16, 185, 129,0.3)",
+                  borderRadius: 8,
+                  color: "#F1F5F9",
+                  fontSize: 12,
+                }}
+                formatter={(v: unknown) => [`$${Number(v).toLocaleString()}`, "Cost"]}
+              />
+            )}
+            <Area
+              type="monotone"
+              dataKey="cost"
+              stroke="#10B981"
+              strokeWidth={strokeWidth}
+              fill={`url(#${gradientId})`}
+              dot={false}
+              activeDot={tooltip ? { r: 4, fill: "#10B981" } : undefined}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      ) : (
+        <div className="h-full animate-pulse rounded-xl bg-[#1E2D4F]" />
+      )}
+    </div>
+  );
+}
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function HeroDashboardMockup() {
@@ -84,44 +149,7 @@ function HeroDashboardMockup() {
       </div>
 
       {/* Chart */}
-      <div style={{ height: 140 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
-            <defs>
-              <linearGradient id="costGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#10B981" stopOpacity={0.35} />
-                <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <XAxis
-              dataKey="time"
-              tick={{ fill: "#475569", fontSize: 10 }}
-              axisLine={false}
-              tickLine={false}
-            />
-            <YAxis hide />
-            <Tooltip
-              contentStyle={{
-                background: "#0A0E1A",
-                border: "1px solid rgba(16, 185, 129,0.3)",
-                borderRadius: 8,
-                color: "#F1F5F9",
-                fontSize: 12,
-              }}
-              formatter={(v: unknown) => [`$${Number(v).toLocaleString()}`, "Cost"]}
-            />
-            <Area
-              type="monotone"
-              dataKey="cost"
-              stroke="#10B981"
-              strokeWidth={2}
-              fill="url(#costGrad)"
-              dot={false}
-              activeDot={{ r: 4, fill: "#10B981" }}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
+      <SafeAreaPreview height={140} gradientId="costGrad" tooltip />
 
       {/* Savings counter */}
       <div
@@ -593,21 +621,7 @@ function FeaturesBentoSection() {
             <p className="mb-4 text-sm" style={{ color: "#94A3B8" }}>
               Every cost spike is linked to the exact deploy that caused it. Git SHA, timestamp, and cost delta.
             </p>
-            <div style={{ height: 110 }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="bento1Grad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10B981" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis dataKey="time" tick={{ fill: "#475569", fontSize: 9 }} axisLine={false} tickLine={false} />
-                  <YAxis hide />
-                  <Area type="monotone" dataKey="cost" stroke="#10B981" strokeWidth={2} fill="url(#bento1Grad)" dot={false} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
+            <SafeAreaPreview height={110} gradientId="bento1Grad" />
           </motion.div>
 
           {/* Large card 2: AI Auto-Remediation */}
