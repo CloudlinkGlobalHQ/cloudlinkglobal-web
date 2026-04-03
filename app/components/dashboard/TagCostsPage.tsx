@@ -119,8 +119,8 @@ export default function TagCostsPage() {
           {/* No data */}
           {data.breakdown.length === 0 && (
             <div className="bg-[#141C33] border border-[#1E2D4F] rounded-xl p-10 text-center">
-              <p className="text-3xl mb-3">🏷️</p>
-              <p className="font-semibold text-slate-700">No resources with <code className="bg-[#1A2340] px-1 rounded">{data.tag_key}</code> tag found</p>
+              <div className="mx-auto mb-3 h-10 w-10 rounded-full border border-[#1E2D4F] bg-[#0F1629]" />
+              <p className="font-semibold text-slate-100">No resources with <code className="bg-[#1A2340] px-1 rounded">{data.tag_key}</code> tag found</p>
               <p className="text-sm text-slate-500 mt-1">Make sure your AWS resources have this tag applied, then run a scan.</p>
             </div>
           )}

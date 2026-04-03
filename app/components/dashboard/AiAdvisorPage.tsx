@@ -30,7 +30,7 @@ function renderMarkdown(text: string) {
     // Bold
     line = line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#F1F5F9] font-semibold">$1</strong>')
     // Inline code
-    line = line.replace(/`([^`]+)`/g, '<code class="bg-[#4F6EF7]/10 text-[#4F6EF7] px-1 py-0.5 rounded text-[11px] font-mono">$1</code>')
+    line = line.replace(/`([^`]+)`/g, '<code class="bg-[#10B981]/10 text-[#6EE7B7] px-1 py-0.5 rounded text-[11px] font-mono">$1</code>')
 
     if (line.startsWith('| ')) {
       return (
@@ -40,7 +40,7 @@ function renderMarkdown(text: string) {
     }
     if (line.startsWith('- ') || line.startsWith('* ')) {
       return (
-        <p key={i} className="pl-3 border-l-2 border-[#4F6EF7]/30 my-1 text-[#94A3B8]"
+        <p key={i} className="pl-3 border-l-2 border-[#10B981]/30 my-1 text-[#94A3B8]"
           dangerouslySetInnerHTML={{ __html: line.replace(/^[-*]\s/, '') }} />
       )
     }
@@ -78,7 +78,7 @@ function renderMarkdown(text: string) {
 function StreamingCursor() {
   return (
     <motion.span
-      className="inline-block w-1.5 h-3.5 bg-[#4F6EF7] rounded-sm ml-0.5 align-middle"
+      className="inline-block w-1.5 h-3.5 bg-[#10B981] rounded-sm ml-0.5 align-middle"
       animate={{ opacity: [1, 0, 1] }}
       transition={{ duration: 0.8, repeat: Infinity }}
     />
@@ -201,8 +201,8 @@ export default function AiAdvisorPage() {
       <aside className="hidden md:flex flex-col w-56 flex-shrink-0 bg-[#0F1629] border-r border-[#1E2D4F]">
         <div className="p-4 border-b border-[#1E2D4F]">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-[#4F6EF7]/20 flex items-center justify-center">
-              <Sparkles size={12} className="text-[#4F6EF7]" />
+            <div className="w-6 h-6 rounded-md bg-[#10B981]/20 flex items-center justify-center">
+              <Sparkles size={12} className="text-[#10B981]" />
             </div>
             <span className="text-sm font-semibold text-[#F1F5F9]">AI Advisor</span>
           </div>
@@ -211,7 +211,7 @@ export default function AiAdvisorPage() {
         <div className="p-3">
           <button
             onClick={startNew}
-            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-[#4F6EF7] bg-[#4F6EF7]/10 border border-[#4F6EF7]/20 rounded-lg hover:bg-[#4F6EF7]/20 transition"
+            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/20 rounded-lg hover:bg-[#10B981]/15 transition"
           >
             <MessageSquare size={12} />
             New conversation
@@ -242,16 +242,16 @@ export default function AiAdvisorPage() {
 
         {/* Header */}
         <div className="flex items-center gap-3 px-5 py-3 border-b border-[#1E2D4F] bg-[#0F1629] flex-shrink-0">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#4F6EF7] to-[#7C3AED] flex items-center justify-center">
-            <Sparkles size={13} className="text-white" />
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center">
+              <Sparkles size={13} className="text-white" />
           </div>
           <div>
             <p className="text-sm font-semibold text-[#F1F5F9]">Cloudlink AI Advisor</p>
             <p className="text-[10px] flex items-center gap-1">
               {isStreaming ? (
-                <span className="text-[#4F6EF7] flex items-center gap-1">
+                <span className="text-[#10B981] flex items-center gap-1">
                   <motion.span
-                    className="w-1.5 h-1.5 bg-[#4F6EF7] rounded-full inline-block"
+                    className="w-1.5 h-1.5 bg-[#10B981] rounded-full inline-block"
                     animate={{ opacity: [1, 0.3, 1] }}
                     transition={{ duration: 1, repeat: Infinity }}
                   />
@@ -276,8 +276,8 @@ export default function AiAdvisorPage() {
               transition={{ duration: 0.4 }}
               className="flex flex-col items-center justify-center h-full text-center py-12"
             >
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#4F6EF7]/20 to-[#7C3AED]/20 border border-[#4F6EF7]/20 flex items-center justify-center mb-4">
-                <Sparkles size={24} className="text-[#4F6EF7]" />
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#10B981]/20 bg-gradient-to-br from-[#10B981]/15 to-[#059669]/15">
+                <Sparkles size={24} className="text-[#10B981]" />
               </div>
               <h2 className="text-base font-semibold text-[#F1F5F9] mb-1">Ask me anything about your cloud</h2>
               <p className="text-xs text-[#64748B] mb-6 max-w-xs">
@@ -288,7 +288,7 @@ export default function AiAdvisorPage() {
                   <button
                     key={prompt}
                     onClick={() => sendMessage(prompt)}
-                    className="px-3 py-2 text-xs font-medium text-[#94A3B8] bg-[#141C33] border border-[#1E2D4F] rounded-lg hover:bg-[#1E2D4F] hover:text-[#F1F5F9] hover:border-[#2E3D5F] transition flex items-center gap-1.5 group"
+                    className="group flex items-center gap-1.5 rounded-lg border border-[#1E2D4F] bg-[#141C33] px-3 py-2 text-xs font-medium text-[#94A3B8] transition hover:border-[#10B981]/30 hover:bg-[#141C33] hover:text-[#F1F5F9]"
                   >
                     <span>{prompt}</span>
                     <ChevronRight size={10} className="text-[#3D5070] group-hover:text-[#64748B] transition" />
@@ -308,7 +308,7 @@ export default function AiAdvisorPage() {
                 className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {msg.role === 'assistant' && (
-                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#4F6EF7] to-[#7C3AED] flex items-center justify-center flex-shrink-0 mt-0.5">
+            <div className="mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#10B981] to-[#059669]">
                     <Bot size={13} className="text-white" />
                   </div>
                 )}
@@ -316,7 +316,7 @@ export default function AiAdvisorPage() {
                 <div className={[
                   'max-w-[75%] rounded-xl px-4 py-3 text-xs leading-relaxed',
                   msg.role === 'user'
-                    ? 'bg-[#4F6EF7]/20 border border-[#4F6EF7]/30 text-[#CBD5E1]'
+                    ? 'border border-[#10B981]/25 bg-[#10B981]/10 text-[#E2E8F0]'
                     : 'bg-transparent border border-[#1E2D4F] text-[#94A3B8]',
                 ].join(' ')}>
                   {msg.role === 'user' ? (
@@ -390,14 +390,14 @@ export default function AiAdvisorPage() {
                 placeholder="Ask about your cloud costs, regressions, resources..."
                 rows={1}
                 disabled={isStreaming}
-                className="w-full bg-[#141C33] border border-[#1E2D4F] rounded-xl px-4 py-3 text-sm text-[#F1F5F9] placeholder-[#3D5070] focus:outline-none focus:border-[#4F6EF7]/50 transition resize-none disabled:opacity-60"
+                className="w-full resize-none rounded-xl border border-[#1E2D4F] bg-[#141C33] px-4 py-3 text-sm text-[#F1F5F9] placeholder-[#3D5070] transition focus:border-[#10B981]/50 focus:outline-none disabled:opacity-60"
                 style={{ minHeight: 44, maxHeight: 120 }}
               />
             </div>
             <button
               type="submit"
               disabled={!input.trim() || isStreaming}
-              className="flex items-center justify-center w-10 h-10 rounded-xl bg-[#4F6EF7] text-white hover:bg-[#6B84F8] transition disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[#10B981] text-white transition hover:bg-[#059669] disabled:cursor-not-allowed disabled:opacity-40"
             >
               <Send size={15} />
             </button>

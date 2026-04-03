@@ -131,7 +131,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
     return false
   }
 
-  const inp = "w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+  const inp = "dashboard-field w-full rounded-lg px-3 py-2 text-sm"
 
   return (
     <div>
@@ -140,20 +140,20 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
           <h1 className="text-2xl font-bold text-slate-100">Credentials</h1>
           <p className="text-slate-500 text-sm mt-1">Cloud credentials used to scan and remediate infrastructure</p>
         </div>
-        <button onClick={() => setShowForm(s => !s)} className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+        <button onClick={() => setShowForm(s => !s)} className="dashboard-primary-button text-sm px-4 py-2">
           + Add credential
         </button>
       </div>
 
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
-      {msg && <p className="text-sm text-green-600 mb-4">{msg}</p>}
+      {msg && <p className="text-sm text-[#6EE7B7] mb-4">{msg}</p>}
 
       {showForm && (
         <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-6 mb-6">
           <div className="flex gap-1 border-b border-slate-200 mb-6">
             {CLOUD_TABS.map(t => (
               <button key={t} onClick={() => setCloudTab(t)}
-                className={`px-4 py-2 text-sm font-medium border-b-2 transition ${cloudTab === t ? 'border-green-600 text-green-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>{t}</button>
+                className={`px-4 py-2 text-sm font-medium rounded-t-lg transition ${cloudTab === t ? 'dashboard-pill-active' : 'dashboard-pill hover:text-slate-200'}`}>{t}</button>
             ))}
           </div>
 
@@ -238,10 +238,10 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
           )}
 
           <div className="flex gap-3 mt-2">
-            <button onClick={handleAdd} disabled={saving || !formValid()} className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+            <button onClick={handleAdd} disabled={saving || !formValid()} className="dashboard-primary-button disabled:opacity-50 text-sm px-4 py-2">
               {saving ? 'Saving…' : 'Save credential'}
             </button>
-            <button onClick={() => setShowForm(false)} className="text-sm text-slate-500 hover:text-slate-700">Cancel</button>
+            <button onClick={() => setShowForm(false)} className="dashboard-secondary-button text-sm px-4 py-2">Cancel</button>
           </div>
         </div>
       )}
@@ -264,7 +264,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
                   <td className="px-4 py-3"><span className="bg-[#10B981]/15 text-[#10B981] px-2 py-0.5 rounded text-xs font-medium">{c.credential_type}</span></td>
                   <td className="px-4 py-3 text-xs text-slate-400">{new Date(c.created_at).toLocaleDateString()}</td>
                   <td className="px-4 py-3 text-xs">
-                    {c.last_verified_at ? <span className="text-[#10B981]">✓ {new Date(c.last_verified_at).toLocaleString()}</span> : <span className="text-yellow-500">Never verified</span>}
+                    {c.last_verified_at ? <span className="text-[#6EE7B7]">Verified {new Date(c.last_verified_at).toLocaleString()}</span> : <span className="text-yellow-500">Never verified</span>}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-1.5 flex-wrap">

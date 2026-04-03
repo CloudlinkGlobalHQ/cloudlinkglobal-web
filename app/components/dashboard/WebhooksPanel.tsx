@@ -73,22 +73,21 @@ function SlackCard() {
             value={url}
             onChange={e => setUrl(e.target.value)}
             placeholder="https://hooks.slack.com/services/T.../B.../..."
-            className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="dashboard-field w-full rounded-lg px-3 py-2 text-sm font-mono"
           />
         </div>
         <button onClick={handleSave} disabled={saving || url === saved}
-          className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition whitespace-nowrap">
+          className="dashboard-primary-button disabled:opacity-50 text-sm px-4 py-2 whitespace-nowrap">
           {saving ? 'Saving…' : 'Save'}
         </button>
         {saved && (
-          <button onClick={handleTest} disabled={testing}
-            className="border border-[#1E2D4F] hover:bg-[#141C33] text-slate-400 text-sm font-medium px-4 py-2 rounded-lg transition whitespace-nowrap">
+          <button onClick={handleTest} disabled={testing} className="dashboard-secondary-button text-sm px-4 py-2 whitespace-nowrap">
             {testing ? 'Sending…' : 'Test alert'}
           </button>
         )}
       </div>
 
-      {msg && <p className={`text-xs mt-3 ${msgOk ? 'text-green-600' : 'text-red-500'}`}>{msg}</p>}
+      {msg && <p className={`text-xs mt-3 ${msgOk ? 'text-[#6EE7B7]' : 'text-red-500'}`}>{msg}</p>}
 
       <p className="text-xs text-slate-400 mt-3">
         Create an incoming webhook at <span className="font-mono">api.slack.com/apps</span> → Incoming Webhooks, then paste the URL above.
@@ -150,15 +149,15 @@ export default function WebhooksPanel() {
           <p className="text-slate-500 text-sm mt-1">Receive real-time Cloudlink events via HTTP POST or Slack</p>
         </div>
         <div className="flex gap-2">
-          {hooks.length > 0 && <button onClick={handleTest} className="border border-[#1E2D4F] text-slate-400 hover:bg-[#141C33] text-sm font-medium px-4 py-2 rounded-lg transition">Send test ping</button>}
-          <button onClick={() => setShowForm(s => !s)} className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">+ Add webhook</button>
+          {hooks.length > 0 && <button onClick={handleTest} className="dashboard-secondary-button text-sm px-4 py-2">Send test ping</button>}
+          <button onClick={() => setShowForm(s => !s)} className="dashboard-primary-button text-sm px-4 py-2">+ Add webhook</button>
         </div>
       </div>
 
       <SlackCard />
 
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
-      {msg && <p className="text-sm text-green-600 mb-4">{msg}</p>}
+      {msg && <p className="text-sm text-[#6EE7B7] mb-4">{msg}</p>}
 
       {showForm && (
         <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-6 mb-6">
@@ -167,12 +166,12 @@ export default function WebhooksPanel() {
             <div className="md:col-span-2">
               <label className="block text-xs font-medium text-slate-600 mb-1">URL *</label>
               <input value={form.url} onChange={e => setForm(f => ({ ...f, url: e.target.value }))} placeholder="https://your-server.com/cloudlink-hook"
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-500" />
+                className="dashboard-field w-full rounded-lg px-3 py-2 text-sm font-mono" />
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">HMAC Secret (optional)</label>
               <input value={form.secret} onChange={e => setForm(f => ({ ...f, secret: e.target.value }))} type="password" placeholder="your-secret"
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+                className="dashboard-field w-full rounded-lg px-3 py-2 text-sm" />
             </div>
           </div>
           <div className="mb-4">
@@ -180,17 +179,17 @@ export default function WebhooksPanel() {
             <div className="flex flex-wrap gap-2">
               {ALL_EVENTS.map(ev => (
                 <label key={ev} className="flex items-center gap-1.5 cursor-pointer">
-                  <input type="checkbox" checked={form.events.includes(ev)} onChange={() => toggleEvent(ev)} className="rounded text-green-600" />
-                  <span className="text-xs text-slate-700 font-mono">{ev}</span>
+                  <input type="checkbox" checked={form.events.includes(ev)} onChange={() => toggleEvent(ev)} className="rounded" />
+                  <span className="text-xs text-slate-300 font-mono">{ev}</span>
                 </label>
               ))}
             </div>
           </div>
           <div className="flex gap-3">
-            <button onClick={handleAdd} disabled={saving || !form.url} className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+            <button onClick={handleAdd} disabled={saving || !form.url} className="dashboard-primary-button disabled:opacity-50 text-sm px-4 py-2">
               {saving ? 'Saving…' : 'Save webhook'}
             </button>
-            <button onClick={() => setShowForm(false)} className="text-sm text-slate-500 hover:text-slate-700">Cancel</button>
+            <button onClick={() => setShowForm(false)} className="dashboard-secondary-button text-sm px-4 py-2">Cancel</button>
           </div>
         </div>
       )}

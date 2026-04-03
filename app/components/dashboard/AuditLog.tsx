@@ -45,21 +45,21 @@ export default function AuditLog() {
           <h1 className="text-2xl font-bold text-slate-200">Audit Log</h1>
           <p className="text-slate-500 text-sm mt-1">Every remediation action taken by Cloudlink</p>
         </div>
-        <button onClick={load} className="text-sm text-green-600 hover:underline">Refresh</button>
+        <button onClick={load} className="dashboard-secondary-button px-3 py-1.5 text-sm">Refresh</button>
       </div>
 
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
 
       <div className="flex gap-3 mb-4 flex-wrap">
         <select value={filterType} onChange={e => setFilterType(e.target.value)}
-          className="border border-[#1E2D4F] text-sm rounded-lg px-3 py-2 text-slate-600 focus:outline-none focus:ring-2 focus:ring-green-500">
+          className="dashboard-field text-sm rounded-lg px-3 py-2">
           <option value="">All action types</option>
           {types.map(t => <option key={t as string} value={t as string}>{(t as string).replace(/_/g, ' ')}</option>)}
         </select>
         <input value={filterResource} onChange={e => setFilterResource(e.target.value)} placeholder="Filter by resource ID…"
-          className="border border-[#1E2D4F] text-sm rounded-lg px-3 py-2 text-slate-600 focus:outline-none focus:ring-2 focus:ring-green-500 min-w-64" />
+          className="dashboard-field text-sm rounded-lg px-3 py-2 min-w-64" />
         {(filterType || filterResource) && (
-          <button onClick={() => { setFilterType(''); setFilterResource('') }} className="text-sm text-slate-400 hover:text-slate-600">✕ Clear</button>
+          <button onClick={() => { setFilterType(''); setFilterResource('') }} className="text-sm text-slate-400 hover:text-slate-200">Clear filters</button>
         )}
       </div>
 

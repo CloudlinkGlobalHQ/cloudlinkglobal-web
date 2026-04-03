@@ -177,7 +177,7 @@ export default function CostEstimatePage() {
       {/* Placeholder when no estimate */}
       {!estimate && !loading && (
         <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-12 text-center">
-          <div className="text-4xl mb-3">🔮</div>
+          <div className="mx-auto mb-3 h-10 w-10 rounded-full border border-[#1E2D4F] bg-[#141C33]" />
           <h3 className="text-lg font-semibold text-slate-100 mb-1">Predict before you deploy</h3>
           <p className="text-sm text-slate-500 max-w-md mx-auto">
             Select a service above to see predicted cost impact based on your historical deployment patterns and cost data.

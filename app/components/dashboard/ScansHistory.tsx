@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react'
 import { getScans, scanNow } from '../../lib/api'
 
 const STATUS_STYLES: Record<string, string> = {
-  finished: 'bg-green-100 text-green-700',
-  running:  'bg-blue-100 text-blue-700',
-  error:    'bg-red-100 text-red-600',
+  finished: 'bg-[#10B981]/12 text-[#6EE7B7] border-[#10B981]/20',
+  running:  'bg-blue-500/12 text-blue-300 border-blue-500/20',
+  error:    'bg-red-500/12 text-red-300 border-red-500/20',
 }
 
 function fmt(iso: string | null) { return iso ? new Date(iso).toLocaleString() : '—' }
@@ -54,11 +54,11 @@ export default function ScansHistory() {
           <p className="text-slate-500 text-sm mt-1">Every time Cloudlink scanned your cloud accounts</p>
         </div>
         <div className="flex items-center gap-3">
-          {msg && <span className="text-sm text-green-600">{msg}</span>}
-          <button onClick={handleScan} disabled={scanning} className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
-            {scanning ? 'Scanning…' : '▶ Scan now'}
+          {msg && <span className="text-sm text-[#6EE7B7]">{msg}</span>}
+          <button onClick={handleScan} disabled={scanning} className="dashboard-primary-button disabled:opacity-50 text-sm px-4 py-2">
+            {scanning ? 'Scanning…' : 'Scan now'}
           </button>
-          <button onClick={load} className="text-sm text-green-600 hover:underline">Refresh</button>
+          <button onClick={load} className="dashboard-secondary-button text-sm px-3 py-1.5">Refresh</button>
         </div>
       </div>
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
@@ -81,11 +81,11 @@ export default function ScansHistory() {
                   <td className="px-4 py-3 text-xs text-slate-500">{fmt(s.started_at)}</td>
                   <td className="px-4 py-3 text-xs text-slate-500">{duration(s.started_at, s.finished_at)}</td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLES[s.status] || 'bg-[#1A2340] text-slate-600'}`}>{s.status}</span>
+                    <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[s.status] || 'bg-[#1A2340] text-slate-400 border-[#1E2D4F]'}`}>{s.status}</span>
                     {s.error && <p className="text-xs text-red-500 mt-1 max-w-xs truncate">{s.error}</p>}
                   </td>
                   <td className="px-4 py-3 text-center text-slate-700 font-medium">{s.events_found ?? 0}</td>
-                  <td className="px-4 py-3 text-center text-green-600 font-medium">{s.actions_queued ?? 0}</td>
+                  <td className="px-4 py-3 text-center text-[#6EE7B7] font-medium">{s.actions_queued ?? 0}</td>
                 </tr>
               ))}
             </tbody>

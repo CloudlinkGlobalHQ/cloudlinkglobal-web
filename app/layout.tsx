@@ -1,12 +1,12 @@
 import './lib/env'
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
 import { Suspense } from "react";
 import PostHogProvider from "./components/PostHogProvider";
 import Nav from "./components/Nav";
+import AppProviders from "./components/AppProviders";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,10 +23,18 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Cloudlink Global — Stop Paying for Cloud Waste",
+  title: {
+    default: "Cloudlink Global — Deploy-aware cloud cost intelligence",
+    template: "Cloudlink | %s",
+  },
   description:
     "Cloudlink connects to your AWS, Azure, or GCP account and automatically detects cost regressions, idle resources, and misconfigurations — then fixes them. You keep 85% of everything we save.",
   metadataBase: new URL("https://cloudlinkglobal.com"),
+  icons: {
+    icon: "/cloudlink-logo.png",
+    apple: "/cloudlink-logo.png",
+    shortcut: "/cloudlink-logo.png",
+  },
   openGraph: {
     title: "Cloudlink Global — Stop Paying for Cloud Waste",
     description:
@@ -54,7 +62,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="antialiased">
-        <ClerkProvider>
+        <AppProviders>
           <Suspense fallback={null}>
             <PostHogProvider />
           </Suspense>
@@ -62,7 +70,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <Nav />
             {children}
           </SmoothScroll>
-        </ClerkProvider>
+        </AppProviders>
       </body>
     </html>
   );

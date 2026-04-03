@@ -76,12 +76,12 @@ const COLORS = [
 function StatCard({ label, value, sub, color = 'green' }: {
   label: string; value: string; sub?: string; color?: string
 }) {
-  const ring = color === 'green' ? 'border-l-green-500' : color === 'blue' ? 'border-l-blue-500'
-    : color === 'purple' ? 'border-l-purple-500' : 'border-l-yellow-500'
+  const accent = color === 'green' ? 'text-[#6EE7B7]' : color === 'blue' ? 'text-blue-300'
+    : color === 'purple' ? 'text-purple-300' : 'text-yellow-300'
   return (
-    <div className={`bg-[#0F1629] rounded-xl border border-l-4 border-[#1E2D4F] ${ring} p-5 shadow-sm`}>
+    <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-5 shadow-sm">
       <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">{label}</p>
-      <p className="text-2xl font-bold text-slate-100 mt-1">{value}</p>
+      <p className={`text-2xl font-bold mt-1 ${accent}`}>{value}</p>
       {sub && <p className="text-xs text-slate-500 mt-1">{sub}</p>}
     </div>
   )
@@ -197,8 +197,8 @@ export default function UnitEconomicsPage() {
             <button key={d} onClick={() => setDays(d)}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition ${
                 days === d
-                  ? 'bg-green-600 text-white border-green-600'
-                  : 'border-[#1E2D4F] text-slate-600 hover:border-green-400 hover:text-green-600'
+                  ? 'dashboard-pill-active'
+                  : 'dashboard-pill hover:text-slate-200'
               }`}>
               {d}d
             </button>
@@ -260,7 +260,7 @@ export default function UnitEconomicsPage() {
             <button key={tab} onClick={() => setActiveTab(tab)}
               className={`px-5 py-3 text-sm font-medium border-b-2 transition capitalize ${
                 activeTab === tab
-                  ? 'border-green-600 text-green-600'
+                  ? 'border-[#10B981] text-[#6EE7B7]'
                   : 'border-transparent text-slate-500 hover:text-slate-200'
               }`}>
               {tab === 'services' ? 'By Service' : tab === 'resources' ? 'By Resource Type' : 'By Action'}

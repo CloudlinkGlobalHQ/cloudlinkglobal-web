@@ -64,7 +64,7 @@ export default function RightsizingPage() {
           <span className="text-xs text-slate-500">CPU threshold:</span>
           {[10, 20, 30, 40].map(t => (
             <button key={t} onClick={() => setThreshold(t)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition ${threshold === t ? 'bg-green-600 text-white border-green-600' : 'border-[#1E2D4F] text-slate-600 hover:border-green-400'}`}>
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition ${threshold === t ? 'dashboard-pill-active' : 'dashboard-pill hover:text-slate-200'}`}>
               &lt;{t}%
             </button>
           ))}
@@ -78,9 +78,9 @@ export default function RightsizingPage() {
           { label: 'Monthly Savings', value: fmt(data.total_monthly_savings_usd), color: 'green' },
           { label: 'Annual Savings', value: fmt(data.total_annual_savings_usd), color: 'purple' },
         ].map(({ label, value, color }) => (
-          <div key={label} className={`bg-[#0F1629] rounded-xl border border-l-4 border-[#1E2D4F] p-5 border-l-${color}-500`}>
+          <div key={label} className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-5">
             <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">{label}</p>
-            <p className="text-2xl font-bold text-slate-100 mt-1">{value}</p>
+            <p className={`text-2xl font-bold mt-1 ${color === 'green' ? 'text-[#6EE7B7]' : color === 'yellow' ? 'text-yellow-300' : 'text-purple-300'}`}>{value}</p>
           </div>
         ))}
       </div>

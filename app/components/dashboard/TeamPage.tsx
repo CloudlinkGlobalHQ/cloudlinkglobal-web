@@ -51,7 +51,7 @@ function InviteModal({ onClose, onInvite }: { onClose: () => void; onInvite: (m:
       <div className="bg-[#0F1629] rounded-2xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-[#1E2D4F]/50">
           <h2 className="text-lg font-bold text-slate-100">Invite Team Member</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-xl">✕</button>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-200 text-sm font-medium">Close</button>
         </div>
         <div className="p-6 space-y-4">
           {error && <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-600">{error}</div>}
@@ -60,7 +60,7 @@ function InviteModal({ onClose, onInvite }: { onClose: () => void; onInvite: (m:
             <input
               type="email" value={email} onChange={e => setEmail(e.target.value)}
               placeholder="teammate@company.com"
-              className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+              className="dashboard-field w-full rounded-lg px-3 py-2 text-sm"
             />
           </div>
           <div>
@@ -68,13 +68,13 @@ function InviteModal({ onClose, onInvite }: { onClose: () => void; onInvite: (m:
             <input
               type="text" value={name} onChange={e => setName(e.target.value)}
               placeholder="Jane Smith"
-              className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+              className="dashboard-field w-full rounded-lg px-3 py-2 text-sm"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1.5">Role</label>
             <select value={role} onChange={e => setRole(e.target.value as any)}
-              className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400">
+              className="dashboard-field w-full rounded-lg px-3 py-2 text-sm">
               <option value="viewer">Viewer — read-only access</option>
               <option value="developer">Developer — can approve/reject actions</option>
               <option value="admin">Admin — full access including billing</option>
@@ -82,11 +82,11 @@ function InviteModal({ onClose, onInvite }: { onClose: () => void; onInvite: (m:
           </div>
         </div>
         <div className="flex gap-3 p-6 pt-0">
-          <button onClick={onClose} className="flex-1 px-4 py-2 text-sm border border-[#1E2D4F] rounded-lg text-slate-600 hover:bg-[#141C33]">
+          <button onClick={onClose} className="dashboard-secondary-button flex-1 px-4 py-2 text-sm">
             Cancel
           </button>
           <button onClick={submit} disabled={loading}
-            className="flex-1 px-4 py-2 text-sm bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 disabled:opacity-60 transition">
+            className="dashboard-primary-button flex-1 px-4 py-2 text-sm disabled:opacity-60">
             {loading ? 'Sending invite…' : 'Send invite'}
           </button>
         </div>
@@ -141,7 +141,7 @@ export default function TeamPage() {
           <p className="text-sm text-slate-500 mt-0.5">Invite teammates to view and manage cloud costs</p>
         </div>
         <button onClick={() => setShowInvite(true)}
-          className="px-4 py-2 text-sm font-medium bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-sm">
+          className="dashboard-primary-button px-4 py-2 text-sm shadow-sm">
           + Invite member
         </button>
       </div>
@@ -165,11 +165,11 @@ export default function TeamPage() {
 
       {!loading && members.length === 0 && (
         <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-12 text-center shadow-sm">
-          <p className="text-3xl mb-3">👥</p>
-          <p className="font-semibold text-slate-700">No team members yet</p>
+          <div className="mx-auto mb-3 h-10 w-10 rounded-full border border-[#1E2D4F] bg-[#141C33]" />
+          <p className="font-semibold text-slate-100">No team members yet</p>
           <p className="text-sm text-slate-500 mt-1">Invite your first teammate to collaborate on cloud cost management.</p>
           <button onClick={() => setShowInvite(true)}
-            className="mt-4 px-4 py-2 text-sm bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition">
+            className="dashboard-primary-button mt-4 px-4 py-2 text-sm">
             Invite someone
           </button>
         </div>
@@ -192,7 +192,7 @@ export default function TeamPage() {
                 <tr key={m.member_id} className={`hover:bg-[#141C33] ${updating === m.member_id ? 'opacity-50' : ''}`}>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-sm font-bold shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-[#10B981]/10 text-[#6EE7B7] border border-[#10B981]/20 flex items-center justify-center text-sm font-bold shrink-0">
                         {(m.name || m.email)[0].toUpperCase()}
                       </div>
                       <div>
@@ -206,7 +206,7 @@ export default function TeamPage() {
                       value={m.role}
                       onChange={e => handleRoleChange(m.member_id, e.target.value)}
                       disabled={updating === m.member_id}
-                      className="text-xs border border-[#1E2D4F] rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-400 bg-[#0F1629]"
+                      className="dashboard-field text-xs rounded-lg px-2 py-1 bg-[#0F1629]"
                     >
                       <option value="admin">admin</option>
                       <option value="developer">developer</option>

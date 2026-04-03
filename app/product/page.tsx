@@ -29,12 +29,12 @@ function DeployCard() {
       <div className="text-[#94A3B8]">$ deploy <span className="text-[#10B981]">main</span> → prod</div>
       <div className="text-[#10B981]">✓ Build passed · Hash: <span className="text-[#F1F5F9]">a3f9c12</span></div>
       <div className="text-[#94A3B8]">→ Fingerprinting cost baseline…</div>
-      <div className="text-yellow-400">⚠ Cost regression detected: <span className="text-[#F1F5F9]">+$847/day</span></div>
+      <div className="text-yellow-400">Alert: cost regression detected <span className="text-[#F1F5F9]">+$847/day</span></div>
       <div className="text-[#94A3B8]">  Service: <span className="text-[#F1F5F9]">api-gateway</span></div>
       <div className="text-[#94A3B8]">  Cause: Lambda concurrency spike</div>
       <div className="text-[#10B981]">→ Alert sent to #eng-alerts</div>
       <div className="mt-2 pt-2 border-t border-[#1E2D4F] text-xs text-[#94A3B8]">
-        Detected in <span className="text-[#10B981] font-semibold">47 minutes</span> · 3 fixes suggested
+        Detected in <span className="text-[#10B981] font-semibold">under 1 hour</span> · 3 verified fixes suggested
       </div>
     </div>
   );
@@ -411,14 +411,14 @@ export default function ProductPage() {
               actually does something
             </span>
           </motion.h1>
-          <motion.p variants={fadeUp} className="text-xl text-[#94A3B8] mb-10 max-w-xl mx-auto">
-            Not just dashboards. Real automation, real attribution, real savings.
+          <motion.p variants={fadeUp} className="text-xl text-[#94A3B8] mb-10 max-w-2xl mx-auto leading-8">
+            Built for engineering and finance teams that need clear cost attribution, enforceable controls, and operational remediation instead of passive reporting.
           </motion.p>
           <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4">
             <Link
               href="/signup"
-              className="inline-flex items-center gap-2 rounded-full bg-[#10B981] hover:bg-[#3d5ce6] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#10B981]/25 transition-all duration-200"
-            >
+              className="inline-flex items-center gap-2 rounded-full bg-[#10B981] hover:bg-[#059669] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#10B981]/25 transition-all duration-200"
+              >
               Start for free <ArrowRight size={16} />
             </Link>
             <Link
@@ -496,7 +496,7 @@ export default function ProductPage() {
               <h2 className="text-3xl sm:text-4xl font-bold text-[#F1F5F9]">How we stack up</h2>
             </motion.div>
 
-            <motion.div variants={fadeUp} className="overflow-x-auto">
+            <motion.div variants={fadeUp} className="overflow-x-auto rounded-3xl border border-[#1E2D4F] bg-[#0A0E1A]">
               <table className="w-full border-collapse">
                 <thead>
                   <tr>
@@ -558,7 +558,7 @@ export default function ProductPage() {
             <motion.div variants={fadeUp}>
               <Link
                 href="/signup"
-                className="inline-flex items-center gap-2 rounded-full bg-[#10B981] hover:bg-[#3d5ce6] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#10B981]/25 transition-all duration-200"
+                className="inline-flex items-center gap-2 rounded-full bg-[#10B981] hover:bg-[#059669] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#10B981]/25 transition-all duration-200"
               >
                 Get started free <ArrowRight size={16} />
               </Link>

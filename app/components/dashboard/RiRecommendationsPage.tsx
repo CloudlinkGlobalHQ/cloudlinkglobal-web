@@ -116,7 +116,7 @@ export default function RiRecommendationsPage() {
           {(['1yr', '3yr'] as const).map(t => (
             <button key={t} onClick={() => setView(t)}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition ${
-                view === t ? 'bg-green-600 text-white border-green-600' : 'border-slate-200 text-slate-600 hover:border-green-400'
+                view === t ? 'dashboard-pill-active' : 'dashboard-pill hover:text-slate-200'
               }`}>
               {t === '1yr' ? '1 Year' : '3 Years'}
             </button>
@@ -126,24 +126,24 @@ export default function RiRecommendationsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-[#0F1629] rounded-xl border border-l-4 border-l-green-500 border-[#1E2D4F] p-5">
+        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">EC2 Analyzed</p>
-          <p className="text-2xl font-bold text-slate-100 mt-1">{data.ec2_analyzed}</p>
+          <p className="text-2xl font-bold text-[#6EE7B7] mt-1">{data.ec2_analyzed}</p>
           <p className="text-xs text-slate-400 mt-1">of {data.ec2_total} total</p>
         </div>
-        <div className="bg-[#0F1629] rounded-xl border border-l-4 border-l-blue-500 border-[#1E2D4F] p-5">
+        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">On-Demand Monthly</p>
-          <p className="text-2xl font-bold text-slate-100 mt-1">{fmt(data.total_monthly_ondemand_usd)}</p>
+          <p className="text-2xl font-bold text-blue-300 mt-1">{fmt(data.total_monthly_ondemand_usd)}</p>
           <p className="text-xs text-slate-400 mt-1">current spend</p>
         </div>
-        <div className="bg-[#0F1629] rounded-xl border border-l-4 border-l-yellow-500 border-[#1E2D4F] p-5">
+        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Monthly Savings ({view})</p>
-          <p className="text-2xl font-bold text-green-600 mt-1">{fmt(data.total_monthly_savings_1yr_usd)}</p>
+          <p className="text-2xl font-bold text-yellow-300 mt-1">{fmt(data.total_monthly_savings_1yr_usd)}</p>
           <p className="text-xs text-slate-400 mt-1">if all RI committed</p>
         </div>
-        <div className="bg-[#0F1629] rounded-xl border border-l-4 border-l-purple-500 border-[#1E2D4F] p-5">
+        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Annual Savings ({view})</p>
-          <p className="text-2xl font-bold text-green-600 mt-1">{fmt(annualSavings)}</p>
+          <p className="text-2xl font-bold text-purple-300 mt-1">{fmt(annualSavings)}</p>
           <p className="text-xs text-slate-400 mt-1">if all RI committed</p>
         </div>
       </div>
@@ -151,8 +151,8 @@ export default function RiRecommendationsPage() {
       {/* No data state */}
       {recs.length === 0 && (
         <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-10 text-center">
-          <p className="text-4xl mb-3">🖥️</p>
-          <p className="font-semibold text-slate-700">No EC2 instances found</p>
+          <div className="mx-auto mb-3 h-10 w-10 rounded-full border border-[#1E2D4F] bg-[#141C33]" />
+          <p className="font-semibold text-slate-100">No EC2 instances found</p>
           <p className="text-sm text-slate-500 mt-1">
             Run a scan to discover your EC2 fleet and get RI recommendations.
           </p>
@@ -206,12 +206,12 @@ export default function RiRecommendationsPage() {
                         </span>
                       </td>
                       <td className="px-5 py-3 text-right font-mono text-slate-600">{fmt(rec.monthly_ondemand_usd)}</td>
-                      <td className="px-5 py-3 text-right font-mono text-slate-600">
+                      <td className="px-5 py-3 text-right font-mono text-slate-300">
                         {fmt(rec.monthly_ri_1yr_usd)}
-                        <div className="text-xs text-green-600 font-medium">{discPct}% off</div>
+                        <div className="text-xs text-[#6EE7B7] font-medium">{discPct}% off</div>
                       </td>
-                      <td className="px-5 py-3 text-right font-mono font-semibold text-green-600">{fmt(monthlySav)}</td>
-                      <td className="px-5 py-3 text-right font-mono font-bold text-green-700">{fmt(annSav)}</td>
+                      <td className="px-5 py-3 text-right font-mono font-semibold text-[#6EE7B7]">{fmt(monthlySav)}</td>
+                      <td className="px-5 py-3 text-right font-mono font-bold text-[#6EE7B7]">{fmt(annSav)}</td>
                     </tr>
                   )
                 })}
@@ -223,10 +223,10 @@ export default function RiRecommendationsPage() {
                     {fmt(data.total_monthly_ondemand_usd)}
                   </td>
                   <td className="px-5 py-3" />
-                  <td className="px-5 py-3 text-right font-mono font-bold text-green-600">
+                  <td className="px-5 py-3 text-right font-mono font-bold text-[#6EE7B7]">
                     {fmt(data.total_monthly_savings_1yr_usd)}
                   </td>
-                  <td className="px-5 py-3 text-right font-mono font-bold text-green-700">
+                  <td className="px-5 py-3 text-right font-mono font-bold text-[#6EE7B7]">
                     {fmt(annualSavings)}
                   </td>
                 </tr>

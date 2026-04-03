@@ -10,6 +10,16 @@ type EnvVar = {
   description: string
 }
 
+function isTestOrDevClerkPublishableKey(value: string | undefined): boolean {
+  if (!value) return false
+  return value.startsWith('pk_test_') || value.includes('.clerk.accounts.dev')
+}
+
+function isTestOrDevClerkSecretKey(value: string | undefined): boolean {
+  if (!value) return false
+  return value.startsWith('sk_test_')
+}
+
 const ENV_VARS: EnvVar[] = [
   // Auth
   { key: 'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY', required: true, description: 'Clerk publishable key' },
@@ -52,6 +62,22 @@ function validateEnv(): void {
     } else {
       console.warn(`[env] Missing environment variables (non-fatal in development):\n${list}`)
     }
+  }
+
+  const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+  const secretKey = process.env.CLERK_SECRET_KEY
+
+  if (
+    process.env.NODE_ENV === 'production' &&
+    (isTestOrDevClerkPublishableKey(publishableKey) || isTestOrDevClerkSecretKey(secretKey))
+  ) {
+    throw new Error(
+      [
+        'Production is configured with Clerk development credentials.',
+        'Replace NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY with your Clerk production publishable key (pk_live_...).',
+        'Replace CLERK_SECRET_KEY with your Clerk production secret key (sk_live_...).',
+      ].join(' ')
+    )
   }
 }
 

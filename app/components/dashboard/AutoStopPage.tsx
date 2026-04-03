@@ -358,7 +358,7 @@ export default function AutoStopPage() {
     )
   }
 
-  const runLabel = { idle: 'Run now', running: 'Running…', done: '✓ Done', error: '✕ Error' }[runState]
+  const runLabel = { idle: 'Run now', running: 'Running…', done: 'Complete', error: 'Error' }[runState]
   const totalSavings = savings?.total_savings_usd ?? 0
   const monthlySavings = totalSavings * 24 * 30
 

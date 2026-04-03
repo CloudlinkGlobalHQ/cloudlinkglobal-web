@@ -41,8 +41,8 @@ describe('lib/env – validateEnv', () => {
   it('does not throw in production when all required vars are present', async () => {
     vi.stubEnv('NEXT_PHASE', '')
     vi.stubEnv('NODE_ENV', 'production')
-    vi.stubEnv('NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY', 'pk_test_abc')
-    vi.stubEnv('CLERK_SECRET_KEY', 'sk_test_abc')
+    vi.stubEnv('NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY', 'pk_live_abc')
+    vi.stubEnv('CLERK_SECRET_KEY', 'sk_live_abc')
     vi.stubEnv('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY', 'pk_test_stripe')
     vi.stubEnv('STRIPE_SECRET_KEY', 'sk_test_stripe')
     vi.stubEnv('STRIPE_WEBHOOK_SECRET', 'whsec_test')

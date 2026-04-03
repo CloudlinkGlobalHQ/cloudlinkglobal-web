@@ -95,10 +95,10 @@ export default function BudgetsPage() {
   }
 
   const utilizationColor = (pct: number) => {
-    if (pct >= 100) return 'text-red-600 bg-red-50'
-    if (pct >= 80) return 'text-amber-600 bg-amber-50'
-    if (pct >= 50) return 'text-yellow-600 bg-yellow-50'
-    return 'text-green-600 bg-green-50'
+    if (pct >= 100) return 'text-red-300 bg-red-500/10'
+    if (pct >= 80) return 'text-orange-300 bg-orange-500/10'
+    if (pct >= 50) return 'text-yellow-300 bg-yellow-500/10'
+    return 'text-[#6EE7B7] bg-[#10B981]/10'
   }
 
   const barColor = (pct: number) => {
@@ -120,18 +120,18 @@ export default function BudgetsPage() {
         </div>
         <div className="flex gap-3">
           <button onClick={handleCheck} disabled={checking}
-            className="text-sm font-medium px-4 py-2 rounded-lg border border-[#1E2D4F] bg-[#0F1629] hover:bg-[#141C33] text-slate-700 transition disabled:opacity-60">
+            className="dashboard-secondary-button px-4 py-2 text-sm disabled:opacity-60">
             {checking ? 'Checking…' : 'Run budget check'}
           </button>
           <button onClick={() => setShowCreate(true)}
-            className="text-sm font-medium px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition shadow-sm">
+            className="dashboard-primary-button px-4 py-2 text-sm shadow-sm">
             + New budget
           </button>
         </div>
       </div>
 
       {checkResult && (
-        <div className={`rounded-lg p-4 text-sm font-medium ${checkResult.alerts_fired > 0 ? 'bg-amber-50 text-amber-700' : 'bg-green-50 text-green-700'}`}>
+        <div className={`dashboard-surface-elevated p-4 text-sm font-medium ${checkResult.alerts_fired > 0 ? 'text-orange-300' : 'text-[#6EE7B7]'}`}>
           {checkResult.alerts_fired > 0
             ? `${checkResult.alerts_fired} budget alert(s) fired`
             : 'All budgets within limits'}
@@ -146,17 +146,17 @@ export default function BudgetsPage() {
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Budget Name</label>
               <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Monthly AWS Budget"
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                className="dashboard-field w-full rounded-lg px-3 py-2 text-sm" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Monthly Limit (USD)</label>
               <input type="number" value={limit} onChange={e => setLimit(e.target.value)} placeholder="1000"
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                className="dashboard-field w-full rounded-lg px-3 py-2 text-sm" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Scope</label>
               <select value={scope} onChange={e => setScope(e.target.value as 'total' | 'service')}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                className="dashboard-field w-full rounded-lg px-3 py-2 text-sm">
                 <option value="total">Total spend (all services)</option>
                 <option value="service">Specific service</option>
               </select>
@@ -165,7 +165,7 @@ export default function BudgetsPage() {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Service</label>
                 <select value={service} onChange={e => setService(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                  className="dashboard-field w-full rounded-lg px-3 py-2 text-sm">
                   <option value="">Select service…</option>
                   {services.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
@@ -174,11 +174,11 @@ export default function BudgetsPage() {
           </div>
           <div className="flex gap-3 mt-5">
             <button onClick={handleCreate} disabled={creating || !name || !limit}
-              className="text-sm font-medium px-5 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition disabled:opacity-60">
+              className="dashboard-primary-button px-5 py-2 text-sm disabled:opacity-60">
               {creating ? 'Creating…' : 'Create budget'}
             </button>
             <button onClick={() => setShowCreate(false)}
-              className="text-sm font-medium px-4 py-2 rounded-lg border border-[#1E2D4F] bg-[#0F1629] text-slate-400 hover:bg-[#141C33] transition">
+              className="dashboard-secondary-button px-4 py-2 text-sm">
               Cancel
             </button>
           </div>
@@ -222,7 +222,7 @@ export default function BudgetsPage() {
                 <span className={`text-sm font-bold px-2.5 py-0.5 rounded-full ${utilizationColor(b.utilization_pct || 0)}`}>
                   {(b.utilization_pct || 0).toFixed(1)}% used
                 </span>
-                <span className={`text-xs font-medium ${b.enabled ? 'text-green-600' : 'text-slate-400'}`}>
+                <span className={`text-xs font-medium ${b.enabled ? 'text-[#6EE7B7]' : 'text-slate-400'}`}>
                   {b.enabled ? 'Active' : 'Disabled'}
                 </span>
               </div>

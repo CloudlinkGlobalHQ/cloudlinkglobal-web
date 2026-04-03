@@ -36,6 +36,7 @@ interface Dispute {
 }
 
 function fmt(n: number) {
+  if (typeof n !== 'number' || !Number.isFinite(n)) return '$0.00'
   if (n >= 1000) return `$${(n / 1000).toFixed(1)}k`
   return `$${n.toFixed(2)}`
 }
@@ -213,7 +214,19 @@ export default function BillingPage() {
 
   const hasPaymentMethod = !!subscription?.stripe_customer_id
 
-  const events = summary?.events || []
+  const safeSummary = {
+    savings_this_month_usd: summary?.savings_this_month_usd ?? 0,
+    cloudlink_fee_this_month_usd: summary?.cloudlink_fee_this_month_usd ?? 0,
+    savings_all_time_usd: summary?.savings_all_time_usd ?? 0,
+    cloudlink_fee_all_time_usd: summary?.cloudlink_fee_all_time_usd ?? 0,
+    billing_threshold_usd: summary?.billing_threshold_usd ?? 500,
+    pending_billing: summary?.pending_billing ?? false,
+    rollover_usd: summary?.rollover_usd ?? 0,
+    breakdown: summary?.breakdown ?? {},
+    events: summary?.events ?? [],
+  }
+
+  const events = safeSummary.events
   const disputedEventIds = new Set(disputes.map(d => d.saving_event_id))
 
   return (
@@ -240,7 +253,7 @@ export default function BillingPage() {
       </div>
 
       {/* ── How it works banner ── */}
-      <div className="rounded-2xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-100 p-5">
+      <div className="dashboard-surface-elevated p-5">
         <div className="flex flex-wrap gap-6">
           {[
             { step: '1', label: 'Connect your cloud', desc: 'We scan for waste' },
@@ -249,12 +262,12 @@ export default function BillingPage() {
             { step: '4', label: 'We take 15%', desc: 'Only after ≥$500 in savings/month' },
           ].map(({ step, label, desc }) => (
             <div key={step} className="flex items-start gap-3 min-w-[160px]">
-              <div className="w-6 h-6 rounded-full bg-green-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="w-6 h-6 rounded-full bg-[#10B981]/15 text-[#6EE7B7] border border-[#10B981]/20 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
                 {step}
               </div>
               <div>
-                <p className="text-sm font-semibold text-green-900">{label}</p>
-                <p className="text-xs text-green-700 mt-0.5">{desc}</p>
+                <p className="text-sm font-semibold text-slate-100">{label}</p>
+                <p className="text-xs text-slate-400 mt-0.5">{desc}</p>
               </div>
             </div>
           ))}
@@ -264,11 +277,11 @@ export default function BillingPage() {
       {/* ── Savings stats ── */}
       {!loadingData && summary && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { label: 'Savings this month', value: fmt(summary.savings_this_month_usd), sub: summary.rollover_usd > 0 ? `+${fmt(summary.rollover_usd)} rolled over` : undefined, accent: 'green' },
-            { label: 'Projected fee (15%)', value: fmt(summary.cloudlink_fee_this_month_usd), sub: summary.pending_billing ? 'Billing this month' : `$${Math.max(0, summary.billing_threshold_usd - summary.savings_this_month_usd).toFixed(0)} until billing` },
-            { label: 'All-time savings', value: fmt(summary.savings_all_time_usd), sub: 'you keep 85%' },
-            { label: 'All-time fees', value: fmt(summary.cloudlink_fee_all_time_usd), sub: 'total paid to Cloudlink' },
+            {[
+            { label: 'Savings this month', value: fmt(safeSummary.savings_this_month_usd), sub: safeSummary.rollover_usd > 0 ? `+${fmt(safeSummary.rollover_usd)} rolled over` : undefined, accent: 'green' },
+            { label: 'Projected fee (15%)', value: fmt(safeSummary.cloudlink_fee_this_month_usd), sub: safeSummary.pending_billing ? 'Billing this month' : `$${Math.max(0, safeSummary.billing_threshold_usd - safeSummary.savings_this_month_usd).toFixed(0)} until billing` },
+            { label: 'All-time savings', value: fmt(safeSummary.savings_all_time_usd), sub: 'you keep 85%' },
+            { label: 'All-time fees', value: fmt(safeSummary.cloudlink_fee_all_time_usd), sub: 'total paid to Cloudlink' },
           ].map(({ label, value, sub, accent }) => (
             <div key={label} className="rounded-xl border border-[#1E2D4F] bg-[#0F1629] p-5">
               <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">{label}</p>
@@ -280,24 +293,24 @@ export default function BillingPage() {
       )}
 
       {/* ── Threshold progress ── */}
-      {!loadingData && summary && summary.savings_this_month_usd < summary.billing_threshold_usd && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+      {!loadingData && summary && safeSummary.savings_this_month_usd < safeSummary.billing_threshold_usd && (
+        <div className="dashboard-surface-elevated p-4">
           <div className="flex items-center justify-between text-sm mb-2">
-            <span className="font-medium text-amber-900">
-              Billing threshold: {fmt(summary.savings_this_month_usd)} / {fmt(summary.billing_threshold_usd)} saved this month
+            <span className="font-medium text-slate-100">
+              Billing threshold: {fmt(safeSummary.savings_this_month_usd)} / {fmt(safeSummary.billing_threshold_usd)} saved this month
             </span>
-            <span className="text-amber-700 font-bold">
-              {Math.round((summary.savings_this_month_usd / summary.billing_threshold_usd) * 100)}%
+            <span className="text-slate-300 font-bold">
+              {Math.round((safeSummary.savings_this_month_usd / safeSummary.billing_threshold_usd) * 100)}%
             </span>
           </div>
-          <div className="h-2 bg-amber-100 rounded-full overflow-hidden">
+          <div className="h-2 bg-[#1A2340] rounded-full overflow-hidden">
             <div
-              className="h-full bg-amber-400 rounded-full transition-all"
-              style={{ width: `${Math.min((summary.savings_this_month_usd / summary.billing_threshold_usd) * 100, 100)}%` }}
+              className="h-full bg-[#10B981] rounded-full transition-all"
+              style={{ width: `${Math.min((safeSummary.savings_this_month_usd / safeSummary.billing_threshold_usd) * 100, 100)}%` }}
             />
           </div>
-          <p className="text-xs text-amber-700 mt-2">
-            We don't charge until you've saved at least ${summary.billing_threshold_usd} in a month. Anything under that rolls to next month.
+          <p className="text-xs text-slate-400 mt-2">
+            We don't charge until you've saved at least ${safeSummary.billing_threshold_usd} in a month. Anything under that rolls to next month.
           </p>
         </div>
       )}
@@ -321,7 +334,7 @@ export default function BillingPage() {
                 <button
                   onClick={openPortal}
                   disabled={portalLoading}
-                  className="rounded-lg bg-[#0F1629] border border-[#1E2D4F] hover:border-[#10B981]/50 px-4 py-2 text-sm font-medium text-slate-300 hover:text-[#10B981] transition disabled:opacity-60"
+                  className="dashboard-secondary-button px-4 py-2 text-sm disabled:opacity-60"
                 >
                   {portalLoading ? 'Opening…' : 'Manage payment method'}
                 </button>
@@ -340,7 +353,7 @@ export default function BillingPage() {
               <button
                 onClick={openSetup}
                 disabled={setupLoading}
-                className="rounded-lg bg-green-600 hover:bg-green-700 px-4 py-2 text-sm font-semibold text-white transition disabled:opacity-60"
+                className="dashboard-primary-button px-4 py-2 text-sm disabled:opacity-60"
               >
                 {setupLoading ? 'Opening…' : 'Add payment method →'}
               </button>
@@ -389,7 +402,7 @@ export default function BillingPage() {
                         {SAVING_TYPE_LABELS[ev.saving_type] || ev.saving_type}
                       </span>
                       {ev.billed && (
-                        <span className="text-xs text-green-600 bg-green-50 border border-green-100 px-2 py-0.5 rounded-full">billed</span>
+                        <span className="text-xs text-[#6EE7B7] bg-[#10B981]/10 border border-[#10B981]/20 px-2 py-0.5 rounded-full">billed</span>
                       )}
                       {isDisputed && (
                         <span className="text-xs text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">disputed</span>

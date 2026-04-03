@@ -60,7 +60,7 @@ const caseStudies = [
     quote: "We had a deploy go out on a Friday afternoon that quietly doubled our Lambda costs over the weekend. By Monday morning Cloudlink had already flagged it, attributed it to the exact commit, and suggested the fix. We reverted within minutes. That kind of visibility used to take us days to piece together manually.",
     metrics: [
       { icon: <DollarSign size={13} />, label: "$4,200 regression caught" },
-      { icon: <Clock size={13} />, label: "Attributed to exact deploy in 47 mins" },
+      { icon: <Clock size={13} />, label: "Attributed to exact deploy in under 1 hour" },
       { icon: <Zap size={13} />, label: "Lambda costs normalised same day" },
     ],
   },

@@ -104,7 +104,7 @@ function OnboardingState() {
           'Track savings in real time',
         ].map((item) => (
           <li key={item} className="flex items-start gap-3 text-sm text-[#94A3B8]">
-            <span className="text-[#10B981] font-bold mt-0.5">✓</span>
+            <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#10B981] shrink-0" />
             <span>{item}</span>
           </li>
         ))}
@@ -541,7 +541,7 @@ export default function Overview({ stats: _stats, onRefresh }: { stats: any; onR
 
         {regressions.length === 0 ? (
           <p className="text-sm text-[#10B981] py-4">
-            No regressions detected — your deploys are clean ✓
+            No regressions detected — your recent deploys are clean.
           </p>
         ) : (
           <div className="overflow-x-auto">

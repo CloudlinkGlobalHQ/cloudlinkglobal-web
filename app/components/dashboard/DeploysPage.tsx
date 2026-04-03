@@ -38,7 +38,7 @@ function RegressionBadge({ status }: { status?: string }) {
     clean:        'bg-[#0A0E1A] text-slate-400 border-[#1E2D4F]',
   }
   const cls = map[status] || 'bg-[#1A2340] text-slate-400 border-[#1E2D4F]'
-  const icons: Record<string, string> = { open: '!', acknowledged: '~', resolved: '✓', clean: '✓' }
+  const icons: Record<string, string> = { open: 'Open', acknowledged: 'Ack', resolved: 'Resolved', clean: 'Clean' }
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium border ${cls}`}>
       {icons[status] || ''} {status}
@@ -98,14 +98,14 @@ export default function DeploysPage() {
         <div className="flex items-center gap-3">
           {msg && <span className="text-xs text-slate-500">{msg}</span>}
           <button onClick={() => setShowSnippet(s => !s)}
-            className="text-sm text-slate-500 border border-slate-200 hover:border-slate-300 px-3 py-1.5 rounded-lg transition">
-            {showSnippet ? 'Hide' : '⚙ CI setup'}
+            className="dashboard-secondary-button text-sm px-3 py-1.5">
+            {showSnippet ? 'Hide' : 'CI setup'}
           </button>
           <button onClick={handleRunDetection} disabled={running}
-            className="bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+            className="dashboard-primary-button disabled:opacity-60 text-sm px-4 py-2">
             {running ? 'Running…' : 'Run detection'}
           </button>
-          <button onClick={load} className="text-sm text-green-600 hover:underline">Refresh</button>
+          <button onClick={load} className="dashboard-secondary-button text-sm px-3 py-1.5">Refresh</button>
         </div>
       </div>
 
@@ -130,7 +130,7 @@ export default function DeploysPage() {
           <p className="text-slate-200 font-medium mb-1">No deploys tracked yet</p>
           <p className="text-slate-400 text-sm mb-4">Send a webhook from your CI/CD pipeline after each deploy.</p>
           <button onClick={() => setShowSnippet(true)}
-            className="text-sm bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
+            className="dashboard-primary-button text-sm px-4 py-2">
             Show setup snippet
           </button>
         </div>

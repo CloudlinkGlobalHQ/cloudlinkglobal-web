@@ -77,10 +77,10 @@ export default function ActionsTable({ onRefresh }: { onRefresh?: () => void }) 
         </div>
         <div className="flex gap-2">
           <button onClick={() => setShowPolicies(s => !s)}
-            className="border border-[#1E2D4F] text-slate-400 hover:bg-[#141C33] text-sm font-medium px-4 py-2 rounded-lg transition">
-            ⚙ Policies
+            className="dashboard-secondary-button text-sm px-4 py-2">
+            Policies
           </button>
-          <button onClick={load} className="text-sm text-green-600 hover:underline">Refresh</button>
+          <button onClick={load} className="dashboard-secondary-button text-sm px-4 py-2">Refresh</button>
         </div>
       </div>
 

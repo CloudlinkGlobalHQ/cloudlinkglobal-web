@@ -89,14 +89,14 @@ export default function SavingsPlansPage() {
           <div>
             <label className="block text-xs font-medium text-slate-600 mb-1.5">Plan Type</label>
             <select value={commitType} onChange={e => { setCommitType(e.target.value); setTerm((TERMS[e.target.value] || [])[0] || '') }}
-              className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm bg-[#0A0E1A] focus:ring-2 focus:ring-green-500 outline-none">
+              className="dashboard-field w-full rounded-lg px-3 py-2 text-sm bg-[#0A0E1A]">
               {SP_TYPES.map(t => <option key={t} value={t}>{t.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}</option>)}
             </select>
           </div>
           <div>
             <label className="block text-xs font-medium text-slate-600 mb-1.5">Term & Upfront</label>
             <select value={term} onChange={e => setTerm(e.target.value)}
-              className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm bg-[#0A0E1A] focus:ring-2 focus:ring-green-500 outline-none">
+              className="dashboard-field w-full rounded-lg px-3 py-2 text-sm bg-[#0A0E1A]">
               {(TERMS[commitType] || []).map(t => (
                 <option key={t} value={t}>{t.replace(/_/g, ' ')} ({DISCOUNTS[commitType]?.[t]}% off)</option>
               ))}
@@ -106,20 +106,20 @@ export default function SavingsPlansPage() {
             <label className="block text-xs font-medium text-slate-600 mb-1.5">Coverage % <span className="text-slate-400">(of P10 baseline)</span></label>
             <div className="flex items-center gap-2">
               <input type="range" min={20} max={100} step={5} value={coverage} onChange={e => setCoverage(Number(e.target.value))}
-                className="flex-1 accent-green-600" />
-              <span className="text-sm font-bold text-slate-700 w-10">{coverage}%</span>
+                className="flex-1 accent-emerald-500" />
+              <span className="text-sm font-bold text-slate-200 w-10">{coverage}%</span>
             </div>
           </div>
           <div>
             <label className="block text-xs font-medium text-slate-600 mb-1.5">History (days)</label>
             <select value={daysHistory} onChange={e => setDaysHistory(Number(e.target.value))}
-              className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm bg-[#0A0E1A] focus:ring-2 focus:ring-green-500 outline-none">
+              className="dashboard-field w-full rounded-lg px-3 py-2 text-sm bg-[#0A0E1A]">
               {[30, 60, 90, 180].map(d => <option key={d} value={d}>{d} days</option>)}
             </select>
           </div>
         </div>
         <button onClick={analyze} disabled={loading}
-          className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition shadow-sm">
+          className="dashboard-primary-button disabled:opacity-50 px-6 py-2.5 text-sm shadow-sm">
           {loading ? 'Analyzing…' : 'Run Analysis'}
         </button>
       </div>
@@ -138,9 +138,9 @@ export default function SavingsPlansPage() {
               { label: 'ROI', value: `${analysis.recommendation.roi_pct}%`, sub: `${analysis.recommendation.payback_months}mo payback`, color: 'purple' },
               { label: 'Coverage', value: `${analysis.coverage_pct_actual}%`, sub: 'of eligible spend', color: 'yellow' },
             ].map(({ label, value, sub, color }) => (
-              <div key={label} className={`bg-[#0F1629] rounded-xl border border-[#1E2D4F] border-l-4 border-l-${color}-500 shadow-sm p-5`}>
+              <div key={label} className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] shadow-sm p-5">
                 <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">{label}</p>
-                <p className="text-2xl font-bold text-slate-100 mt-1">{value}</p>
+                <p className={`text-2xl font-bold mt-1 ${color === 'green' ? 'text-[#6EE7B7]' : color === 'blue' ? 'text-blue-300' : color === 'purple' ? 'text-purple-300' : 'text-yellow-300'}`}>{value}</p>
                 <p className="text-xs text-slate-400 mt-0.5">{sub}</p>
               </div>
             ))}
@@ -186,11 +186,11 @@ export default function SavingsPlansPage() {
               )}
 
               <div className="mt-5 pt-4 border-t border-slate-100">
-                <h4 className="text-sm font-semibold text-slate-700 mb-2">Next Steps</h4>
+                <h4 className="text-sm font-semibold text-slate-100 mb-2">Next Steps</h4>
                 <ol className="space-y-1.5">
                   {analysis.next_steps.map((step, i) => (
-                    <li key={i} className="flex gap-2 text-sm text-slate-600">
-                      <span className="text-green-500 font-bold shrink-0">{i + 1}.</span>
+                    <li key={i} className="flex gap-2 text-sm text-slate-400">
+                      <span className="text-[#6EE7B7] font-bold shrink-0">{i + 1}.</span>
                       <span>{step}</span>
                     </li>
                   ))}
@@ -200,18 +200,18 @@ export default function SavingsPlansPage() {
           </div>
 
           {/* CTA */}
-          <div className="bg-gradient-to-r from-green-600 to-emerald-500 rounded-2xl p-6 text-white">
+          <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-2xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold mb-1">Ready to commit?</h3>
-                <p className="text-green-100 text-sm">
+                <h3 className="text-lg font-bold mb-1 text-slate-100">Ready to commit?</h3>
+                <p className="text-slate-400 text-sm">
                   Your recommended commitment: <strong>{fmtHr(analysis.recommendation.hourly_commitment_usd)}</strong> on a <strong>{analysis.term.replace(/_/g, ' ')}</strong> {analysis.commitment_type} plan — saving <strong>{fmt(analysis.recommendation.annual_savings_usd)}/year</strong>.
                 </p>
               </div>
               <a href="https://console.aws.amazon.com/billing/home#/savingsPlans/purchase"
                 target="_blank" rel="noopener noreferrer"
-                className="shrink-0 bg-[#0F1629] text-green-400 hover:bg-green-900/20 px-5 py-2.5 rounded-lg text-sm font-bold transition shadow">
-                Open AWS Console →
+                className="dashboard-primary-button shrink-0 px-5 py-2.5 text-sm">
+                Open AWS Console
               </a>
             </div>
           </div>

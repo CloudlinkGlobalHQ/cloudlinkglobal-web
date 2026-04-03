@@ -54,30 +54,30 @@ export default function ApiKeysPage() {
           <p className="text-sm text-slate-500 mt-0.5">Manage programmatic access keys for the Cloudlink Public API v1</p>
         </div>
         <button onClick={() => setShowCreate(true)}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">
+          className="dashboard-primary-button px-4 py-2 text-sm shadow-sm">
           + Create Key
         </button>
       </div>
 
       {/* New key banner */}
       {newKey && (
-        <div className="bg-[#10B981]/10 border border-[#10B981]/30 rounded-xl p-5">
+        <div className="dashboard-surface-elevated p-5">
           <div className="flex items-start gap-3">
-            <span className="text-2xl text-[#10B981]">↳</span>
+            <div className="mt-0.5 h-2.5 w-2.5 rounded-full bg-[#10B981] shrink-0" />
             <div className="flex-1">
-              <p className="font-semibold text-[#10B981] mb-1">API Key Created — Store it now!</p>
+              <p className="font-semibold text-[#6EE7B7] mb-1">API key created. Store it now.</p>
               <p className="text-sm text-[#94A3B8] mb-3">This key will not be shown again. Copy it and store it securely.</p>
               <div className="flex items-center gap-2">
-                <code className="flex-1 bg-[#0F1629] border border-green-200 rounded-lg px-3 py-2 text-sm font-mono text-slate-200 break-all">
+                <code className="flex-1 bg-[#0A0E1A] border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm font-mono text-slate-200 break-all">
                   {newKey}
                 </code>
                 <button onClick={() => copy(newKey)}
-                  className={`shrink-0 px-3 py-2 rounded-lg text-sm font-medium transition ${copied ? 'bg-[#10B981] text-white' : 'bg-[#0F1629] border border-[#10B981]/40 text-[#10B981] hover:bg-[#10B981]/10'}`}>
-                  {copied ? '✓ Copied' : 'Copy'}
+                  className={`shrink-0 px-3 py-2 rounded-lg text-sm font-medium transition ${copied ? 'bg-[#10B981] text-white' : 'dashboard-secondary-button'}`}>
+                  {copied ? 'Copied' : 'Copy'}
                 </button>
               </div>
             </div>
-            <button onClick={() => setNewKey(null)} className="text-green-400 hover:text-green-600 text-xl shrink-0">×</button>
+            <button onClick={() => setNewKey(null)} className="text-slate-400 hover:text-slate-200 text-sm font-medium shrink-0">Close</button>
           </div>
         </div>
       )}
@@ -105,8 +105,8 @@ curl https://cloudlink-agents-production.up.railway.app/v1/anomalies \\
         </div>
       ) : keys.length === 0 ? (
         <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-10 text-center">
-          <p className="text-3xl mb-3">🔐</p>
-          <p className="font-semibold text-slate-700">No API keys yet</p>
+          <div className="mx-auto mb-3 h-10 w-10 rounded-full border border-[#1E2D4F] bg-[#141C33]" />
+          <p className="font-semibold text-slate-100">No API keys yet</p>
           <p className="text-sm text-slate-500 mt-1">Create a key to start using the Cloudlink Public API v1</p>
         </div>
       ) : (
@@ -140,25 +140,25 @@ curl https://cloudlink-agents-production.up.railway.app/v1/anomalies \\
           <div className="bg-[#0F1629] rounded-2xl shadow-2xl w-full max-w-md">
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E2D4F]/50">
               <h3 className="text-lg font-bold text-slate-100">Create API Key</h3>
-              <button onClick={() => setShowCreate(false)} className="text-slate-400 hover:text-slate-600 text-xl">×</button>
+              <button onClick={() => setShowCreate(false)} className="text-slate-400 hover:text-slate-200 text-sm font-medium">Close</button>
             </div>
             <div className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">Key Name <span className="text-red-500">*</span></label>
                 <input value={name} onChange={e => setName(e.target.value)}
-                  className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
+                  className="dashboard-field w-full rounded-lg px-3 py-2 text-sm"
                   placeholder="e.g. CI/CD Pipeline, Terraform Provider" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">Description <span className="text-slate-400 font-normal">(optional)</span></label>
                 <input value={desc} onChange={e => setDesc(e.target.value)}
-                  className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
+                  className="dashboard-field w-full rounded-lg px-3 py-2 text-sm"
                   placeholder="What is this key used for?" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">Expiry <span className="text-slate-400 font-normal">(optional)</span></label>
                 <select value={expireDays} onChange={e => setExpireDays(e.target.value ? Number(e.target.value) : '')}
-                  className="w-full border border-[#1E2D4F] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 outline-none bg-[#0F1629]">
+                  className="dashboard-field w-full rounded-lg px-3 py-2 text-sm">
                   <option value="">Never expires</option>
                   <option value="30">30 days</option>
                   <option value="90">90 days</option>
@@ -167,9 +167,9 @@ curl https://cloudlink-agents-production.up.railway.app/v1/anomalies \\
               </div>
             </div>
             <div className="flex justify-end gap-3 px-6 py-4 border-t border-[#1E2D4F]/50">
-              <button onClick={() => setShowCreate(false)} className="text-slate-600 hover:text-slate-200 px-4 py-2 text-sm font-medium">Cancel</button>
+              <button onClick={() => setShowCreate(false)} className="dashboard-secondary-button px-4 py-2 text-sm">Cancel</button>
               <button onClick={handleCreate} disabled={!name.trim() || creating}
-                className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-medium transition shadow-sm">
+                className="dashboard-primary-button px-5 py-2 text-sm disabled:opacity-50 shadow-sm">
                 {creating ? 'Creating…' : 'Create Key'}
               </button>
             </div>

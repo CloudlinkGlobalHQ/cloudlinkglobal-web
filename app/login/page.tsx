@@ -2,27 +2,88 @@ import { SignIn } from '@clerk/nextjs'
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { Activity, ShieldCheck, TrendingUp } from 'lucide-react'
 
-export default async function LoginPage() {
+type LoginPageProps = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
+}
+
+function getRedirectTarget(value: string | string[] | undefined) {
+  const candidate = Array.isArray(value) ? value[0] : value
+
+  if (!candidate || !candidate.startsWith('/dashboard')) {
+    return '/dashboard'
+  }
+
+  return candidate
+}
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
   const { userId } = await auth()
   if (userId) redirect('/dashboard')
+  const resolvedSearchParams = searchParams ? await searchParams : undefined
+  const redirectTarget = getRedirectTarget(resolvedSearchParams?.redirect_url)
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center px-4"
+      className="min-h-screen grid lg:grid-cols-[1.1fr_0.9fr]"
       style={{ backgroundColor: '#0A0E1A' }}
     >
-      {/* Subtle radial glow */}
       <div
         className="pointer-events-none fixed inset-0"
         style={{
-          backgroundImage: 'radial-gradient(circle at 50% 0%, rgba(16,185,129,0.08) 0%, transparent 60%)',
+          backgroundImage: 'radial-gradient(circle at 20% 10%, rgba(16,185,129,0.12) 0%, transparent 35%), radial-gradient(circle at 80% 80%, rgba(5,150,105,0.12) 0%, transparent 32%)',
         }}
       />
 
-      <div className="relative z-10 w-full max-w-md flex flex-col items-center">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 mb-8 group w-fit">
+      <div className="relative hidden border-r border-[#1E2D4F] lg:flex lg:flex-col lg:justify-between lg:px-14 lg:py-16">
+        <div>
+          <Link href="/" className="group flex w-fit items-center gap-2.5">
+            <div
+              className="flex h-10 w-10 items-center justify-center rounded-xl"
+              style={{ background: 'linear-gradient(135deg, #10B981, #059669)', boxShadow: '0 0 24px rgba(16,185,129,0.28)' }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="white"/>
+              </svg>
+            </div>
+            <span className="text-lg font-bold tracking-tight text-[#F1F5F9]">Cloudlink</span>
+          </Link>
+        </div>
+
+        <div className="max-w-xl">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-[#10B981]">Secure access</p>
+          <h1 className="max-w-lg text-5xl font-extrabold leading-[1.02] tracking-[-0.04em] text-[#F1F5F9]">
+            Sign in to the command center for cloud cost operations.
+          </h1>
+          <p className="mt-6 max-w-xl text-lg leading-8 text-[#94A3B8]">
+            Monitor deploy-linked regressions, scan for waste, review approvals, and measure verified savings across AWS, Azure, and GCP.
+          </p>
+          <div className="mt-10 grid gap-4">
+            {[
+              { icon: Activity, title: 'Deploy-aware monitoring', body: 'Trace spend changes back to the service, deploy, and timeframe that introduced them.' },
+              { icon: ShieldCheck, title: 'Read-only by default', body: 'Onboarding stays read-only until you explicitly approve an operational action.' },
+              { icon: TrendingUp, title: 'Verified savings reporting', body: 'See gross savings, Cloudlink fee, and retained savings in one operator-friendly surface.' },
+            ].map((item) => (
+              <div key={item.title} className="rounded-2xl border border-[#1E2D4F] bg-[#0F1629]/80 px-5 py-4">
+                <div className="mb-2 flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#10B981]/10 text-[#10B981]">
+                    <item.icon size={16} />
+                  </div>
+                  <p className="font-semibold text-[#F1F5F9]">{item.title}</p>
+                </div>
+                <p className="text-sm leading-7 text-[#94A3B8]">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <p className="text-sm text-[#64748B]">Trusted by engineering leaders who need answers before the monthly bill lands.</p>
+      </div>
+
+      <div className="relative z-10 flex min-h-screen items-center justify-center px-4 py-10">
+        <div className="w-full max-w-md flex flex-col items-center">
+        <Link href="/" className="flex items-center gap-2.5 mb-8 group w-fit lg:hidden">
           <div
             className="w-8 h-8 rounded-lg flex items-center justify-center"
             style={{ background: 'linear-gradient(135deg, #10B981, #059669)', boxShadow: '0 0 20px rgba(16,185,129,0.3)' }}
@@ -37,7 +98,8 @@ export default async function LoginPage() {
         </Link>
 
         <SignIn
-          forceRedirectUrl="/dashboard"
+          forceRedirectUrl={redirectTarget}
+          fallbackRedirectUrl="/dashboard"
           appearance={{
             variables: {
               colorBackground: '#0F1629',
@@ -88,6 +150,7 @@ export default async function LoginPage() {
         <p style={{ color: '#475569', fontSize: '12px', textAlign: 'center', marginTop: '24px' }}>
           © {new Date().getFullYear()} Cloudlink Global · All rights reserved
         </p>
+      </div>
       </div>
     </div>
   )

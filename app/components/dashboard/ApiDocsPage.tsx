@@ -14,13 +14,12 @@ interface Endpoint {
 
 interface Section {
   name: string
-  emoji: string
   endpoints: Endpoint[]
 }
 
 const API_SECTIONS: Section[] = [
   {
-    name: 'Public API v1', emoji: '🌐',
+    name: 'Public API v1',
     endpoints: [
       { method: 'GET', path: '/v1/costs', description: 'Aggregated cost data with per-service breakdown', params: '?days=30&provider=gcp' },
       { method: 'GET', path: '/v1/regressions', description: 'Active cost regressions', params: '?status=open|acknowledged|resolved' },
@@ -35,7 +34,7 @@ const API_SECTIONS: Section[] = [
     ]
   },
   {
-    name: 'Cost Data', emoji: '💰',
+    name: 'Cost Data',
     endpoints: [
       { method: 'GET', path: '/cost-summary', description: 'High-level cost summary' },
       { method: 'GET', path: '/multi-cloud/summary', description: 'Provider-by-provider connected cloud summary' },
@@ -46,7 +45,7 @@ const API_SECTIONS: Section[] = [
     ]
   },
   {
-    name: 'Governance & Drift', emoji: '🛡️',
+    name: 'Governance & Drift',
     endpoints: [
       { method: 'GET', path: '/approval-policies', description: 'List action approval policies' },
       { method: 'PUT', path: '/approval-policies/{action_type}', description: 'Update approval rules for an action type', body: '{"require_approval":true,"auto_approve_min_confidence":0.9}' },
@@ -58,7 +57,7 @@ const API_SECTIONS: Section[] = [
     ]
   },
   {
-    name: 'Deploy Risk & AutoFix', emoji: '🧠',
+    name: 'Deploy Risk & AutoFix',
     endpoints: [
       { method: 'GET', path: '/deploy-risk/{service}', description: 'Get deploy risk score for a service' },
       { method: 'POST', path: '/deploy-risk/batch', description: 'Get risk scores for multiple services', body: '{"services":["api","worker","dashboard"]}' },
@@ -66,7 +65,7 @@ const API_SECTIONS: Section[] = [
     ]
   },
   {
-    name: 'Virtual Tags', emoji: '🏷️',
+    name: 'Virtual Tags',
     endpoints: [
       { method: 'GET', path: '/virtual-tags', description: 'List all virtual tags' },
       { method: 'POST', path: '/virtual-tags', description: 'Create a virtual tag', body: '{"name":"Production","color":"#22c55e","rules":[{"field":"service","op":"contains","value":"ec2"}]}' },
@@ -76,7 +75,7 @@ const API_SECTIONS: Section[] = [
     ]
   },
   {
-    name: 'Kubernetes', emoji: '☸️',
+    name: 'Kubernetes',
     endpoints: [
       { method: 'GET', path: '/k8s/costs', description: 'Cluster/namespace rollup + hourly trend', params: '?hours_back=168&cluster=' },
       { method: 'GET', path: '/k8s/costs/namespaces', description: 'Per-namespace cost breakdown' },
@@ -85,7 +84,7 @@ const API_SECTIONS: Section[] = [
     ]
   },
   {
-    name: 'Anomaly Detection', emoji: '🔍',
+    name: 'Anomaly Detection',
     endpoints: [
       { method: 'GET', path: '/anomalies', description: 'List all detected anomalies' },
       { method: 'GET', path: '/anomalies/{service}', description: 'Anomaly analysis for a service' },
@@ -94,7 +93,7 @@ const API_SECTIONS: Section[] = [
     ]
   },
   {
-    name: 'AutoStop', emoji: '⏹️',
+    name: 'AutoStop',
     endpoints: [
       { method: 'GET', path: '/autostop/rules', description: 'List AutoStop rules' },
       { method: 'POST', path: '/autostop/rules', description: 'Create AutoStop rule', body: '{"name":"Stop idle EC2","service":"ec2","idle_threshold_minutes":60,"action":"stop"}' },
@@ -104,7 +103,7 @@ const API_SECTIONS: Section[] = [
     ]
   },
   {
-    name: 'Savings Plans', emoji: '📈',
+    name: 'Savings Plans',
     endpoints: [
       { method: 'POST', path: '/savings-plans/analyze', description: 'Get SP commitment recommendation', body: '{"commitment_type":"compute","term":"1yr_no_upfront","coverage_pct":70,"days_history":90}' },
       { method: 'GET', path: '/savings-plans/options', description: 'All SP types, terms, discount rates' },
@@ -112,7 +111,7 @@ const API_SECTIONS: Section[] = [
     ]
   },
   {
-    name: 'SDK (Cost-per-Customer)', emoji: '🧩',
+    name: 'SDK (Cost-per-Customer)',
     endpoints: [
       { method: 'POST', path: '/sdk/cost-events', description: 'Ingest cost attribution events from SDK', body: '{"events":[{"service":"api","cost_usd":0.00001,"customer_id":"cust_123","feature":"checkout"}]}' },
       { method: 'GET', path: '/sdk/costs/by-customer', description: 'Per-customer cost breakdown', params: '?days=30&feature=' },
@@ -120,20 +119,20 @@ const API_SECTIONS: Section[] = [
     ]
   },
   {
-    name: 'GitHub App Integration', emoji: '🐙',
+    name: 'GitHub App Integration',
     endpoints: [
       { method: 'POST', path: '/github/webhook', description: 'Receive GitHub push/PR webhook events' },
     ]
   },
   {
-    name: 'Slack Integration', emoji: '💬',
+    name: 'Slack Integration',
     endpoints: [
       { method: 'POST', path: '/slack/commands', description: 'Handle /cloudlink slash commands' },
       { method: 'POST', path: '/slack/events', description: 'Handle Slack event subscriptions (app_mention)' },
     ]
   },
   {
-    name: 'Budgets', emoji: '🚨',
+    name: 'Budgets',
     endpoints: [
       { method: 'GET', path: '/budgets', description: 'List budget guardrails' },
       { method: 'POST', path: '/budgets', description: 'Create budget', body: '{"name":"Prod Budget","limit_usd":5000,"period":"monthly","alert_pct":80}' },
@@ -210,7 +209,7 @@ export default function ApiDocsPage() {
                             onClick={() => copy(`${BASE}${ep.path}${ep.params || ''}`, ep.path)}
                             className={`text-xs px-2 py-0.5 rounded transition ${copiedPath === ep.path ? 'bg-green-900/40 text-green-400' : 'bg-[#1A2340] text-slate-400 hover:bg-[#1E2D4F]'}`}
                           >
-                            {copiedPath === ep.path ? '✓' : 'copy URL'}
+                            {copiedPath === ep.path ? 'Copied' : 'Copy URL'}
                           </button>
                         </div>
                         <p className="text-sm text-slate-400 mt-0.5">{ep.description}</p>
@@ -237,8 +236,8 @@ export default function ApiDocsPage() {
           <p className="text-sm text-slate-400">Test endpoints directly in your browser using the OpenAPI/Swagger UI.</p>
         </div>
         <a href={`${BASE}/docs`} target="_blank" rel="noopener noreferrer"
-          className="bg-[#10B981] hover:bg-[#059669] text-white px-4 py-2 rounded-lg text-sm font-medium transition shrink-0">
-          Open Swagger →
+          className="dashboard-primary-button px-4 py-2 text-sm shrink-0">
+          Open Swagger
         </a>
       </div>
     </div>

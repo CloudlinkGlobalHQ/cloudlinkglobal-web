@@ -251,7 +251,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   return (
     <ClerkApiProvider>
     <SubscriptionProvider>
-    <div className="min-h-screen flex" style={{ backgroundColor: '#0A0E1A', color: '#F1F5F9' }}>
+    <div className="dashboard-shell min-h-screen flex" style={{ backgroundColor: '#0A0E1A', color: '#F1F5F9' }}>
 
       {/* Mobile overlay */}
       {mobileOpen && (

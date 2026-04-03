@@ -3,6 +3,10 @@ import { NextResponse } from 'next/server'
 
 const API_URL = process.env.CLOUDLINK_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents-production.up.railway.app'
 
+function toNumber(value: unknown) {
+  return typeof value === 'number' && Number.isFinite(value) ? value : 0
+}
+
 // GET /api/savings/summary
 // Returns real-time savings summary for the dashboard widget:
 // {
@@ -44,15 +48,27 @@ export async function GET() {
 
     const data = await res.json()
 
-    // Compute fee client-side if backend doesn't return it
-    const savingsMtd = data.savings_this_month_usd ?? 0
-    const savingsAllTime = data.savings_all_time_usd ?? 0
+    const savingsMtd = toNumber(data?.savings_this_month_usd)
+    const savingsAllTime = toNumber(data?.savings_all_time_usd)
+    const rollover = toNumber(data?.rollover_usd)
+    const threshold = toNumber(data?.billing_threshold_usd) || 500
+
     return NextResponse.json({
       ...data,
-      cloudlink_fee_this_month_usd: data.cloudlink_fee_this_month_usd ?? savingsMtd * 0.15,
-      cloudlink_fee_all_time_usd: data.cloudlink_fee_all_time_usd ?? savingsAllTime * 0.15,
-      billing_threshold_usd: 500,
-      pending_billing: savingsMtd >= 500,
+      savings_this_month_usd: savingsMtd,
+      savings_all_time_usd: savingsAllTime,
+      rollover_usd: rollover,
+      cloudlink_fee_this_month_usd: toNumber(data?.cloudlink_fee_this_month_usd) || savingsMtd * 0.15,
+      cloudlink_fee_all_time_usd: toNumber(data?.cloudlink_fee_all_time_usd) || savingsAllTime * 0.15,
+      breakdown: typeof data?.breakdown === 'object' && data?.breakdown ? data.breakdown : {
+        AUTOSTOP: 0,
+        IDLE_RESOURCE: 0,
+        REGRESSION_PREVENTION: 0,
+        MISCONFIGURATION_FIX: 0,
+      },
+      events: Array.isArray(data?.events) ? data.events : [],
+      billing_threshold_usd: threshold,
+      pending_billing: savingsMtd >= threshold,
     })
   } catch (err: unknown) {
     console.error('[savings/summary]', err)

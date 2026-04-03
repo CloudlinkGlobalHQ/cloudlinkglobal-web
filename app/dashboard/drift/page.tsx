@@ -169,14 +169,14 @@ export default function DriftPage() {
         <div className="flex gap-3">
           <button
             onClick={() => setShowForm(true)}
-            className="border border-gray-300 hover:bg-[#141C33] text-gray-700 px-4 py-2 rounded-lg text-sm font-medium"
+            className="dashboard-secondary-button px-4 py-2 text-sm"
           >
             + Add Baseline
           </button>
           <button
             onClick={runScan}
             disabled={scanning}
-            className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm font-medium"
+            className="dashboard-primary-button disabled:opacity-50 px-4 py-2 text-sm"
           >
             {scanning ? 'Scanning...' : 'Scan Now'}
           </button>
@@ -212,7 +212,7 @@ export default function DriftPage() {
                   key={level}
                   onClick={() => setSeverityFilter(level)}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-                    severityFilter === level ? 'bg-green-600 text-white border-green-600' : 'border-[#1E2D4F] text-slate-600 hover:bg-[#141C33]'
+                    severityFilter === level ? 'dashboard-pill-active' : 'dashboard-pill hover:text-slate-200'
                   }`}
                 >
                   {level}
@@ -332,7 +332,7 @@ export default function DriftPage() {
           <div className="text-center py-8 text-gray-400">Loading...</div>
         ) : baselines.length === 0 ? (
           <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] p-12 text-center">
-            <div className="text-4xl mb-3">🔎</div>
+            <div className="mx-auto mb-3 h-10 w-10 rounded-full border border-[#1E2D4F] bg-[#141C33]" />
             <p className="text-gray-500">No baselines yet. Add a baseline to start monitoring drift.</p>
           </div>
         ) : (

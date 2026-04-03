@@ -57,8 +57,8 @@ export default function SavingsReportPage() {
           </p>
         </div>
         <button onClick={() => window.print()}
-          className="px-4 py-2 text-sm font-medium border border-slate-200 rounded-lg text-slate-600 hover:bg-[#141C33] transition">
-          🖨 Print / Export
+          className="dashboard-secondary-button px-4 py-2 text-sm">
+          Print / Export
         </button>
       </div>
 

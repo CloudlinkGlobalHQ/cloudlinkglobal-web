@@ -832,7 +832,7 @@ curl -X POST https://api.cloudlinkglobal.com/v1/deploys \\
     "environment": "production",
     "version": "v2.14.1",
     "commit_sha": "a3f8c1d",
-    "author": "jane@example.com",
+    "author": "platform@acme.dev",
     "deployed_at": "2025-03-15T14:32:00Z"
   }'`}</CodeBlock>
 
@@ -1050,7 +1050,7 @@ curl -X POST https://api.cloudlinkglobal.com/v1/deploys \\
     "monthly_impact_usd": 2840,
     "attributed_deploy": {
       "commit_sha": "a3f8c1d",
-      "author": "jane@example.com",
+      "author": "platform@acme.dev",
       "deployed_at": "2025-03-15T12:00:00Z"
     }
   }

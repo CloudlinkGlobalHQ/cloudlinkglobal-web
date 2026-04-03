@@ -128,8 +128,8 @@ export default function KubernetesPage() {
 
       {!hasData ? (
         <div className="bg-[#0F1629] rounded-2xl border border-[#1E2D4F] shadow-sm p-12 text-center">
-          <div className="text-5xl mb-4">☸️</div>
-          <h3 className="text-lg font-semibold text-slate-700 mb-2">No Kubernetes Data Yet</h3>
+          <div className="mx-auto mb-4 h-10 w-10 rounded-full border border-[#1E2D4F] bg-[#141C33]" />
+          <h3 className="text-lg font-semibold text-slate-100 mb-2">No Kubernetes Data Yet</h3>
           <p className="text-sm text-slate-500 mb-4 max-w-sm mx-auto">
             Ingest cost records from your Kubernetes clusters using OpenCost, Kubecost, or the Cloudlink K8s collector.
           </p>
