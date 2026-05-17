@@ -3,7 +3,6 @@ import AnimatedShaderHero from "@/components/ui/animated-shader-hero";
 import MarketingSavingsCalculator from "./components/MarketingSavingsCalculator";
 import {
   AlertTriangle,
-  ArrowRight,
   BarChart2,
   Clock,
   CloudOff,
@@ -12,7 +11,6 @@ import {
   Globe,
   Mail,
   Shield,
-  Star,
   TrendingUp,
   Zap,
 } from "lucide-react";
@@ -116,50 +114,18 @@ const integrations = [
   { name: "Claude", dot: "#CC785C" },
 ];
 
-const testimonials = [
-  {
-    quote:
-      "Cloudlink is the first surface we’ve used that helps finance and engineering look at the same cost event and agree on what changed.",
-    name: "VP Engineering",
-    role: "Series B fintech",
-    company: "Payments infrastructure",
-    initials: "VP",
-    color: "#10B981",
-  },
-  {
-    quote:
-      "The product feels operational, not just analytical. We can see a deploy-driven spike and decide what to do next without opening five tabs.",
-    name: "Platform Lead",
-    role: "Developer tools company",
-    company: "Engineering productivity",
-    initials: "PL",
-    color: "#059669",
-  },
-  {
-    quote:
-      "The value isn’t just cost visibility. It’s getting to a defensible explanation quickly enough that the team can actually respond.",
-    name: "CTO",
-    role: "AI infrastructure company",
-    company: "Model serving platform",
-    initials: "CT",
-    color: "#10B981",
-  },
-];
-
 const footerCols = [
   {
     heading: "Product",
     links: [
       { label: "Platform", href: "/product" },
       { label: "Pricing", href: "/pricing" },
-      { label: "Customers", href: "/customers" },
       { label: "Docs", href: "/docs" },
     ],
   },
   {
     heading: "Company",
     links: [
-      { label: "Customers", href: "/customers" },
       { label: "Contact", href: "mailto:hello@cloudlinkglobal.com" },
       { label: "Enterprise", href: "mailto:enterprise@cloudlinkglobal.com" },
       { label: "Support", href: "mailto:support@cloudlinkglobal.com" },
@@ -410,50 +376,6 @@ function IntegrationsSection() {
   );
 }
 
-function TestimonialsSection() {
-  return (
-    <section className="bg-[#0A0E1A] py-24">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="mx-auto mb-14 max-w-3xl text-center">
-          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.24em] text-[#10B981]">Customer perspective</p>
-          <h2 className="text-4xl font-extrabold tracking-[-0.03em] text-[#F1F5F9] md:text-5xl">
-            Built for operators who need defensible answers fast.
-          </h2>
-          <p className="mt-5 text-lg leading-8 text-[#94A3B8]">
-            The strongest value signal in Cloudlink is not the chart. It is the speed at which teams can explain, validate, and act on a cloud cost event.
-          </p>
-        </div>
-        <div className="grid gap-6 md:grid-cols-3">
-          {testimonials.map((testimonial) => (
-            <article key={testimonial.name} className="rounded-3xl border border-[#1E2D4F] bg-[#10182E] p-7">
-              <div className="mb-5 flex gap-1 text-[#F59E0B]">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <Star key={index} size={15} fill="currentColor" />
-                ))}
-              </div>
-              <p className="text-sm leading-7 text-[#CBD5E1]">&ldquo;{testimonial.quote}&rdquo;</p>
-              <div className="mt-6 flex items-center gap-3">
-                <div
-                  className="flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold text-[#06261B]"
-                  style={{ background: testimonial.color }}
-                >
-                  {testimonial.initials}
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-[#F8FAFC]">{testimonial.name}</div>
-                  <div className="text-xs text-[#94A3B8]">
-                    {testimonial.role}, {testimonial.company}
-                  </div>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function FinalCTASection() {
   return (
     <section className="bg-[#0F1629] py-28">
@@ -539,7 +461,6 @@ export default function HomePage() {
       <FeaturesBentoSection />
       <MarketingSavingsCalculator />
       <IntegrationsSection />
-      <TestimonialsSection />
       <FinalCTASection />
       <Footer />
     </main>
