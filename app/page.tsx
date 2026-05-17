@@ -226,13 +226,8 @@ function HeroSection() {
             href: "/product",
           },
         }}
+        visual={<MarketingSparkline />}
       />
-      <div className="relative z-20 mx-auto -mt-24 max-w-7xl px-6 pb-20 lg:-mt-28">
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
-          <div className="hidden lg:block" />
-          <MarketingSparkline />
-        </div>
-      </div>
     </section>
   );
 }

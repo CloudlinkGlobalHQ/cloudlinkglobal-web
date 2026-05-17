@@ -35,6 +35,7 @@ interface HeroProps {
       onClick?: () => void
     }
   }
+  visual?: React.ReactNode
   className?: string
 }
 
@@ -435,6 +436,7 @@ export default function AnimatedShaderHero({
   subtitle,
   stats,
   buttons,
+  visual,
   className = '',
 }: HeroProps) {
   const { canvasRef, shaderEnabled } = useShaderBackground()
@@ -450,7 +452,7 @@ export default function AnimatedShaderHero({
   )
 
   return (
-    <section className={`relative isolate min-h-screen overflow-hidden bg-[#0A0E1A] ${className}`}>
+    <section className={`relative isolate overflow-hidden bg-[#0A0E1A] ${className}`}>
       {shaderEnabled && (
         <canvas
           ref={canvasRef}
@@ -462,70 +464,76 @@ export default function AnimatedShaderHero({
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.12),transparent_32%),linear-gradient(180deg,rgba(10,14,26,0.25)_0%,rgba(10,14,26,0.85)_55%,rgba(10,14,26,1)_100%)]" />
       <div className="hero-grid absolute inset-0 opacity-40" />
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-6 py-24">
+      <div className="relative z-10 mx-auto grid min-h-[760px] max-w-7xl items-center gap-10 px-6 pb-16 pt-32 lg:min-h-[780px] lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-14 lg:pb-20 lg:pt-28">
         <div className="max-w-4xl">
-          {trustBadge && (
-            <div className="mb-8 inline-flex items-center gap-3 rounded-full border border-[#10B981]/30 bg-[#0F1629]/70 px-4 py-2.5 text-sm text-[#CFFAEA] shadow-[0_0_0_1px_rgba(16,185,129,0.05)] backdrop-blur-md">
-              {trustBadge.icons && trustBadge.icons.length > 0 && (
-                <div className="flex items-center gap-2 text-[#10B981]">
-                  {trustBadge.icons.map(({ icon: Icon, label }) => (
-                    <span key={label} title={label} className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#10B981]/20 bg-[#10B981]/10">
-                      <Icon size={14} />
-                    </span>
-                  ))}
-                </div>
-              )}
-              <span className="font-medium">{trustBadge.text}</span>
-            </div>
-          )}
+          <div className="max-w-4xl">
+            {trustBadge && (
+              <div className="mb-7 inline-flex max-w-full items-center gap-3 rounded-full border border-[#10B981]/30 bg-[#0F1629]/70 px-4 py-2.5 text-sm text-[#CFFAEA] shadow-[0_0_0_1px_rgba(16,185,129,0.05)] backdrop-blur-md">
+                {trustBadge.icons && trustBadge.icons.length > 0 && (
+                  <div className="flex items-center gap-2 text-[#10B981]">
+                    {trustBadge.icons.map(({ icon: Icon, label }) => (
+                      <span key={label} title={label} className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#10B981]/20 bg-[#10B981]/10">
+                        <Icon size={14} />
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <span className="font-medium">{trustBadge.text}</span>
+              </div>
+            )}
 
-          <div className="space-y-6">
-            <div className="space-y-3">
-              <h1 className="max-w-5xl text-5xl font-black leading-[0.98] tracking-[-0.04em] text-[#F1F5F9] md:text-7xl lg:text-8xl">
+            <div className="space-y-6">
+              <h1 className="max-w-5xl text-5xl font-black leading-[1.02] text-[#F1F5F9] md:text-6xl lg:text-7xl">
                 <span className="block">{headline.line1}</span>
                 <span className="block bg-gradient-to-r from-[#10B981] via-[#6EE7B7] to-[#34D399] bg-clip-text text-transparent">
                   {headline.line2}
                 </span>
               </h1>
+
+              <p className="max-w-3xl text-lg leading-8 text-[#94A3B8] md:text-xl">
+                {subtitle}
+              </p>
+
+              {(buttons?.primary || buttons?.secondary) && (
+                <div className="flex flex-col gap-3 pt-3 sm:flex-row">
+                  {buttons.primary && (
+                    <ActionButton
+                      href={buttons.primary.href}
+                      onClick={buttons.primary.onClick}
+                      className="inline-flex items-center justify-center rounded-xl bg-brand-gradient px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_40px_rgba(16,185,129,0.28)] transition hover:scale-[1.02] hover:shadow-[0_18px_48px_rgba(16,185,129,0.34)]"
+                    >
+                      {buttons.primary.text}
+                    </ActionButton>
+                  )}
+                  {buttons.secondary && (
+                    <ActionButton
+                      href={buttons.secondary.href}
+                      onClick={buttons.secondary.onClick}
+                      className="inline-flex items-center justify-center rounded-xl border border-[#1E2D4F] bg-[#0F1629]/70 px-6 py-3.5 text-sm font-semibold text-[#E2E8F0] backdrop-blur-md transition hover:border-[#10B981]/40 hover:bg-[#141C33]"
+                    >
+                      {buttons.secondary.text}
+                    </ActionButton>
+                  )}
+                </div>
+              )}
             </div>
+          </div>
 
-            <p className="max-w-3xl text-lg leading-8 text-[#94A3B8] md:text-xl">
-              {subtitle}
-            </p>
-
-            {(buttons?.primary || buttons?.secondary) && (
-              <div className="flex flex-col gap-3 pt-4 sm:flex-row">
-                {buttons.primary && (
-                  <ActionButton
-                    href={buttons.primary.href}
-                    onClick={buttons.primary.onClick}
-                    className="inline-flex items-center justify-center rounded-xl bg-brand-gradient px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_40px_rgba(16,185,129,0.28)] transition hover:scale-[1.02] hover:shadow-[0_18px_48px_rgba(16,185,129,0.34)]"
-                  >
-                    {buttons.primary.text}
-                  </ActionButton>
-                )}
-                {buttons.secondary && (
-                  <ActionButton
-                    href={buttons.secondary.href}
-                    onClick={buttons.secondary.onClick}
-                    className="inline-flex items-center justify-center rounded-xl border border-[#1E2D4F] bg-[#0F1629]/70 px-6 py-3.5 text-sm font-semibold text-[#E2E8F0] backdrop-blur-md transition hover:border-[#10B981]/40 hover:bg-[#141C33]"
-                  >
-                    {buttons.secondary.text}
-                  </ActionButton>
-                )}
+          <div className="mt-12 grid gap-4 md:grid-cols-3">
+            {statItems.map((item) => (
+              <div key={item.label} className="glass-card p-5">
+                <div className="text-xs font-semibold uppercase tracking-[0.24em] text-[#3D5070]">{item.label}</div>
+                <div className="mt-3 text-lg font-semibold text-[#F1F5F9] md:text-xl">{item.value}</div>
               </div>
-            )}
+            ))}
           </div>
         </div>
 
-        <div className="mt-16 grid gap-4 md:grid-cols-3">
-          {statItems.map((item) => (
-            <div key={item.label} className="glass-card p-5">
-              <div className="text-xs font-semibold uppercase tracking-[0.24em] text-[#3D5070]">{item.label}</div>
-              <div className="mt-3 text-lg font-semibold text-[#F1F5F9] md:text-xl">{item.value}</div>
-            </div>
-          ))}
-        </div>
+        {visual && (
+          <div className="w-full max-w-[380px] justify-self-center lg:justify-self-end">
+            {visual}
+          </div>
+        )}
       </div>
     </section>
   )
