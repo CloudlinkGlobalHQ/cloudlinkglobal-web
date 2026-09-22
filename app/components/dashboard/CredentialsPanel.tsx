@@ -138,7 +138,7 @@ export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: 
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-100">Credentials</h1>
-          <p className="text-slate-500 text-sm mt-1">Cloud credentials used to scan and remediate infrastructure</p>
+          <p className="text-slate-500 text-sm mt-1">Read-only cloud credentials used to scan your infrastructure</p>
         </div>
         <button onClick={() => setShowForm(s => !s)} className="dashboard-primary-button text-sm px-4 py-2">
           + Add credential

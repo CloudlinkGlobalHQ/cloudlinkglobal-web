@@ -86,15 +86,15 @@ export default function ApiKeysPage() {
       <div className="bg-slate-900 rounded-xl p-5 text-sm">
         <p className="text-slate-400 mb-3 font-medium">Example usage</p>
         <pre className="text-green-400 font-mono text-xs overflow-x-auto whitespace-pre-wrap">{`# Get cost summary
-curl https://cloudlink-agents-production.up.railway.app/v1/costs \\
+curl https://cloudlink-agents.onrender.com/v1/costs \\
   -H "Authorization: Bearer YOUR_API_KEY"
 
 # List regressions
-curl https://cloudlink-agents-production.up.railway.app/v1/regressions?status=open \\
+curl https://cloudlink-agents.onrender.com/v1/regressions?status=open \\
   -H "Authorization: Bearer YOUR_API_KEY"
 
 # Get anomalies
-curl https://cloudlink-agents-production.up.railway.app/v1/anomalies \\
+curl https://cloudlink-agents.onrender.com/v1/anomalies \\
   -H "Authorization: Bearer YOUR_API_KEY"`}</pre>
       </div>
 

@@ -15,7 +15,7 @@ interface TTLRule {
   notes?: string;
 }
 
-const API = process.env.NEXT_PUBLIC_API_URL || "https://cloudlink-agents-production.up.railway.app";
+const API = process.env.NEXT_PUBLIC_API_URL || "https://cloudlink-agents.onrender.com";
 
 function formatDuration(seconds: number): string {
   if (seconds <= 0) return "Expired";

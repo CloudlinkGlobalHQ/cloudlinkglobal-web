@@ -1,4 +1,4 @@
-const BASE = process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents-production.up.railway.app'
+const BASE = process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents.onrender.com'
 
 let _getToken: (() => Promise<string | null>) | null = null
 

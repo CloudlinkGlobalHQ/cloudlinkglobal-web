@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getStripe } from '../../../lib/stripe'
 
-const API_URL = process.env.CLOUDLINK_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents-production.up.railway.app'
+const API_URL = process.env.CLOUDLINK_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents.onrender.com'
 const BACKEND_SYNC_SECRET =
   process.env.CLOUDLINK_WEBHOOK_SECRET ||
   process.env.CLOUDLINK_SYNC_SECRET ||

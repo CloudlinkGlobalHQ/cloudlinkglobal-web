@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-const DEFAULT_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents-production.up.railway.app'
+const DEFAULT_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents.onrender.com'
 
 const EXAMPLES = [
   { label: 'Health', method: 'GET', path: '/health', body: '' },

@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { getStripe } from '../../../lib/stripe'
 
-const API_URL = process.env.CLOUDLINK_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents-production.up.railway.app'
+const API_URL = process.env.CLOUDLINK_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents.onrender.com'
 
 // Returns a Stripe Checkout session URL (setup mode) so the customer can save a card.
 // We use the hosted Stripe page — no frontend Stripe.js required.

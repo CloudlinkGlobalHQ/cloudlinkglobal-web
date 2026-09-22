@@ -17,7 +17,7 @@ function mockFetch(status: number, body: unknown) {
 describe('lib/api – getBase', () => {
   it('returns the default API URL when env var is not set', () => {
     const base = getBase()
-    expect(base).toMatch(/cloudlink-agents-production\.up\.railway\.app|^https?:\/\//)
+    expect(base).toMatch(/cloudlink-agents\.onrender\.com|^https?:\/\//)
   })
 })
 

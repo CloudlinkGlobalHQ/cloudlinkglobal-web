@@ -8,7 +8,7 @@ const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 })
 
-const BACKEND = process.env.CLOUDLINK_API_URL || 'https://cloudlink-agents-production.up.railway.app'
+const BACKEND = process.env.CLOUDLINK_API_URL || 'https://cloudlink-agents.onrender.com'
 
 async function fetchContext(token: string) {
   const h = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }

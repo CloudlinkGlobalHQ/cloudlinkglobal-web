@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 
-const BASE = process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents-production.up.railway.app'
+const BASE = process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents.onrender.com'
 
 async function apiFetch(path: string, opts: RequestInit = {}) {
   const res = await fetch(`${BASE}${path}`, {

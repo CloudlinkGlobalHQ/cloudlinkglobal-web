@@ -10,7 +10,7 @@ type StripeInvoice = Omit<Stripe.Invoice, 'subscription'> & {
   subscription: string | null
 }
 
-const API_URL = process.env.CLOUDLINK_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents-production.up.railway.app'
+const API_URL = process.env.CLOUDLINK_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents.onrender.com'
 const BACKEND_SYNC_SECRET =
   process.env.CLOUDLINK_WEBHOOK_SECRET ||
   process.env.CLOUDLINK_SYNC_SECRET ||

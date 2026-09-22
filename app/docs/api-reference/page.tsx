@@ -47,7 +47,7 @@ export default function APIReferencePage() {
       <p className="lead">All endpoints require authentication via the <code>Authorization: Bearer YOUR_API_KEY</code> header.</p>
 
       <h2>Base URL</h2>
-      <pre className="bg-gray-900 text-green-400 rounded-lg p-4 text-sm">https://cloudlink-agents-production.up.railway.app</pre>
+      <pre className="bg-gray-900 text-green-400 rounded-lg p-4 text-sm">https://cloudlink-agents.onrender.com</pre>
 
       <h2>Authentication</h2>
       <p>Include your API key in every request:</p>

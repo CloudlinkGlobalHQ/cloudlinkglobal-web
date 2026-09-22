@@ -31,7 +31,7 @@ export default function CIIntegrationPage() {
       <table>
         <thead><tr><th>Secret</th><th>Value</th></tr></thead>
         <tbody>
-          <tr><td><code>CLOUDLINK_API_URL</code></td><td>Your Cloudlink API URL (e.g. <code>https://cloudlink-agents-production.up.railway.app</code>)</td></tr>
+          <tr><td><code>CLOUDLINK_API_URL</code></td><td>Your Cloudlink API URL (e.g. <code>https://cloudlink-agents.onrender.com</code>)</td></tr>
           <tr><td><code>CLOUDLINK_API_KEY</code></td><td>Your API key from the Cloudlink dashboard</td></tr>
         </tbody>
       </table>

@@ -21,7 +21,7 @@ export default function CLIDocsPage() {
       </table>
 
       <h2>Quick start</h2>
-      <pre className="bg-gray-900 text-green-400 rounded-lg p-4 text-sm overflow-x-auto">{`export CLOUDLINK_API_URL=https://cloudlink-agents-production.up.railway.app
+      <pre className="bg-gray-900 text-green-400 rounded-lg p-4 text-sm overflow-x-auto">{`export CLOUDLINK_API_URL=https://cloudlink-agents.onrender.com
 export CLOUDLINK_API_KEY=cl_live_your_key
 
 python cloudlink_cli.py health

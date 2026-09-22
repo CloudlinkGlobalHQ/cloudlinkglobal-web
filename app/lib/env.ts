@@ -92,7 +92,7 @@ export function requireEnv(key: string, description?: string): string {
 }
 
 export const env = {
-  apiUrl: process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents-production.up.railway.app',
+  apiUrl: process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agents.onrender.com',
   clerk: {
     publishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!,
   },
