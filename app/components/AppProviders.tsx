@@ -9,14 +9,19 @@ const DynamicClerkProvider = dynamic(
   { ssr: false }
 )
 
+// Clerk's sign-in/sign-up flows continue on sub-paths (e.g. /signup/verify-email-address),
+// so match the whole subtree, not just the entry page.
+const CLERK_ROUTES = ['/login', '/signup', '/dashboard']
+
+export function needsClerk(pathname: string | null): boolean {
+  if (!pathname) return false
+  return CLERK_ROUTES.some((route) => pathname === route || pathname.startsWith(`${route}/`))
+}
+
 export default function AppProviders({ children }: { children: ReactNode }) {
   const pathname = usePathname()
-  const needsClerk =
-    pathname === '/login' ||
-    pathname === '/signup' ||
-    pathname?.startsWith('/dashboard')
 
-  if (!needsClerk) {
+  if (!needsClerk(pathname)) {
     return <>{children}</>
   }
 
