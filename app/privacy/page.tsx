@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export const metadata = { title: 'Privacy Policy — Cloudlink Global' }
+export const metadata = { title: 'Privacy Policy' }
 
 export default function PrivacyPage() {
   return (
@@ -12,12 +12,12 @@ export default function PrivacyPage() {
       </header>
       <main className="max-w-3xl mx-auto px-6 py-12">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Privacy Policy</h1>
-        <p className="text-sm text-gray-400 mb-8">Last updated: March 19, 2026</p>
+        <p className="text-sm text-gray-400 mb-8">Last updated: October 24, 2026</p>
 
         <div className="prose prose-sm prose-gray max-w-none space-y-6 text-gray-600 leading-relaxed">
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mt-8 mb-3">1. Information We Collect</h2>
-            <p>When you use Cloudlink, we collect information you provide directly: your email address when joining the waitlist, API keys for authentication, and AWS credentials you configure for cloud scanning. We also collect usage data such as scan history, resource counts, and cost snapshots to provide the service.</p>
+            <p>When you use Cloudlink, we collect information you provide directly: your name and email address when you create an account, and the IAM role ARN and External ID you give us to connect AWS. We never ask for your AWS password or access keys. To provide the service we also store the results of each scan: resource settings, usage metrics, cost by service and the findings we generate. We do not read the contents of your S3 files, the records in your databases or your Lambda code.</p>
           </section>
 
           <section>
@@ -27,7 +27,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mt-8 mb-3">3. Data Security</h2>
-            <p>Cloud credentials are encrypted at rest using AES-256 encryption. API keys are stored as one-way SHA-256 hashes. All communication between your browser and our servers is encrypted via TLS. We follow industry-standard practices to protect your data.</p>
+            <p>The role ARN and External ID you give us are encrypted at rest. The AWS role Cloudlink uses is read-only: it can describe, get and list, and cannot change anything in your account. You can cut off our access at any time by deleting the CloudFormation stack. All communication between your browser and our servers is encrypted with TLS.</p>
           </section>
 
           <section>
@@ -37,7 +37,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mt-8 mb-3">5. Third-Party Services</h2>
-            <p>We use AWS Cost Explorer APIs to fetch your cost data, OpenAI for action planning, and Slack for alert delivery (when configured by you). We use Formspree for waitlist form submissions. Each third-party service has its own privacy policy.</p>
+            <p>We use these services to run Cloudlink: Clerk for sign-in, Stripe for billing, PostHog for product analytics, Anthropic and OpenAI to generate answers and recommendations from your scan data, Resend to send email, Sentry to report errors, and Slack to deliver alerts when you connect it. The website runs on Vercel and our backend runs on Render. Each service only receives what it needs for its job, and each has its own privacy policy.</p>
           </section>
 
           <section>

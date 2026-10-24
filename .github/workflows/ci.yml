@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Type check & build
+    name: Type check, lint, test & build
     runs-on: ubuntu-latest
 
     steps:
@@ -23,7 +23,13 @@ jobs:
         run: npm ci
 
       - name: TypeScript type check
-        run: npx tsc --noEmit || true
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm test
 
       - name: Build (production)
         run: npm run build

@@ -43,9 +43,8 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
               className="flex h-10 w-10 items-center justify-center rounded-xl"
               style={{ background: 'linear-gradient(135deg, #10B981, #059669)', boxShadow: '0 0 24px rgba(16,185,129,0.28)' }}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="white" stroke="none"/>
-              </svg>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo-mark.png" alt="" width={26} height={15} />
             </div>
             <span className="text-lg font-bold tracking-tight text-[#F1F5F9]">Cloudlink</span>
           </Link>
@@ -54,16 +53,16 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
         <div className="max-w-xl">
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-[#10B981]">Get started</p>
           <h1 className="max-w-lg text-5xl font-extrabold leading-[1.02] tracking-[-0.04em] text-[#F1F5F9]">
-            Connect your cloud and turn cost visibility into action.
+            Find the AWS spend nobody is using.
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-8 text-[#94A3B8]">
-            Set up Cloudlink in minutes, establish your baseline, and start catching regressions before they compound into budget surprises.
+            Create an account, connect AWS with a read-only role in about 5 minutes, and get a list of what&apos;s costing you money for no reason.
           </p>
           <div className="mt-10 grid gap-4">
             {[
-              { icon: Cloud, title: 'Read-only onboarding', body: 'Connect AWS, Azure, or GCP with the least-privilege roles and clear verification steps.' },
-              { icon: GitBranch, title: 'Deploy attribution', body: 'Tie regressions to the deploy, version, or service responsible so engineering can respond quickly.' },
-              { icon: DollarSign, title: 'Performance-based pricing', body: 'You pay 15% of verified savings. No subscription tiers, no upfront contract, no hidden platform tax.' },
+              { icon: Cloud, title: 'Read-only setup', body: 'A CloudFormation template creates one role with 22 Describe, Get and List permissions, locked to your External ID.' },
+              { icon: GitBranch, title: 'Weekly digest', body: 'A weekly email summary of new findings, plus Slack or webhook notifications when a scan finishes.' },
+              { icon: DollarSign, title: 'Free this fall', body: 'The fall 2026 pilot is free. After that, pricing is 15% of verified savings, and nothing if there are none.' },
             ].map((item) => (
               <div key={item.title} className="rounded-2xl border border-[#1E2D4F] bg-[#0F1629]/80 px-5 py-4">
                 <div className="mb-2 flex items-center gap-3">
@@ -78,7 +77,7 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
           </div>
         </div>
 
-        <p className="text-sm text-[#64748B]">The fastest path from “why did spend spike?” to “here’s the change that caused it.”</p>
+        <p className="text-sm text-[#64748B]">Read-only AWS cost monitoring by Cloudlink Global.</p>
       </div>
 
       <div className="relative z-10 flex min-h-screen items-center justify-center px-4 py-10">
@@ -88,9 +87,8 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
             className="w-8 h-8 rounded-lg flex items-center justify-center"
             style={{ background: 'linear-gradient(135deg, #10B981, #059669)', boxShadow: '0 0 20px rgba(16,185,129,0.3)' }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="white" stroke="none"/>
-            </svg>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo-mark.png" alt="" width={24} height={14} />
           </div>
           <span style={{ color: '#F1F5F9', fontWeight: 700, fontSize: '18px', letterSpacing: '-0.01em' }}>
             Cloudlink
@@ -103,10 +101,10 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
           appearance={{
             variables: {
               colorBackground: '#0F1629',
-              colorInputBackground: '#0A0E1A',
-              colorText: '#F1F5F9',
-              colorTextSecondary: '#94A3B8',
-              colorTextOnPrimaryBackground: '#ffffff',
+              colorInput: '#0A0E1A',
+              colorForeground: '#F1F5F9',
+              colorMutedForeground: '#94A3B8',
+              colorPrimaryForeground: '#ffffff',
               colorPrimary: '#10B981',
               colorDanger: '#EF4444',
               colorSuccess: '#10B981',

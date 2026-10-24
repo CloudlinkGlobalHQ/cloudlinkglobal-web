@@ -1,37 +1,48 @@
+export const metadata = { title: 'API reference' }
+
+const API_BASE = 'https://cloudlink-agents.onrender.com'
+const CONTACT = 'satvikranga60@gmail.com'
+
 export default function APIReferencePage() {
   const endpoints = [
-    { method: 'GET', path: '/stats', desc: 'Action counts + resource count for the current tenant' },
-    { method: 'GET', path: '/resources', desc: 'List discovered AWS resources' },
-    { method: 'GET', path: '/credentials', desc: 'List cloud credentials (secrets masked)' },
-    { method: 'POST', path: '/credentials', desc: 'Add a cloud credential' },
-    { method: 'DELETE', path: '/credentials/:id', desc: 'Remove a credential' },
-    { method: 'POST', path: '/scan', desc: 'Trigger an AWS scan across all credentials' },
-    { method: 'GET', path: '/scans', desc: 'List scan history' },
+    { method: 'GET', path: '/health', desc: 'Service health check (no API key needed)' },
+    { method: 'GET', path: '/setup/cloudformation-template', desc: 'Download the read-only IAM role CloudFormation template (no API key needed)' },
+    { method: 'GET', path: '/stats', desc: 'Resource count and last scan for your account' },
+    { method: 'GET', path: '/credentials', desc: 'List connected AWS accounts (secrets masked)' },
+    { method: 'POST', path: '/credentials', desc: 'Add an AWS account: { cloud: "aws", label, role_arn, external_id, regions }' },
+    { method: 'POST', path: '/credentials/:id/verify', desc: 'Assume the role and return the AWS account identity' },
+    { method: 'DELETE', path: '/credentials/:id', desc: 'Remove a connected account' },
+    { method: 'POST', path: '/scan', desc: 'Start a scan of all connected accounts (optional body: { credential_ids: [...] })' },
+    { method: 'GET', path: '/scans', desc: 'Scan history' },
+    { method: 'GET', path: '/resources', desc: 'Scanned resources (?resource_type=, ?limit=, ?offset=)' },
     { method: 'POST', path: '/deploys', desc: 'Record a deploy event' },
-    { method: 'GET', path: '/deploys', desc: 'List deploy events' },
-    { method: 'GET', path: '/regressions', desc: 'List cost regressions (filter by ?status=open|acknowledged|resolved)' },
-    { method: 'POST', path: '/regressions/:id/acknowledge', desc: 'Acknowledge a regression' },
-    { method: 'POST', path: '/regressions/:id/resolve', desc: 'Resolve a regression' },
-    { method: 'POST', path: '/regression/run', desc: 'Manually trigger regression detection' },
-    { method: 'GET', path: '/cost-snapshots', desc: 'List hourly cost snapshots' },
-    { method: 'GET', path: '/cost-snapshots/services', desc: 'List tracked AWS services' },
-    { method: 'GET', path: '/actions', desc: 'List actions (filter by ?status=)' },
-    { method: 'POST', path: '/actions/:id/approve', desc: 'Approve a pending action' },
-    { method: 'POST', path: '/actions/:id/reject', desc: 'Reject a pending action' },
-    { method: 'GET', path: '/webhooks', desc: 'List registered webhooks' },
-    { method: 'POST', path: '/webhooks', desc: 'Register a new webhook' },
-    { method: 'DELETE', path: '/webhooks/:id', desc: 'Remove a webhook' },
-    { method: 'GET', path: '/audit', desc: 'Query audit log (filter by ?event_type=, ?since=)' },
-    { method: 'GET', path: '/subscription/:clerk_user_id', desc: 'Get subscription status for a user' },
-    { method: 'GET', path: '/budgets', desc: 'List all budget guardrails with current spend' },
-    { method: 'POST', path: '/budgets', desc: 'Create a new budget guardrail' },
+    { method: 'GET', path: '/deploys', desc: 'List deploy events (?service=, ?limit=)' },
+    { method: 'GET', path: '/deploys/:id', desc: 'Get one deploy event' },
+    { method: 'GET', path: '/regressions', desc: 'List cost regressions (?status=open|acknowledged|resolved, ?limit=)' },
+    { method: 'GET', path: '/regressions/:id', desc: 'Get one regression' },
+    { method: 'POST', path: '/regressions/:id/acknowledge', desc: 'Mark an open regression as acknowledged' },
+    { method: 'POST', path: '/regressions/:id/resolve', desc: 'Mark a regression as resolved' },
+    { method: 'POST', path: '/regression/run', desc: 'Run regression detection now' },
+    { method: 'GET', path: '/cost-snapshots', desc: 'Hourly cost snapshots by service (?service=, ?limit=)' },
+    { method: 'GET', path: '/cost-snapshots/services', desc: 'Service names that have cost snapshot data' },
+    { method: 'GET', path: '/budgets', desc: "List budgets with this month's spend and utilization" },
+    { method: 'POST', path: '/budgets', desc: 'Create a budget: { name, monthly_limit_usd, scope, service, alert_thresholds }' },
     { method: 'PUT', path: '/budgets/:id', desc: 'Update a budget' },
     { method: 'DELETE', path: '/budgets/:id', desc: 'Delete a budget' },
-    { method: 'GET', path: '/budgets/alerts', desc: 'List budget alert history' },
-    { method: 'POST', path: '/budgets/check', desc: 'Manually trigger budget threshold checks' },
-    { method: 'POST', path: '/cost-estimate', desc: 'Predict cost impact of a deploy before it goes live' },
-    { method: 'GET', path: '/anomalies', desc: 'Scan all services for cost anomalies (ML-powered)' },
-    { method: 'GET', path: '/anomalies/:service', desc: 'Analyze a specific service for cost anomalies' },
+    { method: 'GET', path: '/budgets/alerts', desc: 'Budget alert history (?budget_id=, ?limit=)' },
+    { method: 'POST', path: '/budgets/check', desc: 'Check budgets now and send alerts (Slack, webhooks) for thresholds reached. Alerts only; nothing is blocked.' },
+    { method: 'GET', path: '/webhooks', desc: 'List webhooks (secrets masked)' },
+    { method: 'POST', path: '/webhooks', desc: 'Register a webhook: { url, secret?, events? }' },
+    { method: 'DELETE', path: '/webhooks/:id', desc: 'Remove a webhook' },
+    { method: 'POST', path: '/webhooks/test', desc: 'Send a ping event to webhooks subscribed to ping' },
+    { method: 'GET', path: '/settings/slack', desc: 'Get the Slack webhook setting' },
+    { method: 'PUT', path: '/settings/slack', desc: 'Set the Slack webhook: { slack_webhook_url, enabled }' },
+    { method: 'POST', path: '/settings/slack/test', desc: 'Send a test message to Slack' },
+    { method: 'GET', path: '/v1/costs', desc: 'Total cost, cost by service and daily trend from cost snapshots (?days=30)' },
+    { method: 'GET', path: '/v1/regressions', desc: 'Regressions (?status=)' },
+    { method: 'GET', path: '/v1/resources', desc: 'Scanned resources (?resource_type=)' },
+    { method: 'GET', path: '/v1/deploys', desc: 'Deploy events (?service=, ?limit=)' },
+    { method: 'GET', path: '/v1/budgets', desc: 'Budgets with their most recent alerts' },
   ]
 
   const methodColors: Record<string, string> = {
@@ -44,15 +55,20 @@ export default function APIReferencePage() {
   return (
     <article className="prose prose-gray max-w-none">
       <h1>API Reference</h1>
-      <p className="lead">All endpoints require authentication via the <code>Authorization: Bearer YOUR_API_KEY</code> header.</p>
+      <p className="lead">Every endpoint except <code>/health</code> and <code>/setup/cloudformation-template</code> needs an API key, sent as <code>Authorization: Bearer YOUR_API_KEY</code>.</p>
 
       <h2>Base URL</h2>
-      <pre className="bg-gray-900 text-green-400 rounded-lg p-4 text-sm">https://cloudlink-agents.onrender.com</pre>
+      <pre className="bg-gray-900 text-green-400 rounded-lg p-4 text-sm">{API_BASE}</pre>
+      <p>Most endpoints have no version prefix. The <code>/v1</code> endpoints are read-only views of the same data.</p>
 
       <h2>Authentication</h2>
       <p>Include your API key in every request:</p>
-      <pre className="bg-gray-900 text-green-400 rounded-lg p-4 text-sm">{`curl -H "Authorization: Bearer cl_live_your_key_here" \\
-  https://your-api-url/stats`}</pre>
+      <pre className="bg-gray-900 text-green-400 rounded-lg p-4 text-sm">{`curl -H "Authorization: Bearer YOUR_API_KEY" \\
+  ${API_BASE}/stats`}</pre>
+      <p>During the pilot, API keys are issued by the Cloudlink team. Email <a href={`mailto:${CONTACT}`}>{CONTACT}</a> to request one. A key only sees its own account&apos;s data.</p>
+
+      <h2>Read-only mode</h2>
+      <p>Cloudlink never changes anything in your AWS account. Endpoints that would change a resource, such as approving or running actions, AutoStop runs, and starting or stopping resources, return HTTP 403 and are not listed here.</p>
 
       <h2>Endpoints</h2>
       <div className="not-prose">
@@ -87,17 +103,18 @@ export default function APIReferencePage() {
       <pre className="bg-gray-900 text-green-400 rounded-lg p-4 text-sm">{`{
   "detail": "Error message here"
 }`}</pre>
+      <p>Common status codes: 400 or 422 (missing or invalid field), 401 (missing or invalid API key), 403 (blocked by read-only mode), 404 (not found), 429 (rate limited).</p>
 
       <h2>Rate limits</h2>
-      <p>API requests are rate-limited per tenant:</p>
+      <p>These endpoints are rate-limited per Cloudlink account and return HTTP 429 when the limit is exceeded:</p>
       <ul>
-        <li><code>/scan</code> &mdash; 5 requests per minute</li>
-        <li><code>/regression/run</code> &mdash; 5 requests per minute</li>
-        <li>All other endpoints &mdash; 60 requests per minute</li>
+        <li><code>POST /scan</code> &mdash; 5 requests per minute</li>
+        <li><code>POST /regression/run</code> &mdash; 5 requests per minute</li>
+        <li><code>POST /credentials</code> &mdash; 10 requests per minute</li>
       </ul>
 
       <h2>Interactive docs</h2>
-      <p>For request/response schemas, visit the auto-generated Swagger UI at <code>/docs</code> on your API instance.</p>
+      <p>Request and response schemas are in the auto-generated Swagger UI at <code>{`${API_BASE}/docs`}</code>.</p>
     </article>
   )
 }

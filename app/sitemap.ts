@@ -1,18 +1,28 @@
 import type { MetadataRoute } from 'next'
 
+const baseUrl = 'https://cloudlinkglobal.com'
+
+const pages: { path: string; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']; priority: number }[] = [
+  { path: '', changeFrequency: 'weekly', priority: 1 },
+  { path: '/product', changeFrequency: 'monthly', priority: 0.9 },
+  { path: '/pilot', changeFrequency: 'monthly', priority: 0.9 },
+  { path: '/pricing', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/docs', changeFrequency: 'weekly', priority: 0.8 },
+  { path: '/docs/setup', changeFrequency: 'monthly', priority: 0.7 },
+  { path: '/docs/api-reference', changeFrequency: 'monthly', priority: 0.6 },
+  { path: '/docs/ci-integration', changeFrequency: 'monthly', priority: 0.6 },
+  { path: '/docs/cli', changeFrequency: 'monthly', priority: 0.5 },
+  { path: '/signup', changeFrequency: 'yearly', priority: 0.5 },
+  { path: '/login', changeFrequency: 'yearly', priority: 0.3 },
+  { path: '/privacy', changeFrequency: 'yearly', priority: 0.3 },
+  { path: '/terms', changeFrequency: 'yearly', priority: 0.3 },
+]
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://cloudlinkglobal.com'
-  return [
-    { url: baseUrl, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
-    { url: `${baseUrl}/login`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${baseUrl}/signup`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${baseUrl}/pilot`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/privacy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${baseUrl}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${baseUrl}/docs`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${baseUrl}/docs/setup`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
-    { url: `${baseUrl}/docs/ci-integration`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
-    { url: `${baseUrl}/docs/api-reference`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
-    { url: `${baseUrl}/docs/budget-guardrails`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
-  ]
+  return pages.map(({ path, changeFrequency, priority }) => ({
+    url: `${baseUrl}${path}`,
+    lastModified: new Date(),
+    changeFrequency,
+    priority,
+  }))
 }

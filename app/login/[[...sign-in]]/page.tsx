@@ -43,9 +43,8 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
               className="flex h-10 w-10 items-center justify-center rounded-xl"
               style={{ background: 'linear-gradient(135deg, #10B981, #059669)', boxShadow: '0 0 24px rgba(16,185,129,0.28)' }}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="white"/>
-              </svg>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo-mark.png" alt="" width={26} height={15} />
             </div>
             <span className="text-lg font-bold tracking-tight text-[#F1F5F9]">Cloudlink</span>
           </Link>
@@ -54,16 +53,16 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <div className="max-w-xl">
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-[#10B981]">Secure access</p>
           <h1 className="max-w-lg text-5xl font-extrabold leading-[1.02] tracking-[-0.04em] text-[#F1F5F9]">
-            Sign in to the command center for cloud cost operations.
+            Sign in to Cloudlink.
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-8 text-[#94A3B8]">
-            Monitor deploy-linked regressions, scan for waste, review approvals, and measure verified savings across AWS, Azure, and GCP.
+            See what your AWS account is wasting and what each fix would save per month.
           </p>
           <div className="mt-10 grid gap-4">
             {[
-              { icon: Activity, title: 'Deploy-aware monitoring', body: 'Trace spend changes back to the service, deploy, and timeframe that introduced them.' },
-              { icon: ShieldCheck, title: 'Read-only by default', body: 'Onboarding stays read-only until you explicitly approve an operational action.' },
-              { icon: TrendingUp, title: 'Verified savings reporting', body: 'See gross savings, Cloudlink fee, and retained savings in one operator-friendly surface.' },
+              { icon: Activity, title: 'Findings with a dollar amount', body: 'Idle instances, unattached volumes and risky settings, each with an estimated monthly saving.' },
+              { icon: ShieldCheck, title: 'Read-only', body: 'Cloudlink can describe, get and list. It cannot change anything in your account.' },
+              { icon: TrendingUp, title: 'Savings you can check', body: 'Every saving is tied to a specific resource and finding, so you can review each line item.' },
             ].map((item) => (
               <div key={item.title} className="rounded-2xl border border-[#1E2D4F] bg-[#0F1629]/80 px-5 py-4">
                 <div className="mb-2 flex items-center gap-3">
@@ -78,7 +77,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           </div>
         </div>
 
-        <p className="text-sm text-[#64748B]">Trusted by engineering leaders who need answers before the monthly bill lands.</p>
+        <p className="text-sm text-[#64748B]">Read-only AWS cost monitoring by Cloudlink Global.</p>
       </div>
 
       <div className="relative z-10 flex min-h-screen items-center justify-center px-4 py-10">
@@ -88,9 +87,8 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             className="w-8 h-8 rounded-lg flex items-center justify-center"
             style={{ background: 'linear-gradient(135deg, #10B981, #059669)', boxShadow: '0 0 20px rgba(16,185,129,0.3)' }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="white"/>
-            </svg>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo-mark.png" alt="" width={24} height={14} />
           </div>
           <span style={{ color: '#F1F5F9', fontWeight: 700, fontSize: '18px', letterSpacing: '-0.01em' }}>
             Cloudlink
@@ -103,10 +101,10 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           appearance={{
             variables: {
               colorBackground: '#0F1629',
-              colorInputBackground: '#0A0E1A',
-              colorText: '#F1F5F9',
-              colorTextSecondary: '#94A3B8',
-              colorTextOnPrimaryBackground: '#ffffff',
+              colorInput: '#0A0E1A',
+              colorForeground: '#F1F5F9',
+              colorMutedForeground: '#94A3B8',
+              colorPrimaryForeground: '#ffffff',
               colorPrimary: '#10B981',
               colorDanger: '#EF4444',
               colorSuccess: '#10B981',

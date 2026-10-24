@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Zap, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navLinks = [
   { href: "/product", label: "Product" },
   { href: "/pricing", label: "Pricing" },
+  { href: "/pilot", label: "Free pilot" },
   { href: "/docs", label: "Docs" },
 ];
 
@@ -46,7 +47,8 @@ export default function Nav() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0 group">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center shadow-lg shadow-[#10B981]/30 group-hover:shadow-[#10B981]/50 transition-all duration-200">
-              <Zap size={16} className="text-white fill-white" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo-mark.png" alt="" width={22} height={12} className="h-auto w-[22px]" />
             </div>
             <span className="text-[#F1F5F9] font-bold text-lg tracking-tight">Cloudlink</span>
           </Link>
@@ -87,8 +89,7 @@ export default function Nav() {
               href="/signup"
               className="btn-gradient px-5 py-2 text-sm font-semibold text-white rounded-lg inline-flex items-center gap-2"
             >
-              <Zap size={14} className="fill-white" />
-              Start Saving
+              Sign up
             </Link>
           </div>
 
@@ -122,7 +123,7 @@ export default function Nav() {
               Sign in
             </Link>
             <Link href="/signup" className="btn-gradient px-6 py-3 text-center text-sm font-semibold text-white">
-              Start Saving — It&apos;s Free
+              Sign up
             </Link>
           </div>
         </div>

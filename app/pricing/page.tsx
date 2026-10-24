@@ -24,29 +24,29 @@ function fmt(n: number) {
 const steps = [
   {
     icon: <Zap size={24} className="text-[#10B981]" />,
-    title: "Connect your cloud",
-    desc: "Read-only IAM role. One-click CloudFormation template. No agents, no write access.",
+    title: "Connect AWS",
+    desc: "A CloudFormation template creates one read-only IAM role. No agents, no access keys, no write access.",
     badge: "Free",
     badgeColor: "bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20",
   },
   {
     icon: <Search size={24} className="text-[#059669]" />,
-    title: "We scan and find savings",
-    desc: "Continuous scanning of idle resources, regressions, and misconfigurations across your cloud.",
-    badge: "Automated",
+    title: "We find the waste",
+    desc: "Regular scans for idle resources and risky settings, each with an estimated monthly saving.",
+    badge: "Automatic",
     badgeColor: "bg-[#059669]/10 text-[#059669] border border-[#059669]/20",
   },
   {
     icon: <ThumbsUp size={24} className="text-[#10B981]" />,
-    title: "You approve what to fix",
-    desc: "Every remediation requires your explicit approval. We never touch anything without your say-so.",
+    title: "Your team applies the fixes",
+    desc: "You decide what to change and make the change yourself. Cloudlink can't change anything in your account.",
     badge: "Your control",
     badgeColor: "bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20",
   },
   {
     icon: <DollarSign size={24} className="text-[#10B981]" />,
-    title: "We take 15% of verified savings only",
-    desc: "Before/after CloudWatch metrics confirm the saving. We invoice 15% of what's verified. If savings are under $500, it rolls to next month.",
+    title: "We take 15% of verified savings",
+    desc: "We charge 15% of the savings from fixes you make, tied to specific findings you can review. Under $500 in a month rolls into the next month.",
     badge: "15% only",
     badgeColor: "bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20",
   },
@@ -55,28 +55,28 @@ const steps = [
 // ── FAQ data ──────────────────────────────────────────────────────────────────
 const faqs = [
   {
+    q: "Is the fall 2026 pilot free?",
+    a: "Yes. Pilot teams pay nothing and don't need a card. Nothing turns into a paid plan later unless we ask you first and you agree.",
+  },
+  {
     q: "What counts as savings?",
-    a: "AutoStopping idle dev/staging environments, cleaning up unused resources (EBS volumes, old snapshots, unattached IPs), catching deploy cost regressions before they compound, and fixing misconfigurations like oversized instance types or unnecessary data transfer.",
+    a: "Money you stop spending because of a Cloudlink finding: for example, an idle instance you stopped or an unattached volume you deleted.",
   },
   {
     q: "How do you verify savings?",
-    a: "We use before/after CloudWatch metrics alongside resource cost data from AWS Cost Explorer. Every saving event is attributed to a specific resource and action, with timestamps and cost delta attached. You can audit every line item in your dashboard.",
+    a: "Every saving is tied to a specific resource and finding, with its cost before and after the fix, and you can review each line item in your dashboard before anything is billed.",
   },
   {
-    q: "What if I dispute a charge?",
-    a: "Flag the line item directly in your dashboard. It's immediately excluded from your invoice and we open a manual review within 24 hours. If the dispute is valid, you pay nothing for that item — full stop.",
+    q: "What if I disagree with a charge?",
+    a: "Flag the line item in your dashboard. It's taken out of your invoice while we review it by hand, and if you're right, you don't pay for it.",
   },
   {
     q: "Is there a contract?",
-    a: "No. Month-to-month, cancel anytime from your dashboard. No cancellation fees, no minimum commitment, no lock-in.",
+    a: "No. It's month to month and you can cancel anytime from your dashboard.",
   },
   {
     q: "What's the $500 minimum?",
-    a: "If we save you less than $500 in a calendar month, we don't send a partial invoice — that savings amount rolls forward to the next month. This prevents annoying micro-charges and keeps billing predictable.",
-  },
-  {
-    q: "What about enterprise?",
-    a: "For teams with >$1M in projected annual savings, we can arrange custom billing structures, dedicated support, and SLA guarantees. Reach out at enterprise@cloudlinkglobal.com and we'll respond within one business day.",
+    a: "If verified savings in a month add up to less than $500, we don't send an invoice. The amount rolls forward to the next month instead.",
   },
 ];
 
@@ -115,14 +115,13 @@ function AccordionItem({ q, a, open, onToggle }: { q: string; a: string; open: b
 // ── PAGE ──────────────────────────────────────────────────────────────────────
 export default function PricingPage() {
   // calculator state
-  const [spend, setSpend] = useState(50_000);
+  const [spend, setSpend] = useState(10_000);
   // accordion state
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const wastePercent = 0.30;
-  const savingsPercent = 0.70; // 70% of waste actually recovered
+  const wastePercent = 0.2; // illustrative assumption, not a measurement
   const wasteFound = spend * wastePercent;
-  const savingsGenerated = wasteFound * savingsPercent;
+  const savingsGenerated = wasteFound;
   const cloudlinkFee = savingsGenerated * 0.15;
   const netSavings = savingsGenerated - cloudlinkFee;
 
@@ -150,7 +149,7 @@ export default function PricingPage() {
           </motion.h1>
 
           <motion.p variants={fadeUp} className="text-xl text-[#94A3B8] mb-12 max-w-xl mx-auto">
-            15% of verified savings. Zero if we save you zero. That&apos;s it.
+            15% of verified savings, and nothing if there are none. The fall 2026 pilot is free.
           </motion.p>
 
           {/* Giant 15% display */}
@@ -158,15 +157,15 @@ export default function PricingPage() {
             <div className="text-8xl md:text-9xl font-black bg-gradient-to-br from-[#10B981] via-[#059669] to-[#10B981] bg-clip-text text-transparent leading-none">
               15%
             </div>
-            <p className="text-[#94A3B8] text-lg font-medium">of verified savings — nothing else, ever</p>
+            <p className="text-[#94A3B8] text-lg font-medium">of verified savings. No subscription.</p>
           </motion.div>
 
           <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4">
             <Link
-              href="/signup"
-              className="inline-flex items-center gap-2 rounded-full bg-[#10B981] hover:bg-[#3d5ce6] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#10B981]/25 transition-all duration-200"
+              href="/pilot"
+              className="inline-flex items-center gap-2 rounded-full bg-[#10B981] hover:bg-[#059669] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#10B981]/25 transition-all duration-200"
             >
-              Connect your cloud free <ArrowRight size={16} />
+              Try the free pilot <ArrowRight size={16} />
             </Link>
             <Link
               href="/product"
@@ -192,7 +191,7 @@ export default function PricingPage() {
                 How it works
               </span>
               <h2 className="text-3xl sm:text-4xl font-bold text-[#F1F5F9]">How billing works</h2>
-              <p className="text-[#94A3B8] mt-3 max-w-lg mx-auto">Four steps. No surprises.</p>
+              <p className="text-[#94A3B8] mt-3 max-w-lg mx-auto">Four steps.</p>
             </motion.div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -237,7 +236,7 @@ export default function PricingPage() {
                 Calculator
               </span>
               <h2 className="text-3xl sm:text-4xl font-bold text-[#F1F5F9]">See what you&apos;d save</h2>
-              <p className="text-[#94A3B8] mt-3">Based on industry averages for AWS spend.</p>
+              <p className="text-[#94A3B8] mt-3">An illustration of how the 15% fee works.</p>
             </motion.div>
 
             <motion.div variants={fadeUp} className="bg-[#141C33] border border-[#1E2D4F] rounded-2xl p-8">
@@ -250,26 +249,26 @@ export default function PricingPage() {
                 <input
                   type="range"
                   min={1000}
-                  max={500_000}
+                  max={100_000}
                   step={1000}
                   value={spend}
                   onChange={(e) => setSpend(Number(e.target.value))}
                   className="w-full h-2 rounded-full appearance-none cursor-pointer"
                   style={{
-                    background: `linear-gradient(to right, #10B981 0%, #10B981 ${((spend - 1000) / (500_000 - 1000)) * 100}%, #1E2D4F ${((spend - 1000) / (500_000 - 1000)) * 100}%, #1E2D4F 100%)`,
+                    background: `linear-gradient(to right, #10B981 0%, #10B981 ${((spend - 1000) / (100_000 - 1000)) * 100}%, #1E2D4F ${((spend - 1000) / (100_000 - 1000)) * 100}%, #1E2D4F 100%)`,
                   }}
                 />
                 <div className="flex justify-between text-xs text-[#94A3B8] mt-1">
                   <span>$1K</span>
-                  <span>$500K</span>
+                  <span>$100K</span>
                 </div>
               </div>
 
               {/* Results */}
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { label: "Waste found", value: fmt(wasteFound), sub: "~30% of cloud spend", color: "text-[#F1F5F9]" },
-                  { label: "Savings generated", value: fmt(savingsGenerated), sub: "after remediation", color: "text-[#10B981]" },
+                  { label: "If 20% is waste", value: fmt(wasteFound), sub: "an assumption, not a measurement", color: "text-[#F1F5F9]" },
+                  { label: "Savings if you fix it", value: fmt(savingsGenerated), sub: "per month", color: "text-[#10B981]" },
                   { label: "Cloudlink fee (15%)", value: fmt(cloudlinkFee), sub: "of verified savings", color: "text-[#94A3B8]" },
                   { label: "Your net savings", value: fmt(netSavings), sub: "per month", color: "text-[#10B981]" },
                 ].map((r, i) => (
@@ -282,7 +281,7 @@ export default function PricingPage() {
               </div>
 
               <p className="text-xs text-[#94A3B8] mt-6 text-center leading-relaxed">
-                Estimates based on industry averages. Actual savings vary by environment. You only pay when we verify real savings.
+                Illustration only. Your real numbers come from a scan, and you only pay on savings we verify.
               </p>
             </motion.div>
           </motion.div>
@@ -342,7 +341,7 @@ export default function PricingPage() {
             </motion.h2>
 
             <motion.p variants={fadeUp} className="text-xl text-[#94A3B8] mb-10 leading-relaxed max-w-2xl mx-auto">
-              Subscriptions create misaligned incentives. A vendor on a fixed subscription gets paid whether or not they do anything for you.{" "}
+              With a subscription, you pay before we&apos;ve shown we can save you anything. With this model, the risk is on us.{" "}
               <span className="text-[#F1F5F9] font-semibold">We only win if you win.</span>
             </motion.p>
 
@@ -350,17 +349,17 @@ export default function PricingPage() {
               {[
                 {
                   title: "No savings = no invoice",
-                  desc: "If we don't find and verify real savings in a month, you pay exactly $0.",
+                  desc: "If we don't verify real savings in a month, you pay $0.",
                   icon: "💸",
                 },
                 {
                   title: "We're incentivized to find more",
-                  desc: "More savings for you means more revenue for us. Our goals are perfectly aligned.",
+                  desc: "We only earn more when you save more.",
                   icon: "🎯",
                 },
                 {
                   title: "No commitment required",
-                  desc: "Month-to-month. Cancel anytime from your dashboard. No penalty, no questions.",
+                  desc: "Month to month. Cancel anytime from your dashboard.",
                   icon: "🔓",
                 },
               ].map((p, i) => (
@@ -385,21 +384,21 @@ export default function PricingPage() {
             viewport={{ once: true, margin: "-80px" }}
           >
             <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold text-[#F1F5F9] mb-4">
-              Zero risk. Real savings.
+              See what your AWS account is wasting
             </motion.h2>
             <motion.p variants={fadeUp} className="text-[#94A3B8] text-lg mb-8">
-              Connect in minutes. If we don&apos;t save you money, you owe us nothing.
+              The pilot is free and read-only. Setup takes about 5 minutes.
             </motion.p>
             <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4 mb-8">
               <Link
-                href="/signup"
-                className="inline-flex items-center gap-2 rounded-full bg-[#10B981] hover:bg-[#3d5ce6] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#10B981]/25 transition-all duration-200"
+                href="/pilot"
+                className="inline-flex items-center gap-2 rounded-full bg-[#10B981] hover:bg-[#059669] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#10B981]/25 transition-all duration-200"
               >
-                Start saving — it&apos;s free <ArrowRight size={16} />
+                Try the free pilot <ArrowRight size={16} />
               </Link>
             </motion.div>
             <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-6 text-sm text-[#94A3B8]">
-              {["No credit card required", "Connect in 5 minutes", "Cancel anytime"].map((t) => (
+              {["No credit card", "About 5 minutes to connect", "Read-only access"].map((t) => (
                 <span key={t} className="flex items-center gap-1.5">
                   <CheckCircle size={14} className="text-[#10B981]" /> {t}
                 </span>
