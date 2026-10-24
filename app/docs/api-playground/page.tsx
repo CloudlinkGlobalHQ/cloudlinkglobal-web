@@ -7,8 +7,11 @@ const DEFAULT_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://cloudlink-agent
 const EXAMPLES = [
   { label: 'Health', method: 'GET', path: '/health', body: '' },
   { label: 'Stats', method: 'GET', path: '/stats', body: '' },
-  { label: 'Public costs', method: 'GET', path: '/v1/costs?days=30', body: '' },
+  { label: 'Costs (v1)', method: 'GET', path: '/v1/costs?days=30', body: '' },
+  { label: 'Tracked services', method: 'GET', path: '/cost-snapshots/services', body: '' },
+  { label: 'Resources', method: 'GET', path: '/resources?limit=50', body: '' },
   { label: 'Open regressions', method: 'GET', path: '/regressions?status=open', body: '' },
+  { label: 'Budgets', method: 'GET', path: '/budgets', body: '' },
   { label: 'Trigger scan', method: 'POST', path: '/scan', body: '' },
   {
     label: 'Create deploy',
@@ -16,7 +19,7 @@ const EXAMPLES = [
     path: '/deploys',
     body: JSON.stringify(
       {
-        service: 'Amazon EC2',
+        service: 'AWS Lambda',
         version: 'sha-demo-123',
         environment: 'production',
         source: 'docs-playground',
@@ -77,7 +80,8 @@ export default function APIPlaygroundPage() {
       <div>
         <h1 className="text-3xl font-bold text-gray-900 mb-2">API Playground</h1>
         <p className="text-gray-500">
-          Send live requests to your Cloudlink API without leaving the browser.
+          Send live requests to the Cloudlink API from your browser. Requests use your API key and only see your
+          own account&apos;s data. Cloudlink is read-only, so nothing here can change resources in your AWS account.
         </p>
       </div>
 
@@ -89,7 +93,7 @@ export default function APIPlaygroundPage() {
               value={baseUrl}
               onChange={(e) => setBaseUrl(e.target.value)}
               className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm"
-              placeholder="https://your-cloudlink-api"
+              placeholder="https://cloudlink-agents.onrender.com"
             />
           </label>
           <label className="block">
@@ -98,7 +102,7 @@ export default function APIPlaygroundPage() {
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
               className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm"
-              placeholder="cl_live_..."
+              placeholder="YOUR_API_KEY"
               type="password"
             />
           </label>
@@ -143,7 +147,7 @@ export default function APIPlaygroundPage() {
             value={body}
             onChange={(e) => setBody(e.target.value)}
             className="min-h-48 w-full rounded-xl border border-gray-200 px-4 py-3 font-mono text-sm"
-            placeholder='{"service":"Amazon EC2","version":"sha-demo-123"}'
+            placeholder='{"service":"AWS Lambda","version":"sha-demo-123"}'
           />
         </label>
 

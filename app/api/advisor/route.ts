@@ -146,9 +146,9 @@ export async function POST(req: NextRequest) {
       if (err instanceof Error) {
         const raw = err.message
         if (raw.includes('credit balance is too low') || raw.includes('insufficient_quota') || raw.includes('billing')) {
-          msg = 'The AI Advisor is temporarily unavailable — the Anthropic account needs credits. Please top up at console.anthropic.com/billing.'
+          msg = 'The AI Advisor is temporarily unavailable. Please try again later.'
         } else if (raw.includes('invalid_api_key') || raw.includes('authentication')) {
-          msg = 'AI Advisor configuration error — invalid API key.'
+          msg = 'The AI Advisor is temporarily unavailable. Please try again later.'
         } else if (raw.includes('rate_limit')) {
           msg = 'Too many requests — please wait a moment and try again.'
         } else if (raw.includes('overloaded')) {

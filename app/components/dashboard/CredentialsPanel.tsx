@@ -5,7 +5,7 @@
 import { useEffect, useState } from 'react'
 import { getCredentials, addCredential, verifyCredential, deleteCredential, scanNow, getBase } from '../../lib/api'
 
-const CLOUD_TABS = ['AWS', 'GCP', 'Azure']
+const CLOUD_TABS = ['AWS']
 const CLOUD_COLORS: Record<string, string> = {
   aws: 'bg-orange-500/15 text-orange-400 border-orange-500/30',
   gcp: 'bg-blue-500/15 text-blue-400 border-blue-500/30',

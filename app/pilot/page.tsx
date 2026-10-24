@@ -3,9 +3,9 @@ import type { Metadata } from 'next'
 import { Check, X, Lock, Trash2, Database, CalendarClock } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Community Pilot',
+  title: 'Free pilot',
   description:
-    'A free, read-only AWS cost check for local businesses in Forsyth County and North Atlanta. No payment, no card, and Cloudlink cannot change anything in your account.',
+    'A free, read-only AWS cost check for small teams. No payment, no card, and Cloudlink cannot change anything in your account.',
 }
 
 const CONTACT = 'satvikranga60@gmail.com'
@@ -57,7 +57,7 @@ const faqs = [
   },
   {
     q: 'Who is behind this?',
-    a: 'Cloudlink is built by high school students in Forsyth County, Georgia. This pilot is how we are learning whether it helps real businesses.',
+    a: 'Cloudlink is built by two student founders in Georgia. This pilot is how we are learning whether it helps real teams.',
   },
 ]
 
@@ -66,12 +66,12 @@ export default function PilotPage() {
     <div className="min-h-screen" style={{ backgroundColor: '#0A0E1A' }}>
 
       <main className="mx-auto max-w-4xl px-4 pb-16 pt-28 sm:px-6 sm:pt-32">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#10B981]">Community pilot · Fall 2026</p>
+        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#10B981]">Free pilot · Fall 2026</p>
         <h1 className="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-[#F1F5F9] sm:text-5xl">
-          A free, read-only AWS cost check for local businesses
+          A free, read-only AWS cost check for small teams
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-[#94A3B8]">
-          For businesses in Forsyth County and North Atlanta that run on AWS. We find what is costing you money for no
+          For small teams that run on AWS and don&apos;t have anyone watching the bill. We find what is costing you money for no
           reason and show what each fix would save per month. It is free, and Cloudlink cannot change anything in your account.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">

@@ -6,7 +6,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import {
-  LayoutDashboard, LineChart, AlertTriangle, Server, PowerOff, Sparkles,
+  LayoutDashboard, LineChart, AlertTriangle, Server, Sparkles,
   Shield, Sliders, Tag, TrendingDown, BarChart2, GitBranch, Search,
   ClipboardList, Webhook, Users, Key, CreditCard, Settings, Lock,
   Zap, Bell, ChevronLeft, ChevronRight, Menu, X,
@@ -30,7 +30,6 @@ const NAV_SECTIONS = [
       { label: 'Cost Explorer', href: '/dashboard/cost-explorer', icon: LineChart },
       { label: 'Regressions',   href: '/dashboard/regressions',   icon: AlertTriangle },
       { label: 'Resources',     href: '/dashboard/resources',      icon: Server },
-      { label: 'AutoStopping',  href: '/dashboard/autostop',       icon: PowerOff },
       { label: 'AI Advisor',    href: '/dashboard/advisor',        icon: Sparkles },
     ],
   },
