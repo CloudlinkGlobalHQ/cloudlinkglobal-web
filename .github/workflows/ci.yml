@@ -38,6 +38,42 @@ jobs:
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
 
+  e2e:
+    name: Dashboard e2e (Playwright, mocked backend)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      # Production build with Clerk replaced by e2e/clerk-stub and the API
+      # pointed at a host the tests intercept. Needs no secrets.
+      - name: Build (e2e)
+        run: npm run build:e2e
+
+      - name: Run Playwright
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
   notify-deploy:
     name: Notify Cloudlink of deploy
     runs-on: ubuntu-latest

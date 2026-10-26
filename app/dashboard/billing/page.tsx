@@ -2,6 +2,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 import { useSubscription } from '../../components/SubscriptionProvider'
 
 interface SavingsSummary {
@@ -124,6 +125,7 @@ export default function BillingPage() {
   const [summary, setSummary] = useState<SavingsSummary | null>(null)
   const [disputes, setDisputes] = useState<Dispute[]>([])
   const [loadingData, setLoadingData] = useState(true)
+  const [summaryFailed, setSummaryFailed] = useState(false)
   const [portalLoading, setPortalLoading] = useState(false)
   const [setupLoading, setSetupLoading] = useState(false)
   const [disputeEvent, setDisputeEvent] = useState<SavingsEvent | null>(null)
@@ -138,10 +140,12 @@ export default function BillingPage() {
     setLoadingData(true)
     try {
       const [sumRes, dispRes] = await Promise.allSettled([
-        fetch('/api/savings/summary'),
-        fetch('/api/savings/disputes'),
+        fetch('/api/savings/summary', { signal: AbortSignal.timeout(20_000) }),
+        fetch('/api/savings/disputes', { signal: AbortSignal.timeout(20_000) }),
       ])
-      if (sumRes.status === 'fulfilled' && sumRes.value.ok) setSummary(await sumRes.value.json())
+      const summaryOk = sumRes.status === 'fulfilled' && sumRes.value.ok
+      if (summaryOk) setSummary(await sumRes.value.json())
+      setSummaryFailed(!summaryOk)
       if (dispRes.status === 'fulfilled' && dispRes.value.ok) {
         const d = await dispRes.value.json()
         setDisputes(d.disputes || [])
@@ -248,8 +252,13 @@ export default function BillingPage() {
       <div>
         <h1 className="text-2xl font-bold text-slate-100">Billing</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Performance billing — 15% of verified savings. Nothing until we save you money.
+          After the pilot: 15% of verified savings, and nothing if there are none.
         </p>
+      </div>
+
+      <div role="note" className="rounded-xl border border-[#10B981]/30 bg-[#10B981]/10 p-4 text-sm text-[#A7F3D0]">
+        <p className="font-semibold text-[#F1F5F9]">The fall 2026 pilot is free.</p>
+        <p className="mt-1">Pilot teams pay nothing and don’t need a card. See the <Link href="/pilot" className="underline">pilot terms</Link> and <Link href="/pricing" className="underline">pricing</Link>.</p>
       </div>
 
       {/* ── How it works banner ── */}
@@ -257,9 +266,9 @@ export default function BillingPage() {
         <div className="flex flex-wrap gap-6">
           {[
             { step: '1', label: 'Connect your cloud', desc: 'We scan for waste' },
-            { step: '2', label: 'We find & fix waste', desc: 'AutoStop, idle cleanup, regressions' },
-            { step: '3', label: 'You save money', desc: 'Every saving is logged & attributed' },
-            { step: '4', label: 'We take 15%', desc: 'Only after ≥$500 in savings/month' },
+            { step: '2', label: 'We find waste', desc: 'Idle and unused resources, risky settings' },
+            { step: '3', label: 'You fix it in AWS', desc: 'Cloudlink is read-only and never changes your account' },
+            { step: '4', label: 'After the pilot: 15%', desc: 'Of verified savings, only after ≥$500/month' },
           ].map(({ step, label, desc }) => (
             <div key={step} className="flex items-start gap-3 min-w-[160px]">
               <div className="w-6 h-6 rounded-full bg-[#10B981]/15 text-[#6EE7B7] border border-[#10B981]/20 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -274,12 +283,20 @@ export default function BillingPage() {
         </div>
       </div>
 
+      {loadingData && <p role="status" data-testid="loading-state" className="text-sm text-slate-400">Loading savings…</p>}
+      {!loadingData && summaryFailed && (
+        <div role="alert" className="flex flex-wrap items-center gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200">
+          Couldn’t load your savings summary. The backend may be waking up — this can take up to a minute.
+          <button type="button" onClick={loadData} className="dashboard-secondary-button px-3 py-1.5 text-xs">Retry</button>
+        </div>
+      )}
+
       {/* ── Savings stats ── */}
       {!loadingData && summary && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
             { label: 'Savings this month', value: fmt(safeSummary.savings_this_month_usd), sub: safeSummary.rollover_usd > 0 ? `+${fmt(safeSummary.rollover_usd)} rolled over` : undefined, accent: 'green' },
-            { label: 'Projected fee (15%)', value: fmt(safeSummary.cloudlink_fee_this_month_usd), sub: safeSummary.pending_billing ? 'Billing this month' : `$${Math.max(0, safeSummary.billing_threshold_usd - safeSummary.savings_this_month_usd).toFixed(0)} until billing` },
+            { label: 'Fee after the pilot (15%)', value: fmt(safeSummary.cloudlink_fee_this_month_usd), sub: safeSummary.pending_billing ? 'Billing this month' : `$${Math.max(0, safeSummary.billing_threshold_usd - safeSummary.savings_this_month_usd).toFixed(0)} until billing` },
             { label: 'All-time savings', value: fmt(safeSummary.savings_all_time_usd), sub: 'you keep 85%' },
             { label: 'All-time fees', value: fmt(safeSummary.cloudlink_fee_all_time_usd), sub: 'total paid to Cloudlink' },
           ].map(({ label, value, sub, accent }) => (
@@ -347,8 +364,7 @@ export default function BillingPage() {
                 <span className="text-sm font-medium text-slate-200">No card on file</span>
               </div>
               <p className="text-xs text-gray-500 mb-4">
-                Add a payment method now so we can charge you automatically when you hit the $500 savings threshold.
-                You won't be charged a cent before then.
+                No card is needed during the free pilot, and nothing is charged. You can add one later if you stay on after the pilot.
               </p>
               <button
                 onClick={openSetup}
@@ -366,8 +382,8 @@ export default function BillingPage() {
           <div className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">How billing works</div>
           <div className="space-y-3 text-sm">
             {[
-              { q: 'What do you charge?', a: '15% of verified savings. No savings = no charge.' },
-              { q: 'What counts as savings?', a: 'Cost reductions from AutoStopping, idle resource cleanup, regression prevention, and misconfiguration fixes.' },
+              { q: 'What do you charge?', a: 'Nothing during the fall 2026 pilot. After it: 15% of verified savings, and nothing if there are none.' },
+              { q: 'What counts as savings?', a: 'Cost reductions from fixes you make to findings Cloudlink reported, such as removing idle or unused resources.' },
               { q: 'When do you bill?', a: 'End of each month, only if savings ≥ $500. Below that rolls to next month.' },
               { q: 'Can I dispute a saving?', a: 'Yes. Flag any event and it\'s excluded from your invoice while we review it.' },
             ].map(({ q, a }) => (

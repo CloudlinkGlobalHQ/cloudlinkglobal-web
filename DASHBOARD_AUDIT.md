@@ -1,6 +1,8 @@
-# Dashboard audit (Phase 1, report only)
+# Dashboard audit
 
-Date: 2026-10-25. Branch: `dashboard-audit`. No application code changed.
+- Phase 1 (audit, 2026-10-25): sections "Method" to "Controls" below describe the dashboard **before** any change.
+- Phases 2–3 (fix and proof, 2026-10-26): see [Before and after](#before-and-after) at the end.
+- Branch: `dashboard-audit`.
 
 ## Method
 
@@ -82,7 +84,7 @@ Column key for the result columns:
 | scans | yes | Scan history + scan now | scans, scan | – | yes | list | "No scans yet" | raw detail + empty msg | 23 s / **"Loading…" forever** | Fix | Shared states, scan progress |
 | audit | yes (and bell) | Executed actions log | audit | – | always empty in read-only | empty msg | empty msg | raw detail + empty msg | 22 s / **"Loading…" forever** | Coming soon | Say read-only mode executes nothing |
 | webhooks | yes | Webhooks + Slack | webhooks, settings/slack, webhooks/test | – | yes | form | form | "Error loading Slack settings: …" | 23 s / **"Loading…" forever** | Fix | Shared states |
-| team | yes | Team members | team/members | – | stored; access grant unverified | list | "No team members yet" | raw detail | 22 s / skeleton forever | Fix (unverified) | Shared states; founder to confirm invites grant access |
+| team | yes | Team members | team/members | – | **invites grant no access** (each Clerk user gets their own tenant; membership is never checked) | list | "No team members yet" | raw detail | 22 s / skeleton forever | Coming soon (changed from "Fix" in Phase 2) | Label honestly |
 | api-keys | yes | Self-serve API keys | api-keys | – | **broken** (earlier review) | example + list | same | **error hidden** | **spinner forever** | Hide | – |
 | billing | yes | Plan and savings fee | `/api/savings/*`, `/api/stripe/*` | – | n/a | "15% performance billing" | same | savings cards silently vanish | page renders | Fix | "Free during the fall 2026 pilot" copy only; do not touch Stripe code |
 | settings | yes | Links to settings pages | none | – | n/a | links | links | n/a | n/a | Fix | Remove "Azure, or GCP" |
@@ -130,3 +132,70 @@ Column key for the result columns:
   - Use the customer's role for drift checks.
   - Guard `/actions/{id}/reject` in read-only mode.
   - Remove the "$5 per action" estimate.
+  - Shared workspaces: map team members to the inviter's tenant (needed before Team leaves "Coming soon").
+- Decisions:
+  - Billing still offers "Add payment method" (Stripe setup) during the free pilot. I only changed the copy and didn't touch Stripe code. Decide whether to hide it for pilot users.
+  - Never set `CLOUDLINK_E2E_CLERK_STUB` in Vercel. It swaps Clerk for a test stub; `next.config.ts` refuses to build with it when `VERCEL` is set, and the stubbed build goes to `.next-e2e`.
+- Couldn't verify from this session (network policy blocked both hosts): the API URL in the live production bundle, and live backend responses.
+
+## Before and after
+
+### Method (after)
+
+- Ran the same Phase 1 matrix (31 routes × 8 states at 1440 px; empty and 500 at 390 px) and the same button-click pass against a production build of this branch.
+- The build was made with `npm run build:e2e`: Clerk replaced by `e2e/clerk-stub`, backend mocked with `page.route()`.
+- Screenshots:
+  - every route in the empty state: `docs/dashboard-audit/after/desktop-1440/*--empty.jpg` and `docs/dashboard-audit/after/mobile-390/*--empty.jpg`;
+  - Overview in other states: `dashboard--success.jpg`, `dashboard--e500.jpg`, `dashboard--hang.jpg`.
+
+### Results
+
+"Error" means 401, 403, 404 and 500, which now all behave the same: a plain-English message plus Retry.
+
+| Route | Final verdict | Before (empty / error / hang) | After: success | After: empty | After: error | After: 20 s delay / hang |
+|---|---|---|---|---|---|---|
+| `/dashboard` | Fixed | onboarding / **onboarding (error hidden)** / **skeleton forever** | real MTD spend, top services, findings, rightsizing $/mo | "Connect your AWS account" → Credentials | error + Retry; 401 says the session couldn't be verified | timeout message + "backend may be waking up" + Retry at ~22 s |
+| cost-explorer | Fixed | "Connect AWS" / **same as empty** / skeleton forever | MTD total, top service, per-service table; daily chart labelled Coming soon | "Connect your AWS account" | error + Retry | timeout + Retry at ~22 s |
+| resources | Fixed | empty msg / raw detail + empty msg / skeleton forever | table with findings tags, AWS only | "No resources scanned yet" → Connect AWS | error + Retry | timeout + Retry at ~22 s |
+| scans | Fixed | empty msg / raw detail + empty msg / "Loading…" forever | history table | "No scans yet" → Connect AWS | error + Retry | timeout + Retry at ~22 s |
+| advisor | Fixed (unverified live) | static chat | static chat; errors in plain English, 60 s timeout | same | n/a on load | n/a on load |
+| rightsizing | Works | zero-state / raw detail / skeleton forever | recommendations | "No running EC2 instances found" | error + Retry | timeout + Retry at ~22 s |
+| reserved-instances | Works | zero-state / "Failed to load" + Retry / skeleton forever | recommendations | "No running EC2 instances found" | error + Retry | timeout + Retry at ~22 s |
+| credentials | Fixed | empty msg / raw detail + "No credentials yet" / "Loading…" forever | table (Verify, Scan, Disconnect), AWS only | "No AWS account connected" | error + Retry | timeout + Retry at ~21 s |
+| webhooks | Fixed | form / raw detail / "Loading…" forever | Slack + webhooks (only events the backend fires) | "No webhooks yet" | error + Retry | timeout + Retry at ~20 s |
+| billing | Fixed (copy only, Stripe untouched) | "15% performance billing" | "The fall 2026 pilot is free" banner | same | "Couldn't load your savings summary" + Retry | same at ~21 s |
+| settings | Fixed | links incl. Azure/GCP copy | links to working pages, plan "Free pilot" | same | n/a | n/a |
+| regressions, budgets, deploys, audit, team | Coming soon | looked empty or broken | "Coming soon" with the reason | same | same | same |
+| actions, api-docs, api-keys, autostop, cost-estimate, drift, forecast, kubernetes, runs, savings-plans, savings-report, tags, ttl, unit-economics, virtual-tags | Hidden | various, see Phase 1 table | route kept, removed from sidebar, shows "Not available yet" with the reason | same | same | same |
+
+Across the whole after matrix:
+- 0 stuck skeletons;
+- 0 console or page errors;
+- 0 requests sent without the auth token (before: every first request after a hard load);
+- 0 routes overflowing sideways at 390 px.
+
+With a 20 s delay the request hits the 20 s timeout, so the page shows the timeout message and Retry rather than data. That is the intended limit.
+
+### Controls (after)
+
+| Control | After |
+|---|---|
+| AWS/Azure/GCP switcher | Removed, along with all `?cloud=` handling. Header shows a static "AWS" label. |
+| Search box | Kept. Filters the Resources page via `?q=`; placeholder now says "Search resources…". |
+| 7d / 30d / 90d | Removed. No backend endpoint uses a date range. |
+| Notifications bell | Removed (it had a permanent fake "unread" dot). |
+| Run scan | Shows a spinner, is disabled while running (shared across header, Overview, Scans and Credentials), 90 s timeout. Then shows one of: "Scan finished: N items found", "Scan queued", "Connect an AWS account before running a scan", or a plain-English error. Covered by an e2e test. |
+| Plan badge | "Free pilot" unless the subscription shows an active paid plan. |
+| Sidebar logo | `/logo-mark.png`, matching the marketing nav. |
+| Collapse / hamburger / drawer close | `aria-label` added. Visible focus outline across the dashboard. |
+| Overview "Fix/View" | Removed with the regressions table. |
+| Autostop "Run now", Approve/Reject | Pages hidden ("Not available yet: Cloudlink is read-only"). Any read-only 403 now reads "This action isn't available — Cloudlink is read-only." |
+| Click pass | 31 buttons tested, 27 do something. The other 4 are toggles that were already selected (expected). Before: 112 buttons, including the dead ends listed above. |
+
+### Tests
+
+- `npx tsc --noEmit`: clean.
+- `npm run lint`: 0 errors, 6 warnings (28 before; the remaining ones are in Billing, AI Advisor and marketing code that wasn't touched).
+- `npm test`: 43 passed. The new API tests cover typed errors, timeouts, the token wait, scan summaries and findings.
+- `npm run build`: passes. The production bundle contains no e2e stub code.
+- `npm run build:e2e && npm run test:e2e`: 57 passed in about 1.1 min with 6 workers. Added as the `e2e` job in `.github/workflows/ci.yml`; it needs no secrets.
