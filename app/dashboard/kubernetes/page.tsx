@@ -1,2 +1,10 @@
-import KubernetesPage from '../../components/dashboard/KubernetesPage'
-export default function Page() { return <KubernetesPage /> }
+import { NotAvailable } from '../../components/dashboard/states'
+
+export default function Page() {
+  return (
+    <NotAvailable
+      title="Kubernetes"
+      why="Cloudlink monitors AWS accounts and doesn’t collect Kubernetes cost data."
+    />
+  )
+}

@@ -1,7 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import { getRightsizing } from '../../lib/api'
+import { useApi } from '../../lib/useApi'
+import { EmptyState, ErrorState, LoadingState, PageHeader } from './states'
 
 interface RightRec {
   resource_id: string
@@ -32,38 +34,26 @@ function fmt(n: number) { return `$${n.toLocaleString('en-US', { minimumFraction
 function fmtFull(n: number) { return `$${n.toFixed(2)}` }
 
 export default function RightsizingPage() {
-  const [data, setData] = useState<RightData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const [threshold, setThreshold] = useState(20)
   const [expanded, setExpanded] = useState<string | null>(null)
+  const { data, error, loading, retry } = useApi<RightData>(() => getRightsizing(threshold), [threshold])
+  const header = <PageHeader title="Rightsizing Recommendations" subtitle="Downsize EC2 instances based on their 7-day average CPU." />
 
-  const load = useCallback(async () => {
-    setLoading(true); setError(null)
-    try { setData(await getRightsizing(threshold)) }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    catch (e: any) { setError(e.message) }
-    finally { setLoading(false) }
-  }, [threshold])
-
-   
-  useEffect(() => { load() }, [load])
-
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full" /></div>
-  if (error) return <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-red-600 text-sm text-center">{error}</div>
+  if (loading && !data) return <>{header}<LoadingState label="Loading rightsizing recommendations…" /></>
+  if (error && !data) return <>{header}<ErrorState error={error} onRetry={retry} /></>
   if (!data) return null
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-100">Rightsizing Recommendations</h1>
-          <p className="text-sm text-slate-500 mt-0.5">Downsize overprovisioned EC2 instances based on actual CPU utilization</p>
+          <p className="text-sm text-slate-500 mt-0.5">Downsize EC2 instances based on their 7-day average CPU. Prices are approximate on-demand rates.</p>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-slate-500">CPU threshold:</span>
           {[10, 20, 30, 40].map(t => (
-            <button key={t} onClick={() => setThreshold(t)}
+            <button key={t} onClick={() => setThreshold(t)} aria-pressed={threshold === t}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition ${threshold === t ? 'dashboard-pill-active' : 'dashboard-pill hover:text-slate-200'}`}>
               &lt;{t}%
             </button>
@@ -85,17 +75,25 @@ export default function RightsizingPage() {
         ))}
       </div>
 
-      {data.recommendations.length === 0 ? (
-        <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-10 text-center">
-          <p className="font-semibold text-slate-200">No rightsizing candidates</p>
-          <p className="text-sm text-slate-400 mt-1">All running EC2 instances are above the {threshold}% CPU threshold — well utilized!</p>
-        </div>
+      {error && <ErrorState error={error} onRetry={retry} compact />}
+      {data.ec2_total === 0 ? (
+        <EmptyState
+          title="No running EC2 instances found"
+          body="Recommendations appear after a scan finds running EC2 instances with CPU data."
+          action={{ label: 'Go to Scans', href: '/dashboard/scans' }}
+        />
+      ) : data.recommendations.length === 0 ? (
+        <EmptyState
+          title="No rightsizing candidates"
+          body={`None of your ${data.ec2_total} running EC2 instance${data.ec2_total === 1 ? ' is' : 's are'} below the ${threshold}% CPU threshold.`}
+        />
       ) : (
         <div className="space-y-3">
           {data.recommendations.map(rec => (
             <div key={rec.resource_id} className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] overflow-hidden">
               <button
                 onClick={() => setExpanded(expanded === rec.resource_id ? null : rec.resource_id)}
+                aria-expanded={expanded === rec.resource_id}
                 className="w-full flex items-center gap-4 p-5 text-left hover:bg-[#141C33] transition"
               >
                 <div className="flex-1 min-w-0">
@@ -115,11 +113,11 @@ export default function RightsizingPage() {
                   <div className="text-lg font-bold text-green-600">{fmtFull(rec.monthly_savings_usd)}/mo</div>
                   <div className="text-xs text-slate-400">{fmt(rec.annual_savings_usd)}/yr</div>
                 </div>
-                <span className="text-slate-400 shrink-0">{expanded === rec.resource_id ? '▲' : '▼'}</span>
+                <span className="text-slate-400 shrink-0" aria-hidden>{expanded === rec.resource_id ? '▲' : '▼'}</span>
               </button>
               {expanded === rec.resource_id && (
                 <div className="px-5 pb-5 border-t border-[#1E2D4F] pt-4 space-y-3">
-                  <div className="grid grid-cols-3 gap-4 text-sm">
+                  <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-3">
                     <div className="bg-[#141C33] rounded-lg p-3">
                       <p className="text-xs text-slate-400">Current</p>
                       <p className="font-bold text-slate-200">{rec.current_instance_type}</p>

@@ -1,288 +1,212 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-hooks/set-state-in-effect */
 'use client'
 
-import { useEffect, useState } from 'react'
-import { getCredentials, addCredential, verifyCredential, deleteCredential, scanNow, getBase } from '../../lib/api'
+import { useState } from 'react'
+import { getCredentials, addCredential, verifyCredential, deleteCredential, getBase, toApiError } from '../../lib/api'
+import { describeError } from '../../lib/errors'
+import { useApi } from '../../lib/useApi'
+import { useScan } from '../../lib/scan'
+import { EmptyState, ErrorState, LoadingState, PageHeader } from './states'
 
-const CLOUD_TABS = ['AWS']
-const CLOUD_COLORS: Record<string, string> = {
-  aws: 'bg-orange-500/15 text-orange-400 border-orange-500/30',
-  gcp: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
-  azure: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30',
+type Credential = {
+  credential_id: string
+  label?: string
+  cloud?: string
+  credential_type?: string
+  created_at?: string
+  last_verified_at?: string | null
+}
+type Notice = { tone: 'ok' | 'error'; text: string } | null
+
+function errorText(e: unknown) {
+  const d = describeError(toApiError(e))
+  return d.hint ? `${d.title}. ${d.hint}` : `${d.title}. ${d.message}`
 }
 
-export default function CredentialsPanel({ onScanComplete }: { onScanComplete?: () => void }) {
-  const [creds, setCreds]     = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
-  const [busy, setBusy]       = useState<Record<string, string | null>>({})
+function Field({ id, label, children }: { id: string; label: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <div>
+      <label htmlFor={id} className="mb-1 block text-xs font-medium text-slate-400">{label}</label>
+      {children}
+    </div>
+  )
+}
+
+export default function CredentialsPanel() {
+  const { data, error, loading, retry } = useApi(async () => {
+    const d = await getCredentials()
+    return (Array.isArray(d?.items) ? d.items : []) as Credential[]
+  })
+  const scan = useScan()
+  const [busy, setBusy] = useState<Record<string, string | null>>({})
   const [showForm, setShowForm] = useState(false)
-  const [cloudTab, setCloudTab] = useState('AWS')
-  const [awsAuthTab, setAwsAuthTab] = useState('IAM Role')
-  const [awsRoleForm, setAwsRoleForm] = useState({ label: '', role_arn: '', external_id: '', regions: 'us-east-1' })
-  const [awsKeyForm, setAwsKeyForm]   = useState({ label: '', access_key_id: '', secret_access_key: '', regions: 'us-east-1' })
-  const [gcpForm, setGcpForm]         = useState({ label: '', payload: '', project_ids: '' })
-  const [azureForm, setAzureForm]     = useState({ label: '', tenant_id_az: '', client_id: '', client_secret: '', subscription_ids: '' })
-  const [saving, setSaving]   = useState(false)
-  const [msg, setMsg]         = useState('')
-  const [error, setError]     = useState('')
+  const [authTab, setAuthTab] = useState<'IAM Role' | 'Access Key'>('IAM Role')
+  const [roleForm, setRoleForm] = useState({ label: '', role_arn: '', external_id: '', regions: 'us-east-1' })
+  const [keyForm, setKeyForm] = useState({ label: '', access_key_id: '', secret_access_key: '', regions: 'us-east-1' })
+  const [saving, setSaving] = useState(false)
+  const [notice, setNotice] = useState<Notice>(null)
 
-  const load = async () => {
-    setLoading(true)
-    setError('')
-    try { const d = await getCredentials(); setCreds(d.items || []) } catch (e: any) { setError((e as Error)?.message || 'Something went wrong') }
-    setLoading(false)
-  }
-
-   
-   
-  useEffect(() => { load() }, [])
-
-  const formatVerifySuccess = (res: Record<string, any>) => {
-    const identity = res?.identity || {}
-    if (identity.provider === 'gcp' || identity.project_id || identity.accessible_projects) {
-      const projects = identity.accessible_projects?.join(', ') || identity.project_id || 'verified'
-      return `GCP credential verified!\nProjects: ${projects}`
-    }
-    if (identity.provider === 'azure' || identity.subscription_id || identity.subscription_ids) {
-      const subscriptions = identity.subscription_ids?.join(', ') || identity.subscription_id || 'verified'
-      return `Azure credential verified!\nSubscriptions: ${subscriptions}`
-    }
-    return `AWS credential verified!\nAccount: ${identity?.account || '—'}\nARN: ${identity?.arn || '—'}`
-  }
+  const regions = (s: string) => s.split(',').map((r) => r.trim()).filter(Boolean)
 
   const handleAdd = async () => {
-    setSaving(true); setMsg('')
+    setSaving(true); setNotice(null)
     try {
-      if (cloudTab === 'AWS') {
-        if (awsAuthTab === 'IAM Role') {
-          await addCredential({ cloud: 'aws', label: awsRoleForm.label, role_arn: awsRoleForm.role_arn, external_id: awsRoleForm.external_id || undefined, regions: awsRoleForm.regions.split(',').map(r => r.trim()).filter(Boolean) })
-          setAwsRoleForm({ label: '', role_arn: '', external_id: '', regions: 'us-east-1' })
-        } else {
-          await addCredential({ cloud: 'aws', label: awsKeyForm.label, access_key_id: awsKeyForm.access_key_id, secret_access_key: awsKeyForm.secret_access_key, regions: awsKeyForm.regions.split(',').map(r => r.trim()).filter(Boolean) })
-          setAwsKeyForm({ label: '', access_key_id: '', secret_access_key: '', regions: 'us-east-1' })
-        }
-      } else if (cloudTab === 'GCP') {
-        let payload = gcpForm.payload
-        const projectIds = gcpForm.project_ids.split(',').map(v => v.trim()).filter(Boolean)
-        if (projectIds.length > 0) {
-          try {
-            const parsed = JSON.parse(gcpForm.payload || '{}')
-            payload = JSON.stringify({ ...parsed, project_ids: projectIds })
-          } catch {
-            payload = gcpForm.payload
-          }
-        }
-        await addCredential({ cloud: 'gcp', label: gcpForm.label, credential_type: 'service_account_json', payload })
-        setGcpForm({ label: '', payload: '', project_ids: '' })
-      } else if (cloudTab === 'Azure') {
-        const subscriptionIds = azureForm.subscription_ids.split(',').map(v => v.trim()).filter(Boolean)
-        await addCredential({
-          cloud: 'azure',
-          label: azureForm.label,
-          credential_type: 'client_secret',
-          payload: `tenant_id=${azureForm.tenant_id_az}|client_id=${azureForm.client_id}|client_secret=${azureForm.client_secret}|subscription_ids=${subscriptionIds.join(',')}`,
-        })
-        setAzureForm({ label: '', tenant_id_az: '', client_id: '', client_secret: '', subscription_ids: '' })
+      if (authTab === 'IAM Role') {
+        await addCredential({ cloud: 'aws', label: roleForm.label, role_arn: roleForm.role_arn, external_id: roleForm.external_id || undefined, regions: regions(roleForm.regions) })
+        setRoleForm({ label: '', role_arn: '', external_id: '', regions: 'us-east-1' })
+      } else {
+        await addCredential({ cloud: 'aws', label: keyForm.label, access_key_id: keyForm.access_key_id, secret_access_key: keyForm.secret_access_key, regions: regions(keyForm.regions) })
+        setKeyForm({ label: '', access_key_id: '', secret_access_key: '', regions: 'us-east-1' })
       }
-      setShowForm(false); setMsg('Credential added.'); load()
-     
-    } catch (e: any) { setMsg(`Error: ${e.message}`) }
+      setShowForm(false)
+      setNotice({ tone: 'ok', text: 'AWS account connected. Run a scan to see your resources.' })
+      retry()
+    } catch (e) {
+      setNotice({ tone: 'error', text: errorText(e) })
+    }
     setSaving(false)
   }
 
   const handleVerify = async (id: string) => {
-    setBusy(b => ({ ...b, [id]: 'verify' }))
+    setBusy((b) => ({ ...b, [id]: 'verify' })); setNotice(null)
     try {
       const res = await verifyCredential(id)
-      alert(formatVerifySuccess(res))
-      load()
-     
-    } catch (e: any) { alert(`Verification failed: ${e.message}`) }
-    setBusy(b => ({ ...b, [id]: null }))
-  }
-
-  const handleScan = async (id: string) => {
-    setBusy(b => ({ ...b, [id]: 'scan' }))
-    try {
-      const res = await scanNow()
-      setMsg(`Scan complete — ${res.total_events_found ?? 0} events found`)
-      onScanComplete?.()
-     
-    } catch (e: any) { setMsg(`Scan error: ${e.message}`) }
-    setBusy(b => ({ ...b, [id]: null }))
+      const identity = res?.identity || {}
+      setNotice({ tone: 'ok', text: `Role verified${identity.account ? ` for AWS account ${identity.account}` : ''}.` })
+      retry()
+    } catch (e) {
+      setNotice({ tone: 'error', text: `Verification failed. ${errorText(e)}` })
+    }
+    setBusy((b) => ({ ...b, [id]: null }))
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this credential?')) return
-    setBusy(b => ({ ...b, [id]: 'delete' }))
-     
-    try { await deleteCredential(id); load() } catch (e: any) { alert(e.message) }
-    setBusy(b => ({ ...b, [id]: null }))
-  }
-
-  const formValid = () => {
-    if (cloudTab === 'AWS') {
-      if (awsAuthTab === 'IAM Role') return !!awsRoleForm.role_arn
-      return !!(awsKeyForm.access_key_id && awsKeyForm.secret_access_key)
+    if (!confirm('Disconnect this AWS account from Cloudlink?')) return
+    setBusy((b) => ({ ...b, [id]: 'delete' })); setNotice(null)
+    try {
+      await deleteCredential(id)
+      setNotice({ tone: 'ok', text: 'Account disconnected.' })
+      retry()
+    } catch (e) {
+      setNotice({ tone: 'error', text: errorText(e) })
     }
-    if (cloudTab === 'GCP') return !!gcpForm.payload
-    if (cloudTab === 'Azure') return !!(azureForm.tenant_id_az && azureForm.client_id && azureForm.client_secret && azureForm.subscription_ids)
-    return false
+    setBusy((b) => ({ ...b, [id]: null }))
   }
 
-  const inp = "dashboard-field w-full rounded-lg px-3 py-2 text-sm"
+  const formValid = authTab === 'IAM Role' ? !!roleForm.role_arn : !!(keyForm.access_key_id && keyForm.secret_access_key)
+  const inp = 'dashboard-field w-full rounded-lg px-3 py-2 text-sm'
+  const creds = data || []
+
+  const header = (
+    <PageHeader
+      title="Credentials"
+      subtitle="The read-only AWS role Cloudlink uses to scan your account"
+      actions={<button type="button" onClick={() => setShowForm((s) => !s)} aria-expanded={showForm} className="dashboard-primary-button px-4 py-2 text-sm">+ Connect AWS account</button>}
+    />
+  )
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-100">Credentials</h1>
-          <p className="text-slate-500 text-sm mt-1">Read-only cloud credentials used to scan your infrastructure</p>
-        </div>
-        <button onClick={() => setShowForm(s => !s)} className="dashboard-primary-button text-sm px-4 py-2">
-          + Add credential
-        </button>
-      </div>
+      {header}
 
-      {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
-      {msg && <p className="text-sm text-[#6EE7B7] mb-4">{msg}</p>}
+      {notice && (
+        <p role={notice.tone === 'error' ? 'alert' : 'status'} className={`mb-4 rounded-lg border px-4 py-3 text-sm ${notice.tone === 'error' ? 'border-red-500/30 bg-red-500/10 text-red-200' : 'border-[#10B981]/30 bg-[#10B981]/10 text-[#A7F3D0]'}`}>
+          {notice.text}
+        </p>
+      )}
 
       {showForm && (
-        <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-6 mb-6">
-          <div className="flex gap-1 border-b border-slate-200 mb-6">
-            {CLOUD_TABS.map(t => (
-              <button key={t} onClick={() => setCloudTab(t)}
-                className={`px-4 py-2 text-sm font-medium rounded-t-lg transition ${cloudTab === t ? 'dashboard-pill-active' : 'dashboard-pill hover:text-slate-200'}`}>{t}</button>
-            ))}
-          </div>
+        <div className="mb-6 rounded-xl border border-[#1E2D4F] bg-[#0F1629] p-6">
+          <h2 className="mb-1 font-semibold text-slate-100">Connect an AWS account</h2>
+          <p className="mb-4 text-xs text-slate-400">
+            Cloudlink assumes a read-only IAM role with Describe, Get and List permissions. It never changes anything, and you can delete the role at any time.
+          </p>
 
-          {cloudTab === 'AWS' && (
-            <>
-              <h2 className="font-semibold text-slate-100 mb-1">Connect AWS Account</h2>
-              <p className="text-xs text-slate-500 mb-4">
-                Cloudlink uses a read-only IAM Role — no credentials are stored, and you can revoke access instantly.
-              </p>
-
-              {awsAuthTab === 'IAM Role' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div><label className="block text-xs font-medium text-slate-600 mb-1">Label</label><input value={awsRoleForm.label} onChange={e => setAwsRoleForm(f => ({ ...f, label: e.target.value }))} placeholder="e.g. Acme Production" className={inp} /></div>
-                  <div><label className="block text-xs font-medium text-slate-600 mb-1">Role ARN *</label><input value={awsRoleForm.role_arn} onChange={e => setAwsRoleForm(f => ({ ...f, role_arn: e.target.value }))} placeholder="arn:aws:iam::123456789012:role/CloudlinkRole" className={`${inp} font-mono`} /></div>
-                  <div><label className="block text-xs font-medium text-slate-600 mb-1">External ID <span className="font-normal text-slate-400">(from your Cloudlink onboarding)</span></label><input value={awsRoleForm.external_id} onChange={e => setAwsRoleForm(f => ({ ...f, external_id: e.target.value }))} placeholder="optional" className={inp} /></div>
-                  <div><label className="block text-xs font-medium text-slate-600 mb-1">Regions</label><input value={awsRoleForm.regions} onChange={e => setAwsRoleForm(f => ({ ...f, regions: e.target.value }))} placeholder="us-east-1, us-west-2" className={inp} /></div>
-                  <div className="md:col-span-2 bg-[#10B981]/10 border border-[#10B981]/30 rounded-lg p-4 text-xs text-[#94A3B8]">
-                    <p className="font-medium text-[#F1F5F9] mb-2">Step 1 — Deploy the IAM Role into your AWS account</p>
-                    <p className="text-[#64748B] mb-3">Download the CloudFormation template, then deploy it in your AWS Console. It creates a read-only role that Cloudlink can assume — nothing else. Takes about 60 seconds.</p>
-                    <div className="flex gap-2 flex-wrap">
-                      <a href={`${getBase()}/setup/cloudformation-template`} download="cloudlink-role.yaml" className="inline-flex items-center gap-1 bg-[#10B981] hover:bg-[#059669] text-white text-xs font-medium px-3 py-1.5 rounded-lg transition">↓ Download cloudlink-role.yaml</a>
-                      <a href="https://console.aws.amazon.com/cloudformation/home#/stacks/create" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 border border-[#1E2D4F] text-[#94A3B8] hover:bg-[#141C33] text-xs font-medium px-3 py-1.5 rounded-lg transition">Open CloudFormation Console ↗</a>
-                    </div>
-                    <p className="mt-3 text-[#64748B]">Step 2 — Copy the <code className="bg-[#141C33] px-1 rounded font-mono text-[#10B981]">RoleArn</code> from the CloudFormation Outputs tab and paste it above.</p>
-                  </div>
+          {authTab === 'IAM Role' ? (
+            <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+              <Field id="role-label" label="Label"><input id="role-label" value={roleForm.label} onChange={(e) => setRoleForm((f) => ({ ...f, label: e.target.value }))} placeholder="e.g. Production" className={inp} /></Field>
+              <Field id="role-arn" label="Role ARN *"><input id="role-arn" value={roleForm.role_arn} onChange={(e) => setRoleForm((f) => ({ ...f, role_arn: e.target.value }))} placeholder="arn:aws:iam::123456789012:role/CloudlinkRole" className={`${inp} font-mono`} /></Field>
+              <Field id="role-external-id" label={<>External ID <span className="font-normal text-slate-500">(optional)</span></>}><input id="role-external-id" value={roleForm.external_id} onChange={(e) => setRoleForm((f) => ({ ...f, external_id: e.target.value }))} className={inp} /></Field>
+              <Field id="role-regions" label="Regions"><input id="role-regions" value={roleForm.regions} onChange={(e) => setRoleForm((f) => ({ ...f, regions: e.target.value }))} placeholder="us-east-1, us-west-2" className={inp} /></Field>
+              <div className="rounded-lg border border-[#10B981]/30 bg-[#10B981]/10 p-4 text-xs text-[#94A3B8] md:col-span-2">
+                <p className="mb-2 font-medium text-[#F1F5F9]">Step 1 — Create the role in your AWS account</p>
+                <p className="mb-3 text-[#94A3B8]">Download the CloudFormation template and deploy it in the AWS console. It creates a read-only role that Cloudlink can assume. It takes about a minute.</p>
+                <div className="flex flex-wrap gap-2">
+                  <a href={`${getBase()}/setup/cloudformation-template`} download="cloudlink-role.yaml" className="inline-flex items-center gap-1 rounded-lg bg-[#10B981] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[#059669]">↓ Download cloudlink-role.yaml</a>
+                  <a href="https://console.aws.amazon.com/cloudformation/home#/stacks/create" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-lg border border-[#1E2D4F] px-3 py-1.5 text-xs font-medium text-[#94A3B8] transition hover:bg-[#141C33]">Open CloudFormation console ↗</a>
                 </div>
-              )}
-
-              {awsAuthTab === 'Access Key' && (
-                <>
-                  <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-4 text-xs text-red-400">
-                    <p className="font-semibold mb-1">Warning: Not recommended for production</p>
-                    <p>Access keys are long-lived credentials. If exposed, they grant permanent access to your AWS account. Use IAM Role assumption instead — it uses short-lived tokens and is the industry standard.</p>
-                    <button onClick={() => setAwsAuthTab('IAM Role')} className="mt-2 underline text-red-400 hover:text-red-300">Switch to IAM Role (recommended)</button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div><label className="block text-xs font-medium text-slate-600 mb-1">Label</label><input value={awsKeyForm.label} onChange={e => setAwsKeyForm(f => ({ ...f, label: e.target.value }))} placeholder="e.g. My AWS Account" className={inp} /></div>
-                    <div><label className="block text-xs font-medium text-slate-600 mb-1">Access Key ID *</label><input value={awsKeyForm.access_key_id} onChange={e => setAwsKeyForm(f => ({ ...f, access_key_id: e.target.value }))} placeholder="AKIAIOSFODNN7EXAMPLE" className={`${inp} font-mono`} /></div>
-                    <div><label className="block text-xs font-medium text-slate-600 mb-1">Secret Access Key *</label><input value={awsKeyForm.secret_access_key} onChange={e => setAwsKeyForm(f => ({ ...f, secret_access_key: e.target.value }))} type="password" placeholder="••••••••••••••••••••••••••••••••••••••••" className={`${inp} font-mono`} /></div>
-                    <div><label className="block text-xs font-medium text-slate-600 mb-1">Regions</label><input value={awsKeyForm.regions} onChange={e => setAwsKeyForm(f => ({ ...f, regions: e.target.value }))} placeholder="us-east-1, us-west-2" className={inp} /></div>
-                  </div>
-                </>
-              )}
-
-              {awsAuthTab === 'IAM Role' && (
-                <p className="text-xs text-slate-400 mt-1">
-                  Not using CloudFormation?{' '}
-                  <button onClick={() => setAwsAuthTab('Access Key')} className="underline hover:text-slate-600">
-                    Use an access key instead
-                  </button>
-                  {' '}(not recommended)
-                </p>
-              )}
-            </>
-          )}
-
-          {cloudTab === 'GCP' && (
+                <p className="mt-3">Step 2 — Copy <code className="rounded bg-[#141C33] px-1 font-mono text-[#10B981]">RoleArn</code> from the stack’s Outputs tab and paste it above.</p>
+              </div>
+            </div>
+          ) : (
             <>
-              <h2 className="font-semibold text-slate-100 mb-4">Register GCP Service Account</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div><label className="block text-xs font-medium text-slate-600 mb-1">Label</label><input value={gcpForm.label} onChange={e => setGcpForm(f => ({ ...f, label: e.target.value }))} placeholder="e.g. GCP Production" className={inp} /></div>
-                <div><label className="block text-xs font-medium text-slate-600 mb-1">Project IDs</label><input value={gcpForm.project_ids} onChange={e => setGcpForm(f => ({ ...f, project_ids: e.target.value }))} placeholder="project-a, project-b" className={inp} /></div>
+              <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-300">
+                <p className="mb-1 font-semibold">Not recommended</p>
+                <p>Access keys are long-lived. If they leak, they keep working until you delete them. A read-only IAM role is safer.</p>
+                <button type="button" onClick={() => setAuthTab('IAM Role')} className="mt-2 underline hover:text-red-200">Use an IAM role instead</button>
               </div>
-              <div className="mb-4">
-                <label className="block text-xs font-medium text-slate-600 mb-1">Service Account JSON *</label>
-                <textarea value={gcpForm.payload} onChange={e => setGcpForm(f => ({ ...f, payload: e.target.value }))} placeholder='{"type": "service_account", ...}' rows={6} className={`${inp} font-mono`} />
-              </div>
-            </>
-          )}
-
-          {cloudTab === 'Azure' && (
-            <>
-              <h2 className="font-semibold text-slate-100 mb-4">Register Azure Service Principal</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div><label className="block text-xs font-medium text-slate-600 mb-1">Label</label><input value={azureForm.label} onChange={e => setAzureForm(f => ({ ...f, label: e.target.value }))} placeholder="e.g. Azure Production" className={inp} /></div>
-                <div><label className="block text-xs font-medium text-slate-600 mb-1">Tenant ID *</label><input value={azureForm.tenant_id_az} onChange={e => setAzureForm(f => ({ ...f, tenant_id_az: e.target.value }))} placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" className={`${inp} font-mono`} /></div>
-                <div><label className="block text-xs font-medium text-slate-600 mb-1">Subscription IDs *</label><input value={azureForm.subscription_ids} onChange={e => setAzureForm(f => ({ ...f, subscription_ids: e.target.value }))} placeholder="sub-a, sub-b" className={`${inp} font-mono`} /></div>
-                <div><label className="block text-xs font-medium text-slate-600 mb-1">Client ID *</label><input value={azureForm.client_id} onChange={e => setAzureForm(f => ({ ...f, client_id: e.target.value }))} placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" className={`${inp} font-mono`} /></div>
-                <div className="md:col-span-2"><label className="block text-xs font-medium text-slate-600 mb-1">Client Secret *</label><input value={azureForm.client_secret} onChange={e => setAzureForm(f => ({ ...f, client_secret: e.target.value }))} type="password" placeholder="your-client-secret" className={inp} /></div>
+              <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+                <Field id="key-label" label="Label"><input id="key-label" value={keyForm.label} onChange={(e) => setKeyForm((f) => ({ ...f, label: e.target.value }))} className={inp} /></Field>
+                <Field id="key-id" label="Access key ID *"><input id="key-id" value={keyForm.access_key_id} onChange={(e) => setKeyForm((f) => ({ ...f, access_key_id: e.target.value }))} autoComplete="off" className={`${inp} font-mono`} /></Field>
+                <Field id="key-secret" label="Secret access key *"><input id="key-secret" value={keyForm.secret_access_key} onChange={(e) => setKeyForm((f) => ({ ...f, secret_access_key: e.target.value }))} type="password" autoComplete="off" className={`${inp} font-mono`} /></Field>
+                <Field id="key-regions" label="Regions"><input id="key-regions" value={keyForm.regions} onChange={(e) => setKeyForm((f) => ({ ...f, regions: e.target.value }))} placeholder="us-east-1, us-west-2" className={inp} /></Field>
               </div>
             </>
           )}
 
-          <div className="flex gap-3 mt-2">
-            <button onClick={handleAdd} disabled={saving || !formValid()} className="dashboard-primary-button disabled:opacity-50 text-sm px-4 py-2">
-              {saving ? 'Saving…' : 'Save credential'}
+          {authTab === 'IAM Role' && (
+            <p className="mt-1 text-xs text-slate-500">
+              Can’t use CloudFormation?{' '}
+              <button type="button" onClick={() => setAuthTab('Access Key')} className="underline hover:text-slate-300">Use an access key instead</button> (not recommended)
+            </p>
+          )}
+
+          <div className="mt-4 flex gap-3">
+            <button type="button" onClick={handleAdd} disabled={saving || !formValid} className="dashboard-primary-button px-4 py-2 text-sm disabled:opacity-50">
+              {saving ? 'Saving…' : 'Save'}
             </button>
-            <button onClick={() => setShowForm(false)} className="dashboard-secondary-button text-sm px-4 py-2">Cancel</button>
+            <button type="button" onClick={() => setShowForm(false)} className="dashboard-secondary-button px-4 py-2 text-sm">Cancel</button>
           </div>
         </div>
       )}
 
-      <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] overflow-hidden">
-        {loading ? (
-          <div className="p-10 text-center text-slate-400 text-sm">Loading…</div>
-        ) : creds.length === 0 ? (
-          <div className="p-10 text-center text-slate-400 text-sm">No credentials yet. Add one above to connect your cloud account.</div>
-        ) : (
-          <table className="w-full text-sm">
-            <thead className="bg-[#141C33] border-b border-[#1E2D4F]">
-              <tr>{['Label','Cloud','Type','Added','Last Verified','Actions'].map(h => <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">{h}</th>)}</tr>
+      {loading && !data ? (
+        <LoadingState label="Loading credentials…" />
+      ) : error && !data ? (
+        <ErrorState error={error} onRetry={retry} />
+      ) : creds.length === 0 ? (
+        <EmptyState
+          title="No AWS account connected"
+          body="Connect a read-only IAM role to start scanning."
+          action={showForm ? undefined : { label: 'Connect AWS account', onClick: () => setShowForm(true) }}
+        />
+      ) : (
+        <div className="overflow-x-auto rounded-xl border border-[#1E2D4F] bg-[#0F1629]">
+          <table className="w-full min-w-[640px] text-sm">
+            <thead className="border-b border-[#1E2D4F] bg-[#141C33]">
+              <tr>{['Label', 'Type', 'Added', 'Last verified', 'Actions'].map((h) => <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">{h}</th>)}</tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
-              {creds.map(c => (
+            <tbody className="divide-y divide-[#1E2D4F]">
+              {creds.map((c) => (
                 <tr key={c.credential_id} className="hover:bg-[#141C33]">
-                  <td className="px-4 py-3 font-medium text-slate-700">{c.label || '—'}</td>
-                  <td className="px-4 py-3"><span className={`text-xs border px-2 py-0.5 rounded font-medium ${CLOUD_COLORS[c.cloud] || 'bg-[#141C33] text-slate-400 border-[#1E2D4F]'}`}>{c.cloud?.toUpperCase()}</span></td>
-                  <td className="px-4 py-3"><span className="bg-[#10B981]/15 text-[#10B981] px-2 py-0.5 rounded text-xs font-medium">{c.credential_type}</span></td>
-                  <td className="px-4 py-3 text-xs text-slate-400">{new Date(c.created_at).toLocaleDateString()}</td>
+                  <td className="px-4 py-3 font-medium text-slate-200">{c.label || '—'}</td>
+                  <td className="px-4 py-3"><span className="rounded bg-[#10B981]/15 px-2 py-0.5 text-xs font-medium text-[#10B981]">{c.credential_type === 'access_key' ? 'Access key' : 'IAM role'}</span></td>
+                  <td className="px-4 py-3 text-xs text-slate-400">{c.created_at ? new Date(c.created_at).toLocaleDateString() : '—'}</td>
                   <td className="px-4 py-3 text-xs">
-                    {c.last_verified_at ? <span className="text-[#6EE7B7]">Verified {new Date(c.last_verified_at).toLocaleString()}</span> : <span className="text-yellow-500">Never verified</span>}
+                    {c.last_verified_at ? <span className="text-[#6EE7B7]">{new Date(c.last_verified_at).toLocaleString()}</span> : <span className="text-yellow-400">Never</span>}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex gap-1.5 flex-wrap">
-                      {(c.credential_type === 'iam_role' || c.credential_type === 'access_key' || c.credential_type === 'service_account_json' || c.credential_type === 'client_secret') && (
-                        <>
-                          <button disabled={!!busy[c.credential_id]} onClick={() => handleVerify(c.credential_id)} className="px-2 py-1 bg-[#1A2340] hover:bg-[#1E2D4F] text-slate-300 text-xs rounded-lg disabled:opacity-50 transition">{busy[c.credential_id] === 'verify' ? '…' : 'Verify'}</button>
-                          <button disabled={!!busy[c.credential_id]} onClick={() => handleScan(c.credential_id)} className="px-2 py-1 bg-[#10B981]/15 hover:bg-[#10B981]/25 text-[#10B981] text-xs rounded-lg disabled:opacity-50 transition">{busy[c.credential_id] === 'scan' ? '…' : 'Scan'}</button>
-                        </>
-                      )}
-                      <button disabled={!!busy[c.credential_id]} onClick={() => handleDelete(c.credential_id)} className="px-2 py-1 bg-red-500/15 hover:bg-red-500/25 text-red-400 text-xs rounded-lg disabled:opacity-50 transition">Delete</button>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button type="button" disabled={!!busy[c.credential_id]} onClick={() => handleVerify(c.credential_id)} className="rounded-lg bg-[#1A2340] px-2 py-1 text-xs text-slate-300 transition hover:bg-[#1E2D4F] disabled:opacity-50">{busy[c.credential_id] === 'verify' ? 'Verifying…' : 'Verify'}</button>
+                      <button type="button" disabled={scan.status === 'running'} onClick={() => { void scan.start() }} className="rounded-lg bg-[#10B981]/15 px-2 py-1 text-xs text-[#10B981] transition hover:bg-[#10B981]/25 disabled:opacity-50">{scan.status === 'running' ? 'Scanning…' : 'Scan'}</button>
+                      <button type="button" disabled={!!busy[c.credential_id]} onClick={() => handleDelete(c.credential_id)} className="rounded-lg bg-red-500/15 px-2 py-1 text-xs text-red-400 transition hover:bg-red-500/25 disabled:opacity-50">{busy[c.credential_id] === 'delete' ? 'Removing…' : 'Disconnect'}</button>
                     </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

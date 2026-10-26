@@ -60,7 +60,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       return
     }
     try {
-      const res = await fetch('/api/subscription')
+      const res = await fetch('/api/subscription', { signal: AbortSignal.timeout(20_000) })
       const data = await res.json()
       setSubscription(data)
     } catch {

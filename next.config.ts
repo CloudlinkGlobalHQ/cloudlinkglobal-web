@@ -31,9 +31,24 @@ const securityHeaders = [
   // HSTS is already sent by Vercel for this domain.
 ];
 
+// End-to-end tests run the dashboard without Clerk keys by swapping Clerk for
+// a stub (e2e/clerk-stub). This bypasses sign-in, so it must never reach Vercel.
+const e2eClerkStub = process.env.CLOUDLINK_E2E_CLERK_STUB === "1";
+if (e2eClerkStub && (process.env.VERCEL || process.env.VERCEL_ENV)) {
+  throw new Error("CLOUDLINK_E2E_CLERK_STUB must not be set on Vercel: it disables authentication.");
+}
+
 const nextConfig: NextConfig = {
+  // Keep the stubbed e2e build apart from the real one.
+  ...(e2eClerkStub && { distDir: ".next-e2e" }),
   turbopack: {
     root: path.resolve(__dirname),
+    ...(e2eClerkStub && {
+      resolveAlias: {
+        "@clerk/nextjs/server": "./e2e/clerk-stub/server.ts",
+        "@clerk/nextjs": "./e2e/clerk-stub/index.tsx",
+      },
+    }),
   },
   poweredByHeader: false,
   async headers() {

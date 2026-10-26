@@ -1,7 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import { getRiRecommendations } from '../../lib/api'
+import { useApi } from '../../lib/useApi'
+import { EmptyState, ErrorState, LoadingState, PageHeader } from './states'
 
 interface RiRec {
   instance_type: string
@@ -57,45 +59,12 @@ function CpuBar({ pct }: { pct: number }) {
 }
 
 export default function RiRecommendationsPage() {
-  const [data, setData] = useState<RiData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { data, error, loading, retry } = useApi<RiData>(getRiRecommendations)
   const [view, setView] = useState<'1yr' | '3yr'>('1yr')
+  const header = <PageHeader title="Reserved Instance Recommendations" subtitle="Estimated from your running EC2 instances at approximate us-east-1 prices." />
 
-  const load = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      setData(await getRiRecommendations())
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
-      setError(e.message)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-   
-  useEffect(() => { load() }, [load])
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full" />
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-        <p className="text-red-600 font-medium">Failed to load RI recommendations</p>
-        <p className="text-red-500 text-sm mt-1">{error}</p>
-        <button onClick={load} className="mt-3 text-sm text-red-600 underline">Retry</button>
-      </div>
-    )
-  }
-
+  if (loading && !data) return <>{header}<LoadingState label="Loading RI recommendations…" /></>
+  if (error && !data) return <>{header}<ErrorState error={error} onRetry={retry} /></>
   if (!data) return null
 
   const annualSavings = view === '1yr' ? data.total_annual_savings_1yr_usd : data.total_annual_savings_3yr_usd
@@ -104,11 +73,11 @@ export default function RiRecommendationsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-100">Reserved Instance Recommendations</h1>
           <p className="text-sm text-slate-500 mt-0.5">
-            Commit to Reserved Instances for predictable workloads and save up to 57%
+            Estimated from your running EC2 instances at approximate us-east-1 prices
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -150,18 +119,16 @@ export default function RiRecommendationsPage() {
 
       {/* No data state */}
       {recs.length === 0 && (
-        <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-10 text-center">
-          <div className="mx-auto mb-3 h-10 w-10 rounded-full border border-[#1E2D4F] bg-[#141C33]" />
-          <p className="font-semibold text-slate-100">No EC2 instances found</p>
-          <p className="text-sm text-slate-500 mt-1">
-            Run a scan to discover your EC2 fleet and get RI recommendations.
-          </p>
-        </div>
+        <EmptyState
+          title="No running EC2 instances found"
+          body="Recommendations appear after a scan finds running EC2 instances."
+          action={{ label: 'Go to Scans', href: '/dashboard/scans' }}
+        />
       )}
 
       {/* Recommendations table */}
       {recs.length > 0 && (
-        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] overflow-hidden">
+        <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] overflow-x-auto">
           <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
             <h2 className="font-semibold text-slate-100">Instance Type Analysis</h2>
             <span className="text-xs text-slate-400">{recs.length} type(s) with active instances</span>

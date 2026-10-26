@@ -9,7 +9,7 @@ import { Send, Sparkles, MessageSquare, Clock, ChevronRight, Bot, User, AlertCir
 const SUGGESTED_PROMPTS = [
   "What's driving my cloud costs right now?",
   "Show me my most wasteful resources",
-  "Are there any open cost regressions?",
+  "Which resources look idle or unused?",
   "What rightsizing opportunities do I have?",
 ]
 
@@ -127,6 +127,9 @@ export default function AiAdvisorPage() {
     setMessages((prev) => [...prev, aiMsg])
 
     abortRef.current = new AbortController()
+    // Give up if the first byte takes longer than a minute (the backend may be waking up).
+    let timedOut = false
+    const timer = setTimeout(() => { timedOut = true; abortRef.current?.abort() }, 60_000)
 
     try {
       const res = await fetch('/api/advisor', {
@@ -141,9 +144,13 @@ export default function AiAdvisorPage() {
         signal: abortRef.current.signal,
       })
 
+      clearTimeout(timer)
       if (!res.ok) {
-        const errText = await res.text()
-        throw new Error(errText || `HTTP ${res.status}`)
+        throw new Error(
+          res.status === 503 ? 'The AI Advisor isn’t set up yet. Try again later.'
+          : res.status === 401 ? 'Your session couldn’t be verified. Reload the page and try again.'
+          : 'The AI Advisor hit an error. Try again in a moment.'
+        )
       }
 
       if (!res.body) throw new Error('No response body')
@@ -162,8 +169,11 @@ export default function AiAdvisorPage() {
         )
       }
     } catch (err) {
-      if ((err as Error).name === 'AbortError') return
-      const msg = err instanceof Error ? err.message : 'Something went wrong'
+      clearTimeout(timer)
+      if ((err as Error).name === 'AbortError' && !timedOut) return
+      const msg = timedOut
+        ? 'The AI Advisor didn’t answer in time. The backend may be waking up — this can take up to a minute.'
+        : err instanceof Error ? err.message : 'Something went wrong'
       setError(msg)
       // Remove the empty AI placeholder on error
       setMessages((prev) => prev.filter((m) => m.id !== aiId))
@@ -195,7 +205,9 @@ export default function AiAdvisorPage() {
   const isEmpty = messages.length === 0
 
   return (
-    <div className="flex h-[calc(100vh-120px)] min-h-[600px] gap-0 rounded-xl overflow-hidden border border-[#1E2D4F]" style={{ backgroundColor: '#0A0E1A' }}>
+    <>
+    <h1 className="sr-only">AI Advisor</h1>
+    <div className="flex h-[calc(100vh-140px)] min-h-[480px] gap-0 rounded-xl overflow-hidden border border-[#1E2D4F]" style={{ backgroundColor: '#0A0E1A' }}>
 
       {/* Left sidebar */}
       <aside className="hidden md:flex flex-col w-56 flex-shrink-0 bg-[#0F1629] border-r border-[#1E2D4F]">
@@ -260,7 +272,7 @@ export default function AiAdvisorPage() {
               ) : (
                 <span className="text-[#10B981] flex items-center gap-1">
                   <span className="w-1.5 h-1.5 bg-[#10B981] rounded-full inline-block" />
-                  Connected to your live cloud data
+                  Answers from your latest scan
                 </span>
               )}
             </p>
@@ -281,7 +293,7 @@ export default function AiAdvisorPage() {
               </div>
               <h2 className="text-base font-semibold text-[#F1F5F9] mb-1">Ask me anything about your cloud</h2>
               <p className="text-xs text-[#64748B] mb-6 max-w-xs">
-                I have live access to your actual spend, resources, regressions, and rightsizing data.
+                I can see the results of your latest scan: month-to-date spend, resources and rightsizing estimates.
               </p>
               <div className="flex flex-wrap gap-2 justify-center max-w-lg">
                 {SUGGESTED_PROMPTS.map((prompt) => (
@@ -349,6 +361,7 @@ export default function AiAdvisorPage() {
           {/* Error banner */}
           {error && (
             <motion.div
+              role="alert"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               className="flex items-start gap-3 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-xs text-red-400"
@@ -387,7 +400,8 @@ export default function AiAdvisorPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Ask about your cloud costs, regressions, resources..."
+                placeholder="Ask about your AWS costs and resources…"
+                aria-label="Message the AI Advisor"
                 rows={1}
                 disabled={isStreaming}
                 className="w-full resize-none rounded-xl border border-[#1E2D4F] bg-[#141C33] px-4 py-3 text-sm text-[#F1F5F9] placeholder-[#3D5070] transition focus:border-[#10B981]/50 focus:outline-none disabled:opacity-60"
@@ -397,6 +411,7 @@ export default function AiAdvisorPage() {
             <button
               type="submit"
               disabled={!input.trim() || isStreaming}
+              aria-label="Send message"
               className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[#10B981] text-white transition hover:bg-[#059669] disabled:cursor-not-allowed disabled:opacity-40"
             >
               <Send size={15} />
@@ -408,5 +423,6 @@ export default function AiAdvisorPage() {
         </div>
       </div>
     </div>
+    </>
   )
 }

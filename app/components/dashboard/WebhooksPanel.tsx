@@ -1,226 +1,207 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { useEffect, useState } from 'react'
-import { getWebhooks, addWebhook, deleteWebhook, testWebhooks, getSlackSettings, updateSlackSettings, testSlackSettings } from '../../lib/api'
+import { useState } from 'react'
+import { getWebhooks, addWebhook, deleteWebhook, testWebhooks, getSlackSettings, updateSlackSettings, testSlackSettings, toApiError } from '../../lib/api'
+import { describeError } from '../../lib/errors'
+import { useApi } from '../../lib/useApi'
+import { EmptyState, ErrorState, LoadingState, PageHeader } from './states'
 
-const ALL_EVENTS = ['action.created', 'action.completed', 'action.approved', 'action.rejected', 'scan.finished', 'ping', 'regression.detected']
+// Events the backend fires today in read-only mode.
+const ALL_EVENTS = ['scan.finished', 'ping']
 
-function SlackCard() {
-  const [url, setUrl]         = useState('')
-  const [saved, setSaved]     = useState('')
-  const [enabled, setEnabled] = useState(true)
-  const [saving, setSaving]   = useState(false)
+type Webhook = { webhook_id: string; url: string; events?: string[]; last_fired_at?: string; last_status?: string }
+type Notice = { ok: boolean; text: string } | null
+
+function errorText(e: unknown) {
+  const d = describeError(toApiError(e))
+  return d.hint ? `${d.title}. ${d.hint}` : `${d.title}. ${d.message}`
+}
+
+function NoticeLine({ notice }: { notice: Notice }) {
+  if (!notice) return null
+  return <p role={notice.ok ? 'status' : 'alert'} className={`mt-3 text-xs ${notice.ok ? 'text-[#6EE7B7]' : 'text-red-400'}`}>{notice.text}</p>
+}
+
+function SlackForm({ initialUrl }: { initialUrl: string }) {
+  const [url, setUrl] = useState(initialUrl)
+  const [saved, setSaved] = useState(initialUrl)
+  const [saving, setSaving] = useState(false)
   const [testing, setTesting] = useState(false)
-  const [msg, setMsg]         = useState('')
-  const [msgOk, setMsgOk]     = useState(true)
-
-   
-  useEffect(() => {
-    getSlackSettings().then((d: any) => {
-      setUrl(d.slack_webhook_url || '')
-      setSaved(d.slack_webhook_url || '')
-      setEnabled(d.enabled ?? true)
-    }).catch((e: any) => { setMsg(`Error loading Slack settings: ${e?.message || 'Something went wrong'}`); setMsgOk(false) })
-  }, [])
-
-  const flash = (text: string, ok = true) => { setMsg(text); setMsgOk(ok); setTimeout(() => setMsg(''), 4000) }
+  const [notice, setNotice] = useState<Notice>(null)
 
   const handleSave = async () => {
-    setSaving(true)
+    setSaving(true); setNotice(null)
     try {
-      await updateSlackSettings({ slack_webhook_url: url, enabled })
+      await updateSlackSettings({ slack_webhook_url: url, enabled: true })
       setSaved(url)
-      flash('Slack webhook saved.')
-    } catch (e: any) { flash(`Error: ${e.message}`, false) }
+      setNotice({ ok: true, text: 'Slack webhook saved.' })
+    } catch (e) { setNotice({ ok: false, text: errorText(e) }) }
     setSaving(false)
   }
 
   const handleTest = async () => {
-    if (!saved) { flash('Save a webhook URL first.', false); return }
-    setTesting(true)
-    try { await testSlackSettings(); flash('Test alert sent — check your Slack channel!') }
-    catch (e: any) { flash(`Error: ${e.message}`, false) }
+    setTesting(true); setNotice(null)
+    try { await testSlackSettings(); setNotice({ ok: true, text: 'Test message sent. Check your Slack channel.' }) }
+    catch (e) { setNotice({ ok: false, text: errorText(e) }) }
     setTesting(false)
   }
 
   return (
-    <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-6 mb-6">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-[#4A154B] flex items-center justify-center flex-shrink-0">
-            <svg width="20" height="20" viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19.712.133a5.381 5.381 0 0 0-5.376 5.387 5.381 5.381 0 0 0 5.376 5.386h5.376V5.52A5.381 5.381 0 0 0 19.712.133m0 14.365H5.376A5.381 5.381 0 0 0 0 19.884a5.381 5.381 0 0 0 5.376 5.387h14.336a5.381 5.381 0 0 0 5.376-5.387 5.381 5.381 0 0 0-5.376-5.386" fill="#36C5F0"/>
-              <path d="M53.76 19.884a5.381 5.381 0 0 0-5.376-5.386 5.381 5.381 0 0 0-5.376 5.386v5.387h5.376a5.381 5.381 0 0 0 5.376-5.387m-14.336 0V5.52A5.381 5.381 0 0 0 34.048.133a5.381 5.381 0 0 0-5.376 5.387v14.364a5.381 5.381 0 0 0 5.376 5.387 5.381 5.381 0 0 0 5.376-5.387" fill="#2EB67D"/>
-              <path d="M34.048 54a5.381 5.381 0 0 0 5.376-5.387 5.381 5.381 0 0 0-5.376-5.386h-5.376v5.386A5.381 5.381 0 0 0 34.048 54m0-14.365h14.336a5.381 5.381 0 0 0 5.376-5.386 5.381 5.381 0 0 0-5.376-5.387H34.048a5.381 5.381 0 0 0-5.376 5.387 5.381 5.381 0 0 0 5.376 5.386" fill="#ECB22E"/>
-              <path d="M0 34.249a5.381 5.381 0 0 0 5.376 5.386 5.381 5.381 0 0 0 5.376-5.386v-5.387H5.376A5.381 5.381 0 0 0 0 34.249m14.336 0v14.364A5.381 5.381 0 0 0 19.712 54a5.381 5.381 0 0 0 5.376-5.387V34.249a5.381 5.381 0 0 0-5.376-5.387 5.381 5.381 0 0 0-5.376 5.387" fill="#E01E5A"/>
-            </svg>
-          </div>
-          <div>
-            <h2 className="font-semibold text-slate-100">Slack Alerts</h2>
-            <p className="text-xs text-slate-500">Get notified in Slack when a cost regression is detected</p>
-          </div>
-        </div>
-        {saved && (
-          <span className="text-xs font-medium bg-[#10B981]/15 text-[#10B981] px-2 py-1 rounded-full">Connected</span>
-        )}
-      </div>
-
-      <div className="flex gap-3 items-end">
+    <>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
         <div className="flex-1">
-          <label className="block text-xs font-medium text-slate-600 mb-1">Slack Incoming Webhook URL</label>
+          <label htmlFor="slack-url" className="mb-1 block text-xs font-medium text-slate-400">Slack incoming webhook URL</label>
           <input
+            id="slack-url"
             value={url}
-            onChange={e => setUrl(e.target.value)}
-            placeholder="https://hooks.slack.com/services/T.../B.../..."
-            className="dashboard-field w-full rounded-lg px-3 py-2 text-sm font-mono"
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="https://hooks.slack.com/services/…"
+            className="dashboard-field w-full rounded-lg px-3 py-2 font-mono text-sm"
           />
         </div>
-        <button onClick={handleSave} disabled={saving || url === saved}
-          className="dashboard-primary-button disabled:opacity-50 text-sm px-4 py-2 whitespace-nowrap">
+        <button type="button" onClick={handleSave} disabled={saving || url === saved} className="dashboard-primary-button whitespace-nowrap px-4 py-2 text-sm disabled:opacity-50">
           {saving ? 'Saving…' : 'Save'}
         </button>
         {saved && (
-          <button onClick={handleTest} disabled={testing} className="dashboard-secondary-button text-sm px-4 py-2 whitespace-nowrap">
-            {testing ? 'Sending…' : 'Test alert'}
+          <button type="button" onClick={handleTest} disabled={testing} className="dashboard-secondary-button whitespace-nowrap px-4 py-2 text-sm disabled:opacity-50">
+            {testing ? 'Sending…' : 'Send test message'}
           </button>
         )}
       </div>
+      <NoticeLine notice={notice} />
+    </>
+  )
+}
 
-      {msg && <p className={`text-xs mt-3 ${msgOk ? 'text-[#6EE7B7]' : 'text-red-500'}`}>{msg}</p>}
-
-      <p className="text-xs text-slate-400 mt-3">
-        Create an incoming webhook at <span className="font-mono">api.slack.com/apps</span> → Incoming Webhooks, then paste the URL above.
+function SlackCard() {
+  const { data, error, loading, retry } = useApi<{ slack_webhook_url?: string }>(getSlackSettings)
+  return (
+    <section className="mb-6 rounded-xl border border-[#1E2D4F] bg-[#0F1629] p-6" aria-labelledby="slack-title">
+      <h2 id="slack-title" className="font-semibold text-slate-100">Slack</h2>
+      <p className="mb-4 text-xs text-slate-400">
+        Save a Slack incoming webhook and send a test message. Automatic regression and budget alerts are coming soon.
       </p>
-    </div>
+      {loading && !data ? <LoadingState label="Loading Slack settings…" />
+        : error && !data ? <ErrorState error={error} onRetry={retry} compact />
+        : <SlackForm key={data?.slack_webhook_url || ''} initialUrl={data?.slack_webhook_url || ''} />}
+    </section>
   )
 }
 
 export default function WebhooksPanel() {
-  const [hooks, setHooks]     = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError]     = useState('')
+  const { data, error, loading, retry } = useApi(async () => {
+    const d = await getWebhooks()
+    return (Array.isArray(d?.items) ? d.items : []) as Webhook[]
+  })
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm]       = useState({ url: '', secret: '', events: [...ALL_EVENTS] })
-  const [saving, setSaving]   = useState(false)
-  const [msg, setMsg]         = useState('')
-  const [busy, setBusy]       = useState<Record<string, boolean>>({})
-
-  const load = async () => {
-    setLoading(true)
-    setError('')
-    try { const d = await getWebhooks(); setHooks(d.items || []) } catch (e: any) { setError(e?.message || 'Something went wrong') }
-    setLoading(false)
-  }
-
-  // eslint-disable-next-line react-hooks/set-state-in-effect
-  useEffect(() => { load() }, [])
+  const [form, setForm] = useState({ url: '', secret: '', events: [...ALL_EVENTS] })
+  const [saving, setSaving] = useState(false)
+  const [notice, setNotice] = useState<Notice>(null)
+  const [busy, setBusy] = useState<Record<string, boolean>>({})
+  const hooks = data || []
 
   const toggleEvent = (ev: string) => {
-    setForm(f => ({ ...f, events: f.events.includes(ev) ? f.events.filter(e => e !== ev) : [...f.events, ev] }))
+    setForm((f) => ({ ...f, events: f.events.includes(ev) ? f.events.filter((e) => e !== ev) : [...f.events, ev] }))
   }
 
   const handleAdd = async () => {
-    setSaving(true); setMsg('')
+    setSaving(true); setNotice(null)
     try {
       await addWebhook({ url: form.url, secret: form.secret || undefined, events: form.events })
       setForm({ url: '', secret: '', events: [...ALL_EVENTS] })
-      setShowForm(false); setMsg('Webhook registered.'); load()
-    } catch (e: any) { setMsg(`Error: ${e.message}`) }
+      setShowForm(false); setNotice({ ok: true, text: 'Webhook added.' }); retry()
+    } catch (e) { setNotice({ ok: false, text: errorText(e) }) }
     setSaving(false)
   }
 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this webhook?')) return
-    setBusy(b => ({ ...b, [id]: true }))
-    try { await deleteWebhook(id); load() } catch (e: any) { alert(e.message) }
-    setBusy(b => ({ ...b, [id]: false }))
+    setBusy((b) => ({ ...b, [id]: true })); setNotice(null)
+    try { await deleteWebhook(id); retry() } catch (e) { setNotice({ ok: false, text: errorText(e) }) }
+    setBusy((b) => ({ ...b, [id]: false }))
   }
 
   const handleTest = async () => {
-    try { await testWebhooks(); setMsg('Test ping sent to all webhooks.') } catch (e: any) { setMsg(`Error: ${e.message}`) }
+    setNotice(null)
+    try { await testWebhooks(); setNotice({ ok: true, text: 'Test ping sent to all webhooks.' }) } catch (e) { setNotice({ ok: false, text: errorText(e) }) }
   }
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-100">Webhooks & Integrations</h1>
-          <p className="text-slate-500 text-sm mt-1">Receive real-time Cloudlink events via HTTP POST or Slack</p>
-        </div>
-        <div className="flex gap-2">
-          {hooks.length > 0 && <button onClick={handleTest} className="dashboard-secondary-button text-sm px-4 py-2">Send test ping</button>}
-          <button onClick={() => setShowForm(s => !s)} className="dashboard-primary-button text-sm px-4 py-2">+ Add webhook</button>
-        </div>
-      </div>
+      <PageHeader
+        title="Webhooks & Slack"
+        subtitle="Get Cloudlink events by HTTP POST or in Slack"
+        actions={
+          <>
+            {hooks.length > 0 && <button type="button" onClick={handleTest} className="dashboard-secondary-button px-4 py-2 text-sm">Send test ping</button>}
+            <button type="button" onClick={() => setShowForm((s) => !s)} aria-expanded={showForm} className="dashboard-primary-button px-4 py-2 text-sm">+ Add webhook</button>
+          </>
+        }
+      />
 
       <SlackCard />
 
-      {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>}
-      {msg && <p className="text-sm text-[#6EE7B7] mb-4">{msg}</p>}
+      <NoticeLine notice={notice} />
 
       {showForm && (
-        <div className="bg-[#0F1629] border border-[#1E2D4F] rounded-xl p-6 mb-6">
-          <h2 className="font-semibold text-slate-100 mb-4">Register webhook</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div className="my-6 rounded-xl border border-[#1E2D4F] bg-[#0F1629] p-6">
+          <h2 className="mb-4 font-semibold text-slate-100">Add a webhook</h2>
+          <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="md:col-span-2">
-              <label className="block text-xs font-medium text-slate-600 mb-1">URL *</label>
-              <input value={form.url} onChange={e => setForm(f => ({ ...f, url: e.target.value }))} placeholder="https://your-server.com/cloudlink-hook"
-                className="dashboard-field w-full rounded-lg px-3 py-2 text-sm font-mono" />
+              <label htmlFor="hook-url" className="mb-1 block text-xs font-medium text-slate-400">URL *</label>
+              <input id="hook-url" value={form.url} onChange={(e) => setForm((f) => ({ ...f, url: e.target.value }))} placeholder="https://your-server.example/cloudlink-hook" className="dashboard-field w-full rounded-lg px-3 py-2 font-mono text-sm" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">HMAC Secret (optional)</label>
-              <input value={form.secret} onChange={e => setForm(f => ({ ...f, secret: e.target.value }))} type="password" placeholder="your-secret"
-                className="dashboard-field w-full rounded-lg px-3 py-2 text-sm" />
+              <label htmlFor="hook-secret" className="mb-1 block text-xs font-medium text-slate-400">HMAC secret (optional)</label>
+              <input id="hook-secret" value={form.secret} onChange={(e) => setForm((f) => ({ ...f, secret: e.target.value }))} type="password" autoComplete="off" className="dashboard-field w-full rounded-lg px-3 py-2 text-sm" />
             </div>
           </div>
-          <div className="mb-4">
-            <label className="block text-xs font-medium text-slate-600 mb-2">Events to subscribe to</label>
-            <div className="flex flex-wrap gap-2">
-              {ALL_EVENTS.map(ev => (
-                <label key={ev} className="flex items-center gap-1.5 cursor-pointer">
+          <fieldset className="mb-4">
+            <legend className="mb-2 block text-xs font-medium text-slate-400">Events</legend>
+            <div className="flex flex-wrap gap-3">
+              {ALL_EVENTS.map((ev) => (
+                <label key={ev} className="flex cursor-pointer items-center gap-1.5">
                   <input type="checkbox" checked={form.events.includes(ev)} onChange={() => toggleEvent(ev)} className="rounded" />
-                  <span className="text-xs text-slate-300 font-mono">{ev}</span>
+                  <span className="font-mono text-xs text-slate-300">{ev}</span>
                 </label>
               ))}
             </div>
-          </div>
+          </fieldset>
           <div className="flex gap-3">
-            <button onClick={handleAdd} disabled={saving || !form.url} className="dashboard-primary-button disabled:opacity-50 text-sm px-4 py-2">
+            <button type="button" onClick={handleAdd} disabled={saving || !form.url} className="dashboard-primary-button px-4 py-2 text-sm disabled:opacity-50">
               {saving ? 'Saving…' : 'Save webhook'}
             </button>
-            <button onClick={() => setShowForm(false)} className="dashboard-secondary-button text-sm px-4 py-2">Cancel</button>
+            <button type="button" onClick={() => setShowForm(false)} className="dashboard-secondary-button px-4 py-2 text-sm">Cancel</button>
           </div>
         </div>
       )}
 
-      <div className="bg-[#0F1629] rounded-xl border border-[#1E2D4F] overflow-hidden">
-        {loading ? (
-          <div className="p-10 text-center text-slate-400 text-sm">Loading…</div>
-        ) : hooks.length === 0 ? (
-          <div className="p-10 text-center text-slate-400 text-sm">No webhooks yet. Add one above to receive real-time events.</div>
-        ) : (
-          <table className="w-full text-sm">
-            <thead className="bg-[#141C33] border-b border-[#1E2D4F]">
-              <tr>{['URL','Events','Last Fired','Last Status',''].map(h => <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">{h}</th>)}</tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {hooks.map((h: any) => (
-                <tr key={h.webhook_id} className="hover:bg-[#141C33]">
-                  <td className="px-4 py-3 font-mono text-xs text-slate-700 max-w-xs truncate">{h.url}</td>
-                  <td className="px-4 py-3"><div className="flex flex-wrap gap-1">{(h.events || []).map((ev: string) => <span key={ev} className="text-xs bg-[#10B981]/15 text-[#10B981] px-1.5 py-0.5 rounded font-mono">{ev}</span>)}</div></td>
-                  <td className="px-4 py-3 text-xs text-slate-400">{h.last_fired_at ? new Date(h.last_fired_at).toLocaleString() : '—'}</td>
-                  <td className="px-4 py-3 text-xs">
-                    {h.last_status ? <span className={`px-2 py-0.5 rounded-full font-medium ${h.last_status?.startsWith('2') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>{h.last_status}</span> : <span className="text-slate-400">—</span>}
-                  </td>
-                  <td className="px-4 py-3">
-                    <button disabled={busy[h.webhook_id]} onClick={() => handleDelete(h.webhook_id)} className="px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs rounded-lg disabled:opacity-50 transition">Delete</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+      <div className="mt-4">
+        {loading && !data ? <LoadingState label="Loading webhooks…" />
+          : error && !data ? <ErrorState error={error} onRetry={retry} />
+          : hooks.length === 0 ? <EmptyState title="No webhooks yet" body="Add a webhook to get a POST request when a scan finishes." />
+          : (
+            <div className="overflow-x-auto rounded-xl border border-[#1E2D4F] bg-[#0F1629]">
+              <table className="w-full min-w-[600px] text-sm">
+                <thead className="border-b border-[#1E2D4F] bg-[#141C33]">
+                  <tr>{['URL', 'Events', 'Last fired', 'Last status', ''].map((h) => <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">{h}</th>)}</tr>
+                </thead>
+                <tbody className="divide-y divide-[#1E2D4F]">
+                  {hooks.map((h) => (
+                    <tr key={h.webhook_id} className="hover:bg-[#141C33]">
+                      <td className="max-w-xs truncate px-4 py-3 font-mono text-xs text-slate-300">{h.url}</td>
+                      <td className="px-4 py-3"><div className="flex flex-wrap gap-1">{(h.events || []).map((ev) => <span key={ev} className="rounded bg-[#10B981]/15 px-1.5 py-0.5 font-mono text-xs text-[#10B981]">{ev}</span>)}</div></td>
+                      <td className="px-4 py-3 text-xs text-slate-400">{h.last_fired_at ? new Date(h.last_fired_at).toLocaleString() : '—'}</td>
+                      <td className="px-4 py-3 text-xs text-slate-400">{h.last_status || '—'}</td>
+                      <td className="px-4 py-3">
+                        <button type="button" disabled={busy[h.webhook_id]} onClick={() => handleDelete(h.webhook_id)} aria-label={`Delete webhook ${h.url}`} className="rounded-lg bg-red-500/15 px-3 py-1 text-xs text-red-400 transition hover:bg-red-500/25 disabled:opacity-50">Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
       </div>
     </div>
   )
